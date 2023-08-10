@@ -1,20 +1,15 @@
-import { StyleSheet, Text, View } from 'react-native'
-
-import Header from '@/components/Header'
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
+import Navigation from '@/navigation/Navigation'
+import AuthProvider from '@/providers/auth/AuthProvider'
 
 export default function App() {
 	return (
-		<View style={styles.container}>
-			<Header />
-		</View>
+		<>
+			<AuthProvider>
+				<SafeAreaProvider>
+					<Navigation />
+				</SafeAreaProvider>
+			</AuthProvider>
+		</>
 	)
 }
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: '#333',
-		alignItems: 'center',
-		justifyContent: 'center'
-	}
-})

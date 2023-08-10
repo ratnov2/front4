@@ -4,7 +4,7 @@ import { Text, View } from 'react-native'
 const Header: FC = () => {
 	return (
 		<View>
-			<Text>Hello World from MyComponent</Text>
+			<Text>Hello Woweffwerld from MyComponent</Text>
 		</View>
 	)
 }
