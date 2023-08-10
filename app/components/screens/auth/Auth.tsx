@@ -1,22 +1,24 @@
-import { Button, Loader } from '@/components/ui'
+import { Button, Loader } from '@/ui'
 import { useState } from 'react'
 import { Pressable, Text, View } from 'react-native'
 import AuthFields from './AuthFields'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { IAuthFormData } from '@/shared/types/auth.interface'
-import DismissKeyboard from '@/components/ui/form-elements/field/DismissKeyboard'
+import DismissKeyboard from '@/ui/form-elements/field/DismissKeyboard'
+import { useAuthMutations } from './useAuthMutations'
 
 const Auth = () => {
 	const [isReg, setIsReg] = useState(false)
-
-	const isLoading = false
 
 	const { handleSubmit, reset, control } = useForm<IAuthFormData>({
 		mode: 'onChange'
 	})
 
-	const onSubmit: SubmitHandler<IAuthFormData> = ({ email, password }) => {
-		console.log(email, password)
+	const { isLoading, loginSync, registerSync } = useAuthMutations(reset)
+
+	const onSubmit: SubmitHandler<IAuthFormData> = data => {	
+		if (isReg) registerSync(data)
+		else loginSync(data)
 	}
 	return (
 		<DismissKeyboard>
@@ -37,7 +39,7 @@ const Auth = () => {
 					</Button>
 					<Pressable onPress={() => setIsReg(!isReg)}>
 						<Text className='text-white opacity-30 text-right text-base mt-3'>
-							{isReg ? 'Register' : 'Login'}
+							{isReg ? 'Login' : 'Register'}
 						</Text>
 					</Pressable>
 				</View>

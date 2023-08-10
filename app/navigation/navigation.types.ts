@@ -13,7 +13,7 @@ export type TypeRootStackParamList = {
 	Home2: undefined
 	Home3: undefined
 	Home4: undefined
-	Home5: undefined
+	Profile: undefined
 } & TypeRootStackAdminList
 
 type TypeRootStackAdminList = {

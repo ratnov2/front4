@@ -1,9 +1,8 @@
 import { FC } from 'react'
 import { View, Text, Pressable } from 'react-native'
 import { IMenuItem, TypeNavigate } from './bottom-menu.interface'
-import { TypeRootStackParamList } from '@/navigation/navigation.types'
 import { Feather } from '@expo/vector-icons'
-import { getColor } from '@/components/config/colors.config'
+import { getColor } from '@/config/colors.config'
 
 interface IMenuItemProps {
 	item: IMenuItem

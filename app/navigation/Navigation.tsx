@@ -4,8 +4,9 @@ import {
 	useNavigationContainerRef
 } from '@react-navigation/native'
 import PrivateNavigator from './PrivateNavigator'
-import { useAuth } from '@/components/hooks/useAuth'
-import { BottomMenu } from '@/components/ui'
+import { useCheckAuth } from '@/providers/auth/useCheckAuth'
+import { BottomMenu } from '@/ui'
+import { useAuth } from '@/hooks/useAuth'
 
 const Navigation: FC = () => {
 	const { user } = useAuth()
@@ -27,13 +28,15 @@ const Navigation: FC = () => {
 		}
 	}, [])
 
+	useCheckAuth(currentRoute)
+
 	return (
 		<>
 			<NavigationContainer ref={navRef}>
 				<PrivateNavigator />
 			</NavigationContainer>
 
-			{!user && currentRoute && (
+			{user && currentRoute && (
 				<BottomMenu nav={navRef.navigate} currentRoute={currentRoute} />
 			)}
 		</>

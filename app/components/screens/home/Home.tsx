@@ -1,4 +1,4 @@
-import { useTypedNavigation } from '@/components/hooks/useTypedNavigation'
+import { useTypedNavigation } from '@/hooks/useTypedNavigation'
 import { Pressable, Text, View } from 'react-native'
 
 const Home = () => {
