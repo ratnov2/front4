@@ -5,7 +5,8 @@ import { errorCatch } from './error.api'
 import { getNewTokens } from './helper.auth'
 
 const instance = axios.create({
-	baseURL: API_URL,
+	//baseURL: API_URL,
+	baseURL:'http://192.168.143.227:4200/api',
 	headers: {
 		'Content-Type': 'application/json'
 	}

@@ -13,7 +13,7 @@ const Auth = () => {
 	const { handleSubmit, reset, control } = useForm<IAuthFormData>({
 		mode: 'onChange'
 	})
-
+	
 	const { isLoading, loginSync, registerSync } = useAuthMutations(reset)
 
 	const onSubmit: SubmitHandler<IAuthFormData> = data => {	

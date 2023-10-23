@@ -1733,6 +1733,13 @@
     "@jridgewell/resolve-uri" "3.1.0"
     "@jridgewell/sourcemap-codec" "1.4.14"
 
+"@koale/useworker@^4.0.2":
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/@koale/useworker/-/useworker-4.0.2.tgz#cb540a2581cd6025307c3ca6685bc60748773e58"
+  integrity sha512-xPIPADtom8/3/4FLNj7MvNcBM/Z2FleH85Fdx2O869eoKW8+PoEgtSVvoxWjCWMA46Sm9A5/R1TyzNGc+yM0wg==
+  dependencies:
+    dequal "^1.0.0"
+
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
   resolved "https://registry.yarnpkg.com/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz#7619c2eb21b25483f6d167548b4cfd5a7488c3d5"
@@ -3228,6 +3235,11 @@ deprecated-react-native-prop-types@4.1.0:
     invariant "*"
     prop-types "*"
 
+dequal@^1.0.0:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/dequal/-/dequal-1.0.1.tgz#dbbf9795ec626e9da8bd68782f4add1d23700d8b"
+  integrity sha512-Fx8jxibzkJX2aJgyfSdLhr9tlRoTnHKrRJuu2XHlAgKioN2j19/Bcbe0d4mFXYZ3+wpE2KVobUVTfDutcD17xQ==
+
 destroy@1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/destroy/-/destroy-1.2.0.tgz#4803735509ad8be552934c67df614f94e66fa015"
@@ -3447,6 +3459,14 @@ expo-asset@~8.10.1:
     path-browserify "^1.0.0"
     url-parse "^1.5.9"
 
+expo-camera@~13.4.2:
+  version "13.4.2"
+  resolved "https://registry.yarnpkg.com/expo-camera/-/expo-camera-13.4.2.tgz#858de25720e5de4b21c43107fa5c926a021a2f0f"
+  integrity sha512-3G4ahx0pF56PyYixFlU39jrZof6I9XtBzizGObKN6ZKjSgCqqL0tjsrlDrCn44ZwSY4SngsMJmWR9JQDkKx2WA==
+  dependencies:
+    "@koale/useworker" "^4.0.2"
+    invariant "^2.2.4"
+
 expo-constants@~14.4.2:
   version "14.4.2"
   resolved "https://registry.yarnpkg.com/expo-constants/-/expo-constants-14.4.2.tgz#cac5e8b524069545739b8d8595ce96cc5be6578c"
@@ -3468,6 +3488,18 @@ expo-font@~11.4.0:
   integrity sha512-nkmezCFD7gR/I6R+e3/ry18uEfF8uYrr6h+PdBJu+3dawoLOpo+wFb/RG9bHUekU1/cPanR58LR7G5MEMKHR2w==
   dependencies:
     fontfaceobserver "^2.1.0"
+
+expo-image-loader@~4.3.0:
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/expo-image-loader/-/expo-image-loader-4.3.0.tgz#d897b4d4f1838faa8291c36f00b99c2b36a6ac5c"
+  integrity sha512-2kqJIO+oYM8J3GbvTUHLqTSpt1dLpOn/X0eB4U4RTuzz/faj8l/TyQELsMBLlGAkweNUuG9LqznbaBz+WuSFEw==
+
+expo-image-picker@~14.3.2:
+  version "14.3.2"
+  resolved "https://registry.yarnpkg.com/expo-image-picker/-/expo-image-picker-14.3.2.tgz#5ae2f36fe518a10c8fe82e5ff2ee735c14817cfc"
+  integrity sha512-xr/YeQMIYheXecWP033F2SPwpBlBR5xVCx7YSfSCTH8Y9pw7Z886agqKGbS9QBVGlzJ5qecJktZ6ASSzeslDVg==
+  dependencies:
+    expo-image-loader "~4.3.0"
 
 expo-keep-awake@~12.3.0:
   version "12.3.0"
@@ -5866,6 +5898,11 @@ react-native-toast-message@^2.1.6:
   version "2.1.6"
   resolved "https://registry.yarnpkg.com/react-native-toast-message/-/react-native-toast-message-2.1.6.tgz#322827c66901fa22cb3db614c7383cc717f5bbe2"
   integrity sha512-VctXuq20vmRa9AE13acaNZhrLcS3FaBS2zEevS3+vhBsnVZYG0FIlWIis9tVnpnNxUb3ART+BWtwQjzSttXTng==
+
+react-native-vision-camera@^2.4.2-beta.13:
+  version "2.4.2-beta.13"
+  resolved "https://registry.yarnpkg.com/react-native-vision-camera/-/react-native-vision-camera-2.4.2-beta.13.tgz#e3668b47a2457f8ee7c3e1b6287d2816a9ef342d"
+  integrity sha512-xEkoa3optsVL+mjXHRmpfyNi9WeCPpwU//4baFYyi7O+zDWkWuE3Ao+D3EQ/4hCQeegXf7Q/pqySYZC8Id6JoQ==
 
 react-native@0.72.3:
   version "0.72.3"

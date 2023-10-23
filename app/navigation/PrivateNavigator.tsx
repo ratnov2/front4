@@ -11,6 +11,14 @@ const Stack = createNativeStackNavigator<TypeRootStackParamList>()
 
 const PrivateNavigator: FC = () => {
 	const { user } = useAuth()
+	function Root() {
+		return (
+		  <Stack.Navigator>
+			{/* <Stack.Screen name="Profile" component={Profile} /> */}
+			{/* <Stack.Screen name="Settings" component={Settings} /> */}
+		  </Stack.Navigator>
+		);
+	  }
 	return (
 		<Stack.Navigator
 			screenOptions={{

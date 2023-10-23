@@ -9,8 +9,9 @@ export const useAuthMutations = (reset: UseFormReset<IAuthFormData>) => {
 	const { setUser } = useAuth()
 	const { mutate: loginSync, isLoading: isLoginLoading } = useMutation(
 		['login'],
-		({ email, password }: IAuthFormData) =>
-			AuthService.main('login', email, password),
+		({ email, password }: IAuthFormData) => {
+			return AuthService.main('login', email, password)
+		},
 		{
 			onSuccess(data) {
 				reset()
