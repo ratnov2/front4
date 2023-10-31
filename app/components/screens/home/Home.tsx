@@ -1,5 +1,7 @@
+//ts-nocheck
 import { StatusBar } from 'expo-status-bar'
-import React from 'react'
+import React, { useState } from 'react'
+import mime from 'mime'
 import {
 	StyleSheet,
 	Text,
@@ -9,16 +11,24 @@ import {
 	ImageBackground,
 	Image
 } from 'react-native'
-import { Camera, } from 'expo-camera'
+// import * as Settings from 'expo-settings'
+import { Camera } from 'expo-camera'
+import { useMutation } from '@tanstack/react-query'
+import { FilesService } from '@/services/files/profile.service'
+import { ProfileService } from '@/services/profile/profile.service'
 let camera: Camera | null
 let camera2: Camera | null
 export default function Home() {
-	const [startCamera, setStartCamera] = React.useState(false)
-	const [previewVisible, setPreviewVisible] = React.useState(false)
-	const [capturedImage, setCapturedImage] = React.useState<any>(null)
+	const { mutate } = useMutation(['push-photo'], (form: FormData) =>
+		FilesService.pushPhoto(form)
+	)
+	///
+	const [startCamera, setStartCamera] = useState(false)
+	const [previewVisible, setPreviewVisible] = useState(false)
+	const [capturedImage, setCapturedImage] = useState<any>(null)
 	//@ts-ignore
-	const [cameraType, setCameraType] = React.useState(Camera.Constants.Type.back)
-	const [flashMode, setFlashMode] = React.useState('off')
+	const [cameraType, setCameraType] = useState(Camera.Constants.Type.back)
+	const [flashMode, setFlashMode] = useState('off')
 
 	const __startCamera = async () => {
 		const { status } = await Camera.requestCameraPermissionsAsync()
@@ -31,22 +41,28 @@ export default function Home() {
 	}
 	const __takePicture = async () => {
 		const photo: any = await camera?.takePictureAsync()
-		//const photo2: any = await camera2?.takePictureAsync()
-		console.log(photo)
 		setPreviewVisible(true)
-		//setStartCamera(false)
 		setCapturedImage(photo)
 	}
 	const __savePhoto = () => {
 		setStartCamera(false)
+		const formData = new FormData()
+		
+		const uri = capturedImage.uri
+		formData.append('image', {
+			uri: capturedImage.uri,
+			type: mime.getType(uri),
+			name: uri.split('/').pop()
+		})
+		console.log(formData)
+		mutate(formData)
 	}
 	const __retakePicture = () => {
 		setCapturedImage(null)
 		setPreviewVisible(false)
 		__startCamera()
 	}
-	console.log('////////',cameraType);
-	
+
 	const __handleFlashMode = () => {
 		if (flashMode === 'on') {
 			setFlashMode('off')
@@ -63,6 +79,7 @@ export default function Home() {
 			setCameraType('back')
 		}
 	}
+	const mut = useMutation(['update-favorite-photo'],()=>ProfileService.updateFavoritePhoto())
 	return (
 		<View style={styles.container}>
 			{startCamera ? (
@@ -81,7 +98,7 @@ export default function Home() {
 					) : (
 						<View className='relative flex-1'>
 							<Camera
-								type={1}
+								type={cameraType}
 								//   flashMode={flashMode}
 								style={{ flex: 1 }}
 								ref={r => {
@@ -172,34 +189,6 @@ export default function Home() {
 									</View>
 								</View>
 							</Camera>
-							<Camera
-								type={1}
-								//   flashMode={flashMode}
-								style={{ flex: 1 }}
-								ref={r => {
-									camera2 = r
-								}}
-								className='w-20 h-20 left-10 top-20 absolute'
-							>
-								<View
-									style={{
-										flex: 1,
-										width: '100%',
-										backgroundColor: 'transparent',
-										flexDirection: 'row'
-									}}
-								>
-									<View
-										style={{
-											position: 'absolute',
-											left: '5%',
-											top: '10%',
-											flexDirection: 'column',
-											justifyContent: 'space-between'
-										}}
-									></View>
-								</View>
-							</Camera>
 						</View>
 					)}
 				</View>
@@ -236,7 +225,9 @@ export default function Home() {
 					</TouchableOpacity>
 				</View>
 			)}
-
+			<TouchableOpacity onPress={()=>mut.mutate()}>
+				<Text className='text-black w-20 h-20'>CLiCK</Text>
+			</TouchableOpacity>
 			<StatusBar style='auto' />
 		</View>
 	)

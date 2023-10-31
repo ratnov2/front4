@@ -4,12 +4,19 @@ import { deleteTokensStorage, getAccessToken } from '../auth/auth.helper'
 import { errorCatch } from './error.api'
 import { getNewTokens } from './helper.auth'
 
+const baseURL = 'http://192.168.199.227:4200/api'
+
 const instance = axios.create({
 	//baseURL: API_URL,
-	baseURL:'http://192.168.143.227:4200/api',
+	baseURL,
 	headers: {
 		'Content-Type': 'application/json'
 	}
+})
+
+export const $files = axios.create({
+	baseURL,
+	headers: { 'content-type': 'multipart/form-data' }
 })
 
 instance.interceptors.request.use(async config => {

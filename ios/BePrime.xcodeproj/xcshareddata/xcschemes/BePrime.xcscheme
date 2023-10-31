@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "front4.app"
-               BlueprintName = "front4"
-               ReferencedContainer = "container:front4.xcodeproj">
+               BuildableName = "BePrime.app"
+               BlueprintName = "BePrime"
+               ReferencedContainer = "container:BePrime.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "front4Tests.xctest"
-               BlueprintName = "front4Tests"
-               ReferencedContainer = "container:front4.xcodeproj">
+               BuildableName = "BePrimeTests.xctest"
+               BlueprintName = "BePrimeTests"
+               ReferencedContainer = "container:BePrime.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "front4.app"
-            BlueprintName = "front4"
-            ReferencedContainer = "container:front4.xcodeproj">
+            BuildableName = "BePrime.app"
+            BlueprintName = "BePrime"
+            ReferencedContainer = "container:BePrime.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "front4.app"
-            BlueprintName = "front4"
-            ReferencedContainer = "container:front4.xcodeproj">
+            BuildableName = "BePrime.app"
+            BlueprintName = "BePrime"
+            ReferencedContainer = "container:BePrime.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
