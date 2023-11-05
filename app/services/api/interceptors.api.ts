@@ -4,7 +4,8 @@ import { deleteTokensStorage, getAccessToken } from '../auth/auth.helper'
 import { errorCatch } from './error.api'
 import { getNewTokens } from './helper.auth'
 
-const baseURL = 'http://192.168.199.227:4200/api'
+const baseURL = 'http://192.168.233.227:4200/api'
+export const BaseImageUrl = 'http://192.168.233.227:4200'
 
 const instance = axios.create({
 	//baseURL: API_URL,

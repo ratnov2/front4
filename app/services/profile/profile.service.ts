@@ -1,6 +1,6 @@
 import { request } from '../api/request.api'
 import { getUsersUrl } from '@/config/api.config'
-import { IProfile } from '@/shared/types/profile.interface'
+import { ILatestPhoto, IProfile } from '@/shared/types/profile.interface'
 import instance from '../api/interceptors.api'
 
 export const ProfileService = {
@@ -9,10 +9,31 @@ export const ProfileService = {
 			url: getUsersUrl('/profile'),
 			method: 'GET'
 		})
+
 		return response
 	},
-	async updateFavoritePhoto(){
-		const response = await instance.put(getUsersUrl('/profile/favorite-photos'),{key:'photoOne',photo:'HWIJHFDWJHWFIWDFHGIGWF'})
+
+	async updateFavoritePhoto(data: TypeUpdateFavoritePhoto) {
+		console.log('222', data)
+
+		const response = await instance.put(
+			getUsersUrl('/profile/favorite-photos'),
+			data
+		)
+		return response
+	},
+	async getLatestPhotos() {
+		const response = await request<ILatestPhoto[]>({
+			url: getUsersUrl('/latest-photo'),
+			method: 'GET'
+		})
+		console.log('response',response);
+		
 		return response
 	}
+}
+
+export type TypeUpdateFavoritePhoto = {
+	key: 'photoOne' | 'photoTwo' | 'photoThree'
+	photo: string
 }
