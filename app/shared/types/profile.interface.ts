@@ -3,7 +3,11 @@ export interface IProfile {
 	calendarPhotos: { created: string; photo: string }[]
 	createdAt: string
 	favoritePhotos: { photoOne: string; photoTwo: string; photoThree: string }
+	firstName: string
+	lastName: string
+	avatar: string
 }
+
 export interface ILatestPhoto {
 	calendarPhotos: {
 		created: string

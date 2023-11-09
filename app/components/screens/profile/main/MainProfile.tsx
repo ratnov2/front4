@@ -16,10 +16,12 @@ export const MainProfile: FC = () => {
 			{user.data && (
 				<>
 					<View className='w-20 h-20 rounded-full bg-red-600 flex justify-center items-center color-white'>
-						<Text className='text-white'>anton</Text>
+						<Text className='text-white uppercase font-bold text-3xl'>{(user.data.firstName || 'anonym')[0]}</Text>
 					</View>
 					<View className='flex-row justify-between items-center mt-4'>
-						<Text className='text-white text-5xl font-bold'>anton</Text>
+						<Text className='text-white text-5xl font-bold'>
+							{user.data.firstName || 'anonym'}
+						</Text>
 						<View className='bg-white rounded-full h-10 w-10 flex justify-center items-center '>
 							<Entypo name='share' size={24} color='black' />
 						</View>

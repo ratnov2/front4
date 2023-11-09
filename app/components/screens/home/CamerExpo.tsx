@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { useState, useEffect } from "react";
-import MyFilesList from "./MyList";
+// import MyFilesList from "./MyList";
 
 export default function CameraExpo() {
   const [permission, requestPermission] = ImagePicker.useCameraPermissions();
@@ -75,7 +75,7 @@ export default function CameraExpo() {
     <SafeAreaView style={styles.container}>
       <View style={styles.container}>
         <Text>Working With Firebase and Image Picker</Text>
-        <MyFilesList files={files} />
+        {/* <MyFilesList files={files} /> */}
         <StatusBar style="auto" />
         <Button title="Take Picture" onPress={takePhoto}></Button>
       </View>

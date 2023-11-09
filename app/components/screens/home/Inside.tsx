@@ -29,14 +29,8 @@ export const Inside = () => {
 	useEffect(() => {}, [])
 	return (
 		<View style={{ paddingTop: insets.top, flex: 1 }}>
-			{startCamera && (
-				// <CameraComp
-				// 	setStartCamera={setStartCamera}
-				// 	__startCamera={__startCamera}
-				// 	startCamera={startCamera}
-				// />
-				<CameraExpo />
-			)}
+			<CameraExpo />
+
 			{!startCamera && (
 				<ScrollView
 					className='bg-slate-600'
