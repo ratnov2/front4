@@ -103,7 +103,7 @@ export const CalendarMin: FC = () => {
 					})()}
 				</View>
 			)}
-			<View className='mb-10  align-middle mx-auto '>
+			<View className='mb-10 align-middle mx-auto'>
 				<Link to={'/Calendar'} className=''>
 					<View className='p-3 rounded-lg border-2 border-white'>
 						<Text className='text-white text-xl'>View all my memories</Text>

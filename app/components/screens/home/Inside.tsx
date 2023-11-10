@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react'
 import { Image } from 'react-native'
 import { Camera } from 'expo-camera'
 import userPng from '@/assets/user.png'
-import loading from '@/assets/loading.gif'
+
 import CameraExpo from './CamerExpo'
 
 export const Inside = () => {

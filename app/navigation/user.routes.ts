@@ -5,6 +5,7 @@ import Screen404 from '@/components/screens/system/Screen404'
 import Profile from '@/components/screens/profile/Profile'
 import { Calendar } from '@/components/screens/calendar/Calendar'
 import { CalendarTask } from '@/components/screens/calendarTask/CalendarTask'
+import { EditProfile } from '@/components/screens/edit-profile/EditProfile'
 
 export const userRoutes: IRoute[] = [
 	{
@@ -15,10 +16,13 @@ export const userRoutes: IRoute[] = [
 		name: 'Calendar',
 		component: Calendar
 	},
-
 	{
 		name: 'Home',
 		component: Home
+	},
+	{
+		name: 'EditProfile',
+		component: EditProfile
 	},
 	{
 		name: 'Profile',

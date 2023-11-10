@@ -8,7 +8,7 @@ export const ProfileHeader: FC = () => {
 	const user = useQuery(['get-profile'], () => ProfileService.getProfile())
 	
 	return (
-		<View className='text-white justify-between flex-row w-full'>
+		<View className='text-white justify-between flex-row w-full mb-10'>
 			<FontAwesome name='long-arrow-left' size={24} color='white' />
 			<Text className='text-white '>{user.data?.email}</Text>
 			<Entypo name='dots-three-vertical' size={24} color='white' />

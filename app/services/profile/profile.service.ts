@@ -14,10 +14,17 @@ export const ProfileService = {
 	},
 
 	async updateFavoritePhoto(data: TypeUpdateFavoritePhoto) {
-		console.log('222', data)
-
 		const response = await instance.put(
 			getUsersUrl('/profile/favorite-photos'),
+			data
+		)
+		return response
+	},
+	async updateProfileInfo(data: TypeEditProfile) {
+		console.log(data);
+		
+		const response = await instance.put(
+			getUsersUrl('/profile/info'),
 			data
 		)
 		return response
@@ -27,8 +34,8 @@ export const ProfileService = {
 			url: getUsersUrl('/latest-photo'),
 			method: 'GET'
 		})
-		console.log('response',response);
-		
+		console.log('response', response)
+
 		return response
 	}
 }
@@ -36,4 +43,9 @@ export const ProfileService = {
 export type TypeUpdateFavoritePhoto = {
 	key: 'photoOne' | 'photoTwo' | 'photoThree'
 	photo: string
+}
+export type TypeEditProfile = {
+	firtsName: string
+	lastName: string
+	avatar: string
 }

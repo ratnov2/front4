@@ -5,6 +5,9 @@ import { View, Text, Pressable, ScrollView } from 'react-native'
 import { ProfileHeader } from './header/Header'
 import { MainProfile } from './main/MainProfile'
 import { CalendarMin } from './calendar-min/CalendarMin'
+import { Joined } from './ui/Joined'
+import { useQuery } from '@tanstack/react-query'
+import { ProfileService } from '@/services/profile/profile.service'
 
 const Profile: FC = () => {
 	const { setUser } = useAuth()
@@ -19,7 +22,9 @@ const Profile: FC = () => {
 				>
 					<Text className='text-white text-lg ml-2'>Logout</Text>
 				</Pressable>
+				
 				<MainProfile />
+
 				<CalendarMin />
 			</ScrollView>
 		</View>
