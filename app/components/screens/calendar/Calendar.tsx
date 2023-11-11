@@ -13,9 +13,7 @@ import {
 
 export const Calendar = () => {
 	const user = useQuery(['get-user-profile'], () => ProfileService.getProfile()) //@TASK
-	let date = new Date()
-	console.log(user);
-	
+
 	let daysInMonth = function (date: Date) {
 		return 33 - new Date(date.getFullYear(), date.getMonth(), 33).getDate()
 	}

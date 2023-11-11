@@ -6,8 +6,14 @@ import Profile from '@/components/screens/profile/Profile'
 import { Calendar } from '@/components/screens/calendar/Calendar'
 import { CalendarTask } from '@/components/screens/calendarTask/CalendarTask'
 import { EditProfile } from '@/components/screens/edit-profile/EditProfile'
+import { Friends } from '@/components/screens/friends/Friends'
 
 export const userRoutes: IRoute[] = [
+	
+	{
+		name: 'Friends',
+		component: Friends
+	},
 	{
 		name: 'CalendarTask',
 		component: CalendarTask

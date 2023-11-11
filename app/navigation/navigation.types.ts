@@ -9,10 +9,11 @@ export interface IRoute {
 export type TypeRootStackParamList = {
 	Auth: undefined
 	Home: undefined
-	EditProfile:undefined
-	CalendarTask:undefined
+	EditProfile: undefined
+	CalendarTask: undefined
+	Friends: undefined
 	Screen404: undefined
-	Calendar:undefined
+	Calendar: undefined
 	Home2: undefined
 	Home3: undefined
 	Home4: undefined

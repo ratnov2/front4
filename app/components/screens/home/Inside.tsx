@@ -9,12 +9,14 @@ import { Camera } from 'expo-camera'
 import userPng from '@/assets/user.png'
 
 import CameraExpo from './CamerExpo'
+import { Link } from '@react-navigation/native'
 
 export const Inside = () => {
 	const insets = useSafeAreaInsets()
 	const latestPhoto = useQuery(['get-latest-photo'], () =>
 		ProfileService.getLatestPhotos()
 	)
+
 	const [latestPhotoState, setLatestPhotoState] = useState()
 	const [startCamera, setStartCamera] = useState(false)
 	const __startCamera = async () => {
@@ -29,11 +31,25 @@ export const Inside = () => {
 	useEffect(() => {}, [])
 	return (
 		<View style={{ paddingTop: insets.top, flex: 1 }}>
+			<View
+				className='absolute left-1/2  z-30'
+				style={{
+					position: 'absolute',
+					top: insets.top + 15,
+					left: 0,
+					right: 0,
+					justifyContent: 'center',
+					alignItems: 'center'
+				}}
+			>
+				<Text className='text-white text-2xl font-bold'>BePrime</Text>
+			</View>
 			<CameraExpo />
 
 			{!startCamera && (
 				<ScrollView
-					className='bg-slate-600'
+					className='pt-20'
+
 					// contentContainerStyle={{ flexGrow: 1 }}
 					// showsVerticalScrollIndicator={false}
 					// showsHorizontalScrollIndicator={false}
@@ -75,25 +91,31 @@ export const Inside = () => {
 												}}
 											>
 												<View>
-													<Image
-														source={userPng}
-														style={{
-															width: 30,
-															height: 30,
-															backgroundColor: '#fff',
-															borderRadius: 100
-														}}
-													/>
+													<Link to={'/Profile?id=2332'}>
+														<Image
+															source={userPng}
+															style={{
+																width: 30,
+																height: 30,
+																backgroundColor: '#fff',
+																borderRadius: 100
+															}}
+														/>
+													</Link>
 												</View>
-												<Text style={{ marginLeft: 10 }}> fe</Text>
+												<Text style={{ marginLeft: 10 }} className='text-white'>
+													{' '}
+													fe
+												</Text>
 											</View>
 											<Image
 												className='rounded-2xl'
 												style={{
 													resizeMode: 'cover',
 													flex: 1,
-													aspectRatio: 1,
+													aspectRatio: 9 / 16,
 													borderRadius: 20,
+
 													backgroundColor: '#ffffff'
 												}}
 												// source={{ uri: `${BaseImageUrl}${photo.photo}` }}
