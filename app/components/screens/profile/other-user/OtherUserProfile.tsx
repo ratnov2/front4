@@ -1,11 +1,17 @@
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { Image, ImageBackground, Text, TouchableOpacity } from 'react-native'
 import { View } from 'react-native'
 import img from '@/assets/adaptive-icon.png'
 import { LinearGradient } from 'expo-linear-gradient'
+import { FriendsService } from '@/services/friends/friends.service'
 
 export const OtherUserProfile = () => {
 	const user = useQuery([''], () => '')
+	const addFriend = useMutation(
+		['add-friend'],
+		(data: { friendId: string; status: '0' | '1' | '2' }) =>
+			FriendsService.addFriend(data)
+	)
 	return (
 		<View>
 			<View className='z-10'>
@@ -25,7 +31,7 @@ export const OtherUserProfile = () => {
 						}}
 					></LinearGradient>
 					<LinearGradient
-						colors={['#111111','#00000000', ]}
+						colors={['#111111', '#00000000']}
 						style={{
 							height: '25%',
 							width: '100%',
@@ -37,7 +43,15 @@ export const OtherUserProfile = () => {
 						<Text className='text-3xl text-white font-bold'>wwlefnkewnfef</Text>
 					</View>
 				</ImageBackground>
-				<TouchableOpacity className='flex-row justify-center mt-4 bg-white p-4 rounded-2xl'>
+				<TouchableOpacity
+					onPress={() =>
+						addFriend.mutate({
+							friendId: '654ed0f1b4ee8f45157d1709',
+							status: '1'
+						})
+					}
+					className='flex-row justify-center mt-4 bg-white p-4 rounded-2xl'
+				>
 					<Text className='font-bold text-2xl mr-2'>+</Text>
 					<Text className='font-bold text-2xl'>Add Friend</Text>
 				</TouchableOpacity>
