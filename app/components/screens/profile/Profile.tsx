@@ -27,7 +27,7 @@ const Profile: FC = () => {
 		<View>
 			{user.data && (
 				<View>
-					{(params as { id: string })?.id !== user.data._id && !params ? (
+					{(params as { id: string })?.id !== user.data._id && params ? (
 						<OtherUserProfile />
 					) : (
 						<View className='mt-20 px-5'>

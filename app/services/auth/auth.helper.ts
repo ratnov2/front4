@@ -33,6 +33,7 @@ export const getUserFromStorage = async () => {
 	}
 }
 export const saveToStorage = async (data: IAuthResponse) => {
+	
 	await saveTokensStorage(data)
 	try {
 		return JSON.parse(

@@ -5,7 +5,6 @@ import {
 	useEffect,
 	useState
 } from 'react'
-import { View, Text } from 'react-native'
 import { IContext, TypeUserState } from './auth-provider.interface'
 import * as SplashScreen from 'expo-splash-screen'
 import { getAccessToken, getUserFromStorage } from '@/services/auth/auth.helper'
@@ -25,7 +24,7 @@ const AuthProvider: FC<PropsWithChildren<unknown>> = ({ children }) => {
 
 				if (accessToken) {
 					const user = await getUserFromStorage()
-
+					
 					if (isMounted) {
 						setUser(user)
 					}
