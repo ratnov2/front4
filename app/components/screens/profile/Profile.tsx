@@ -13,21 +13,16 @@ import { OtherUserProfile } from './other-user/OtherUserProfile'
 import { FriendsService } from '@/services/friends/friends.service'
 
 const Profile: FC = () => {
-	const user = useQuery(['get-user'], () => ProfileService.getProfile())
-	const addFriend = useMutation(
-		['add-friend'],
-		(data: { friendId: string; status: '0' | '1' | '2' }) =>
-			FriendsService.addFriend(data)
-	)
+	const { user } = useAuth()
 	const { setUser } = useAuth()
 	let { params } = useRoute()
-	console.log(params?.id, user.data?._id)
 
 	return (
 		<View>
-			{user.data && (
+			{user && (
 				<View>
-					{(params as { id: string })?.id !== user.data._id && params ? (
+					{(params as { id: string })?.id !== user._id &&
+					(params as { id: string })?.id ? (
 						<OtherUserProfile />
 					) : (
 						<View className='mt-20 px-5'>
@@ -42,7 +37,6 @@ const Profile: FC = () => {
 									>
 										<Text className='text-white text-lg ml-2'>Logout</Text>
 									</Pressable>
-
 									<MainProfile />
 
 									<CalendarMin />

@@ -8,11 +8,10 @@ export const FriendsService = {
 			url: getUsersUrl('/friends/all-friends'),
 			method: 'GET'
 		})
-		console.log(response.friendship)
 
 		return response
 	},
-	async addFriend(data: { friendId: string; status: '0' | '1' | '2' }) {
+	async addFriend(data: { friendId: string; status: '0' | '1' | '2' | '3' }) {
 		const response = await request<IFriendsip[]>({
 			url: getUsersUrl('/friends/add-friends'),
 			method: 'PUT',

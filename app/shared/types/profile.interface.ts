@@ -24,6 +24,12 @@ export interface ILatestPhoto {
 	calendarPhotos: {
 		created: string
 		photo: string
+		comment: string
+		comments: {
+			_id: string
+			message: string
+		}[]
 	}
 	name: string
+	_id: string
 }

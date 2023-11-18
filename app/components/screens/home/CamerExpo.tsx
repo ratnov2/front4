@@ -15,27 +15,13 @@ export default function CameraExpo() {
   const [permission, requestPermission] = ImagePicker.useCameraPermissions();
   const [files, setFiles] = useState([]);
 
-//   useEffect(() => {
-//     listFiles().then((listResp) => {
-//       const files = listResp.map((value) => {
-//         return { name: value.fullPath };
-//       });
-
-//       setFiles(files);
-//     });
-//   }, []);
-
-  console.log(files);
-
-  /**
-   *
-   */
   const takePhoto = async () => {
     try {
       const cameraResp = await ImagePicker.launchCameraAsync({
-        allowsEditing: true,
+        allowsEditing: false,
         mediaTypes: ImagePicker.MediaTypeOptions.All,
         quality: 1,
+        aspect:[2,20],
       });
 
       if (!cameraResp.canceled) {

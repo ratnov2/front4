@@ -54,16 +54,15 @@ export const CameraComp: FC<ICameraComp> = ({
 	// }
 	const __takePicture = async () => {
 		setLoading(true)
-		console.log('@@@@@@')
 
 		try {
 			const photo: any = await camera?.takePictureAsync()
 			setPreviewVisible(true)
 			setCapturedImage(photo)
 			setLoading(false)
-			console.log('@@@@')
+		
 		} catch (e) {
-			console.log(e)
+		
 		}
 	}
 	const __savePhoto = () => {

@@ -21,12 +21,7 @@ export const ProfileService = {
 		return response
 	},
 	async updateProfileInfo(data: TypeEditProfile) {
-		console.log(data);
-		
-		const response = await instance.put(
-			getUsersUrl('/profile/info'),
-			data
-		)
+		const response = await instance.put(getUsersUrl('/profile/info'), data)
 		return response
 	},
 	async getLatestPhotos() {
@@ -34,8 +29,23 @@ export const ProfileService = {
 			url: getUsersUrl('/latest-photo'),
 			method: 'GET'
 		})
-		console.log('response', response)
-
+		console.log(response);
+		
+		return response
+	},
+	async getUser(id: string) {
+		const response = await request<IProfile>({
+			url: getUsersUrl(`/${id}`),
+			method: 'GET'
+		})
+		return response
+	},
+	async addMainComment(data: { message: string; link: 'string' }) {
+		const response = await request({
+			url: getUsersUrl(`profile/main-message`),
+			method: 'POST',
+			data
+		})
 		return response
 	}
 }
