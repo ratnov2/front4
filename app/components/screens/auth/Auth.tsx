@@ -37,7 +37,7 @@ const Auth = () => {
 					<Button onPress={handleSubmit(onSubmit)} className='p-5 text-white'>
 						Go to watch
 					</Button>
-					<Pressable onPress={() => setIsReg(!isReg)}>
+					<Pressable onPress={() => setIsReg(!isReg)} >
 						<Text className='text-white opacity-30 text-right text-base mt-3'>
 							{isReg ? 'Login' : 'Register'}
 						</Text>

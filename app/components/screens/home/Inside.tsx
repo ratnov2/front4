@@ -20,6 +20,8 @@ import { useAuth } from '@/hooks/useAuth'
 import { FilesService } from '@/services/files/files.service'
 import mime from 'mime'
 import { BaseImageUrl } from '@/services/api/interceptors.api'
+import { ElementPhoto } from './element-photo/ElementPhoto'
+import DismissKeyboard from '@/ui/form-elements/field/DismissKeyboard'
 
 export const Inside = () => {
 	const insets = useSafeAreaInsets()
@@ -82,8 +84,7 @@ export const Inside = () => {
 		}
 	}
 	////
-	const [isMessage, setIsMessage] = useState(false)
-	const [value, setValue] = useState('')
+
 	return (
 		<View style={{ paddingTop: insets.top, flex: 1 }}>
 			{!startCamera && (
@@ -110,120 +111,40 @@ export const Inside = () => {
 					// showsVerticalScrollIndicator={false}
 					// showsHorizontalScrollIndicator={false}
 				>
-					{latestPhoto.isLoading ? (
-						<View>
-							<Text className='text-white'>Loading...</Text>
-						</View>
-					) : latestPhoto.data && latestPhoto.data.length > 0 ? (
-						<View className='h-full mx-10 '>
-							{latestPhoto.data?.map((photo, key) => {
-								console.log(user?._id === photo._id)
-
-								const photoStr = `${BaseImageUrl}${photo.calendarPhotos.photo}`
-								const [value, setValue] = useState(photo.calendarPhotos.comment)
-								return (
-									<View className='' style={{ marginBottom: 70 }} key={key}>
-										{photo && (
-											<View style={{ flex: 1 }}>
-												<View
-													style={{
-														display: 'flex',
-														flexDirection: 'row',
-														alignItems: 'center',
-														marginBottom: 10
-													}}
-												>
-													<View>
-														<Link
-															to={`/Profile${
-																user?._id !== photo._id
-																	? `?id=${photo._id}`
-																	: ''
-															}`}
-														>
-															<Image
-																source={userPng}
-																style={{
-																	width: 30,
-																	height: 30,
-																	backgroundColor: '#fff',
-																	borderRadius: 100
-																}}
-															/>
-														</Link>
-													</View>
-													<Text
-														style={{ marginLeft: 10 }}
-														className='text-white'
-													>
-														{' '}
-														fe
-													</Text>
-												</View>
-												<Image
-													className='rounded-2xl'
-													style={{
-														resizeMode: 'cover',
-														flex: 1,
-														aspectRatio: 9 / 16,
-														borderRadius: 20
-													}}
-													source={{
-														uri: photoStr
-													}}
-													// source={{
-													// 	uri: 'https://sun9-23.userapi.com/impf/c636420/v636420339/2f8/mEInMCYFfUI.jpg?size=640x512&quality=96&sign=34a9d640a547d663a0f0e55ef2aa4f40&c_uniq_tag=XAjjwBc58g9NQ16xv9-345VibwQmIFlYxdNvG9hr-DY&type=album'
-													// }}
-												/>
-											</View>
-										)}
-										{user?._id === photo._id ? (
-											!isMessage ? (
-												<TouchableOpacity
-													onPress={() => {
-														setIsMessage(true)
-													}}
-												>
-													<Text className='text-white mt-4'>
-														{photo.calendarPhotos.comment || 'Anonym'}
-													</Text>
-												</TouchableOpacity>
-											) : (
-												<TextInput
-													value={value}
-													onChange={e => {
-														console.log(e.currentTarget);
-														
-													}}
-												/>
-											)
-										) : (
-											<View>
-												<Text className='text-white mt-4'>
-													{photo.calendarPhotos.comment || 'Anonym'}
-												</Text>
-											</View>
-										)}
-									</View>
-								)
-							})}
-						</View>
-					) : (
-						<View
-							style={{
-								justifyContent: 'center',
-								flex: 1,
-								alignItems: 'center'
-							}}
-						>
+					<DismissKeyboard>
+						{latestPhoto.isLoading ? (
 							<View>
-								<Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>
-									Здесь пока ничего нет
-								</Text>
+								<Text className='text-white'>Loading...</Text>
 							</View>
-						</View>
-					)}
-					<View className='pb-28'></View>
+						) : latestPhoto.data && latestPhoto.data.length > 0 ? (
+							<View className='h-full mx-10 '>
+								{latestPhoto.data?.map((photo, key) => {
+									return (
+										<ElementPhoto
+											photo={photo}
+											key={key}
+											refetch={() => latestPhoto.refetch()}
+										/>
+									)
+								})}
+							</View>
+						) : (
+							<View
+								style={{
+									justifyContent: 'center',
+									flex: 1,
+									alignItems: 'center'
+								}}
+							>
+								<View>
+									<Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>
+										Здесь пока ничего нет
+									</Text>
+								</View>
+							</View>
+						)}
+						<View className='pb-28'></View>
+					</DismissKeyboard>
 				</ScrollView>
 			)}
 			{!startCamera && (

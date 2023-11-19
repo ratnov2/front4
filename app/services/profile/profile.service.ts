@@ -29,8 +29,8 @@ export const ProfileService = {
 			url: getUsersUrl('/latest-photo'),
 			method: 'GET'
 		})
-		console.log(response);
-		
+		console.log(response)
+
 		return response
 	},
 	async getUser(id: string) {
@@ -40,9 +40,9 @@ export const ProfileService = {
 		})
 		return response
 	},
-	async addMainComment(data: { message: string; link: 'string' }) {
+	async addMainComment(data: { message: string; link: string }) {
 		const response = await request({
-			url: getUsersUrl(`profile/main-message`),
+			url: getUsersUrl(`/profile/main-message`),
 			method: 'POST',
 			data
 		})

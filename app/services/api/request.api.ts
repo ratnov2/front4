@@ -4,7 +4,6 @@ import { errorCatch } from './error.api'
 import instance from './interceptors.api'
 
 export const request = async <T>(config: AxiosRequestConfig) => {
-	
 	const onSuccess = (response: AxiosResponse<T>) => response.data
 
 	const onError = (error: AxiosError<T>) => {
