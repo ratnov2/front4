@@ -1,6 +1,6 @@
 import { useAuth } from '@/hooks/useAuth'
 import { BaseImageUrl } from '@/services/api/interceptors.api'
-import { Link } from '@react-navigation/native'
+import { Link, useNavigation } from '@react-navigation/native'
 import { FC, useRef, useState } from 'react'
 import {
 	ActivityIndicator,
@@ -23,6 +23,7 @@ interface IElementPhoto {
 }
 
 export const ElementPhoto: FC<IElementPhoto> = ({ photo, refetch }) => {
+	const navigate = useNavigation()
 	const { user } = useAuth()
 	const photoStr = `${BaseImageUrl}${photo.calendarPhotos.photo}`
 	const [value, setValue] = useState(photo.calendarPhotos.comment)
@@ -154,13 +155,29 @@ export const ElementPhoto: FC<IElementPhoto> = ({ photo, refetch }) => {
 				</View>
 			)}
 			<TouchableOpacity
-				className='text-center rounded-xl flex-row items-center justify-center mt-5'
-				onPress={() => setIsMessage(false)}
+				className='text-center rounded-xl flex-row items-center justify-center mt-5 '
+				onPress={() => {
+					setIsMessage(false)
+					navigate.navigate({
+						name: 'Comments' as any,
+						params: {
+							_id: photo._id,
+							created: '2022-10-10'
+						}
+					} as never)
+				}}
 			>
-				<MaterialIcons name='comment' size={24} color='white' />
-				<Text className='text-white text-center p-2 font-bold'>
-					Add comments
-				</Text>
+				{/* <Link
+					to={`/Comments?_id=${photo._id}?created='2022-10-10'`}
+					className='items-center flex-row block '
+				> */}
+				<View className='text-center rounded-xl flex-row items-center justify-center mt-5'>
+					<MaterialIcons name='comment' size={24} color='white' />
+					<Text className='text-white text-center p-2 font-bold'>
+						Add comments
+					</Text>
+				</View>
+				{/* </Link> */}
 			</TouchableOpacity>
 		</View>
 	)

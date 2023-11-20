@@ -10,6 +10,7 @@ export type TypeRootStackParamList = {
 	Auth: undefined
 	Home: undefined
 	EditProfile: undefined
+	Comments: string
 	CalendarTask: undefined
 	Friends: undefined
 	Screen404: undefined

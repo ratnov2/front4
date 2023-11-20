@@ -7,9 +7,9 @@ import { Calendar } from '@/components/screens/calendar/Calendar'
 import { CalendarTask } from '@/components/screens/calendarTask/CalendarTask'
 import { EditProfile } from '@/components/screens/edit-profile/EditProfile'
 import { Friends } from '@/components/screens/friends/Friends'
+import { Comments } from '@/components/screens/comments/Comments'
 
 export const userRoutes: IRoute[] = [
-	
 	{
 		name: 'Friends',
 		component: Friends
@@ -33,6 +33,10 @@ export const userRoutes: IRoute[] = [
 	{
 		name: 'Profile',
 		component: Profile
+	},
+	{
+		name: 'Comments',
+		component: Comments
 	},
 	{
 		name: 'Screen404',
