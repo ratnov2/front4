@@ -26,7 +26,7 @@ export const OtherUserProfile = () => {
 	const [typeFriend, setTypeFriend] = useState<'0' | '1' | '2' | '3' | null>(
 		null
 	)
-		console.log(getUser.data);
+		//.log(getUser.data);
 		
 	useEffect(() => {
 		if (!myFriends.isLoading && myFriends.data && user) {

@@ -14,7 +14,7 @@ export const SuggestionFriends = () => {
 				})
 
 				if (data.length > 0) {
-					console.log(data);
+					//console.log(data);
 					
 					setContactUsers(data)
 				}

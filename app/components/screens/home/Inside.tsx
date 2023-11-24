@@ -22,14 +22,40 @@ import mime from 'mime'
 import { BaseImageUrl } from '@/services/api/interceptors.api'
 import { ElementPhoto } from './element-photo/ElementPhoto'
 import DismissKeyboard from '@/ui/form-elements/field/DismissKeyboard'
+import { Feather } from '@expo/vector-icons'
+import { LinearGradient } from 'expo-linear-gradient'
+
+const IsTiming = (date: Date) => {
+	const current = new Date()
+	const userDate = new Date(date)
+	const currYear = current.getFullYear()
+	const currDay = current.getDate()
+	const currHours = current.getHours()
+	const currMonth = current.getMonth()
+	const year = userDate.getFullYear()
+	const day = userDate.getDate()
+	const month = userDate.getMonth()
+	const hours = userDate.getHours()
+	if (currYear >= year && currMonth >= month) {
+		if (currDay > day) {
+			return true
+		} else if (currDay === day && currHours >= 12) {
+			return true
+		} else {
+			return false
+		}
+	}
+}
 
 export const Inside = () => {
 	const insets = useSafeAreaInsets()
 	const latestPhoto = useQuery(['get-latest-photo'], () =>
 		ProfileService.getLatestPhotos()
 	)
+	//console.log(latestPhoto.data);
+
 	const { user } = useAuth()
-	const [latestPhotoState, setLatestPhotoState] = useState()
+
 	const [startCamera, setStartCamera] = useState(false)
 	const __startCamera = async () => {
 		const { status } = await Camera.requestCameraPermissionsAsync()
@@ -147,50 +173,41 @@ export const Inside = () => {
 					</DismissKeyboard>
 				</ScrollView>
 			)}
-			{!startCamera && (
-				<View
-					style={{ height: 50, flex: 1 }}
-					className='bg-transparent absolute bottom-6 left-0 right-0  justify-center items-center'
-				>
+			{user && IsTiming(user.latestPhoto.created) && !startCamera && (
+				<View>
 					<View
-					// style={{
-					// 	justifyContent: 'center',
-					// 	alignItems: 'center',
-					// 	position: 'absolute',
-					// 	left: 0,
-					// 	right: 0,
-					// 	bottom: 10
-					// }}
-					// className='bg-transparent'
+						style={{ height: 50, flex: 1 }}
+						className='absolute bottom-20 left-0 right-0  justify-center items-center '
 					>
-						<TouchableOpacity
-							onPress={() => {
-								__startCamera()
-								takePhoto()
-							}}
-							style={{
-								width: 130,
-								borderRadius: 4,
-								backgroundColor: '#14274e',
-								flexDirection: 'row',
-								justifyContent: 'center',
-								alignItems: 'center',
-								height: 40
-							}}
-						>
-							<Text
-								style={{
-									color: '#fff',
-									fontWeight: 'bold',
-									textAlign: 'center'
+						<View>
+							<TouchableOpacity
+								onPress={() => {
+									__startCamera()
+									takePhoto()
 								}}
+								style={{
+									height: 80
+								}}
+								className='text-center flex items-center'
 							>
-								Take picture
-							</Text>
-						</TouchableOpacity>
+								<Feather name='circle' size={80} color='white' />
+								<Text className='text-white text-center'>
+									Post a Late BeReal
+								</Text>
+							</TouchableOpacity>
+						</View>
 					</View>
 				</View>
 			)}
+			<LinearGradient
+				colors={['#00000000', '#111111']}
+				style={{
+					height: '10%',
+					width: '100%',
+					position: 'absolute',
+					bottom: 0
+				}}
+			></LinearGradient>
 		</View>
 	)
 }

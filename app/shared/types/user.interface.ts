@@ -1,3 +1,5 @@
+import { ILatestPhoto } from './profile.interface'
+
 export interface IUser {
 	_id: string
 	email: string
@@ -10,5 +12,25 @@ export interface IUser {
 		photoOne: string | null
 		photoTwo: string | null
 		photoThree: string | null
+	}
+	latestPhoto: {
+		created: Date
+		photos: {
+			frontPhoto?: {
+				created: Date
+				photo: string
+				locate: string
+			}
+			backPhoto?: {
+				created: Date
+				photo: string
+				locate: string
+			}
+		}
+		comment: string
+		comments: {
+			_id: string
+			message: string
+		}[]
 	}
 }

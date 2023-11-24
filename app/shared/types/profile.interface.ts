@@ -22,8 +22,19 @@ export interface IFriend {
 
 export interface ILatestPhoto {
 	calendarPhotos: {
-		created: string
-		photo: string
+		created: Date
+		photos:{
+			frontPhoto?: {
+				created: Date
+				photo: string
+				locate: string
+			}
+			backPhoto?: {
+				created: Date
+				photo: string
+				locate: string
+			}
+		} 
 		comment: string
 		comments: {
 			_id: string

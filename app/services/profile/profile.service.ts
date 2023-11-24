@@ -29,7 +29,7 @@ export const ProfileService = {
 			url: getUsersUrl('/latest-photo'),
 			method: 'GET'
 		})
-		console.log(response)
+		//console.log(response)
 
 		return response
 	},
@@ -40,9 +40,29 @@ export const ProfileService = {
 		})
 		return response
 	},
-	async addMainComment(data: { message: string; link: string }) {
+	async addMainComment(data: { message: string; created: Date }) {
 		const response = await request({
 			url: getUsersUrl(`/profile/main-message`),
+			method: 'POST',
+			data
+		})
+		return response
+	},
+	async addUserMessage(data: {
+		message: string
+		created: string
+		userId: string
+	}) {
+		const response = await request({
+			url: getUsersUrl(`/profile/user-message`),
+			method: 'POST',
+			data
+		})
+		return response
+	},
+	async getPostUserByLink(data: { created: string; userId: string }) {
+		const response = await request<IPost[]>({
+			url: getUsersUrl(`/profile/user-posts`),
 			method: 'POST',
 			data
 		})
@@ -58,4 +78,11 @@ export type TypeEditProfile = {
 	firtsName: string
 	lastName: string
 	avatar: string
+}
+
+export type IPost = {
+	_id: string
+	avatar: string
+	message: string
+	created:string
 }

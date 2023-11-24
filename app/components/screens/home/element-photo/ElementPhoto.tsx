@@ -1,7 +1,7 @@
 import { useAuth } from '@/hooks/useAuth'
 import { BaseImageUrl } from '@/services/api/interceptors.api'
 import { Link, useNavigation } from '@react-navigation/native'
-import { FC, useRef, useState } from 'react'
+import { FC, useReducer, useRef, useState } from 'react'
 import {
 	ActivityIndicator,
 	Image,
@@ -22,15 +22,97 @@ interface IElementPhoto {
 	refetch: () => void
 }
 
+export type BaseExampleProps = {
+	className?: string
+}
+
+type State = {
+	frontPhoto?:
+		| {
+				created: Date
+				photo: string
+				locate: string
+		  }
+		| undefined
+	backPhoto?:
+		| {
+				created: Date
+				photo: string
+				locate: string
+		  }
+		| undefined
+	length: 0 | 1 | 2
+	current: null | 'frontPhoto' | 'backPhoto'
+}
+
+type Action = {
+	type: null | 'frontPhoto' | 'backPhoto'
+}
+
+const reducer = (state: State, action: Action): State => {
+	const { type } = action
+	switch (type) {
+		case 'frontPhoto':
+			return { ...state, current: 'backPhoto' }
+		case 'backPhoto':
+			return { ...state, current: 'frontPhoto' }
+		default:
+			return state
+	}
+}
+
+const ShareImageUrl = (photo?: string) => `${BaseImageUrl}${photo}`
+
+const UnCurrent = (type: 'frontPhoto' | 'backPhoto' | null) => {
+	if (type === 'frontPhoto') return 'backPhoto'
+	else return 'frontPhoto'
+}
+
 export const ElementPhoto: FC<IElementPhoto> = ({ photo, refetch }) => {
 	const navigate = useNavigation()
 	const { user } = useAuth()
-	const photoStr = `${BaseImageUrl}${photo.calendarPhotos.photo}`
+
+	const photosUser = photo.calendarPhotos.photos
+	const [store, dispatch] = useReducer(
+		reducer,
+		(() => {
+			const result: State = {
+				current: null,
+				length: 0
+			}
+			if (photosUser.frontPhoto?.photo) {
+				result.frontPhoto = photosUser.frontPhoto
+				result.current = 'frontPhoto'
+				result.length++
+			}
+			if (photosUser.backPhoto?.photo) {
+				result.backPhoto = photosUser.backPhoto
+				if (result.current !== 'frontPhoto') result.current = 'backPhoto'
+				result.length++
+			}
+
+			return result
+		})()
+	)
+
+	// const [photos, setPhotos] = useState(
+	// 	(() => {
+	// 		const current =
+	// 			photosUser.frontPhoto?.photo || photosUser.backPhoto?.photo
+	// 		const unCurrent =
+	// 			!photosUser.frontPhoto?.photo || !photosUser.backPhoto?.photo
+	// 		return current
+	// 	})()
+	// )
+	// console.log(photos)
+
 	const [value, setValue] = useState(photo.calendarPhotos.comment)
 	const [isMessage, setIsMessage] = useState(false)
+	//console.log(photo.calendarPhotos)
+
 	const addMainComment = useMutation(
 		['add-main-comment'],
-		(data: { message: string; link: string }) =>
+		(data: { message: string; created: Date }) =>
 			ProfileService.addMainComment(data),
 		{
 			onSuccess: () => {
@@ -73,21 +155,35 @@ export const ElementPhoto: FC<IElementPhoto> = ({ photo, refetch }) => {
 							{photo.name || 'Anonym'}
 						</Text>
 					</View>
-					<Image
-						className='rounded-2xl'
-						style={{
-							resizeMode: 'cover',
-							flex: 1,
-							aspectRatio: 9 / 16,
-							borderRadius: 20
-						}}
-						source={{
-							uri: photoStr
-						}}
-						// source={{
-						// 	uri: 'https://sun9-23.userapi.com/impf/c636420/v636420339/2f8/mEInMCYFfUI.jpg?size=640x512&quality=96&sign=34a9d640a547d663a0f0e55ef2aa4f40&c_uniq_tag=XAjjwBc58g9NQ16xv9-345VibwQmIFlYxdNvG9hr-DY&type=album'
-						// }}
-					/>
+					<View style={{ aspectRatio: 9 / 16 }} className='relative'>
+						<Image
+							className='rounded-2xl'
+							style={{
+								resizeMode: 'cover',
+								flex: 1,
+								aspectRatio: 9 / 16,
+								borderRadius: 20
+							}}
+							source={{
+								uri: ShareImageUrl(store[store.current || 'backPhoto']?.photo)
+							}}
+						/>
+						{store.length === 2 && (
+							<TouchableOpacity
+								className='absolute left-4 top-4 border-2 border-solid border-stone-900 rounded-xl overflow-hidden'
+								onPress={() => dispatch({ type: store.current })}
+							>
+								<View className=''>
+									<Image
+										className='w-28 h-32  '
+										source={{
+											uri: ShareImageUrl(store[UnCurrent(store.current)]?.photo)
+										}}
+									/>
+								</View>
+							</TouchableOpacity>
+						)}
+					</View>
 				</View>
 			)}
 			{user?._id === photo._id ? (
@@ -98,7 +194,7 @@ export const ElementPhoto: FC<IElementPhoto> = ({ photo, refetch }) => {
 						}}
 					>
 						<Text className='text-white mt-4'>
-							{photo.calendarPhotos.comment || 'Anonym'}
+							{photo.calendarPhotos.comment || '...'}
 						</Text>
 					</TouchableOpacity>
 				) : (
@@ -127,7 +223,7 @@ export const ElementPhoto: FC<IElementPhoto> = ({ photo, refetch }) => {
 									onPress={() => {
 										addMainComment.mutate({
 											message: value,
-											link: photo.calendarPhotos.photo
+											created: photo.calendarPhotos.created
 										})
 									}}
 								>
@@ -150,7 +246,7 @@ export const ElementPhoto: FC<IElementPhoto> = ({ photo, refetch }) => {
 			) : (
 				<View>
 					<Text className='text-white mt-4'>
-						{photo.calendarPhotos.comment || 'Anonym'}
+						{photo.calendarPhotos.comment || '...'}
 					</Text>
 				</View>
 			)}
@@ -162,7 +258,7 @@ export const ElementPhoto: FC<IElementPhoto> = ({ photo, refetch }) => {
 						name: 'Comments' as any,
 						params: {
 							_id: photo._id,
-							created: '2022-10-10'
+							created: photo.calendarPhotos.created
 						}
 					} as never)
 				}}
