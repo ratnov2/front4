@@ -11,24 +11,25 @@ import { ProfileService } from '@/services/profile/profile.service'
 import { useRoute } from '@react-navigation/native'
 import { OtherUserProfile } from './other-user/OtherUserProfile'
 import { FriendsService } from '@/services/friends/friends.service'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 const Profile: FC = () => {
 	const { user } = useAuth()
 	const { setUser } = useAuth()
 	let { params } = useRoute()
-
+	const insets = useSafeAreaInsets()
 	return (
-		<View>
+		<View  style={{marginBottom:insets.bottom + 220}}>
 			{user && (
-				<View>
+				<View >
 					{(params as { id: string })?.id !== user._id &&
 					(params as { id: string })?.id ? (
 						<OtherUserProfile />
 					) : (
-						<View className='mt-20 px-5'>
+						<View className='mt-20 px-5 ' >
 							<View>
 								<ProfileHeader />
-								<ScrollView>
+								<ScrollView >
 									<Pressable
 										onPress={() =>
 											AuthService.logout().then(() => setUser(null))

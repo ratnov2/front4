@@ -1,7 +1,7 @@
 export interface IProfile {
 	_id: string
 	email: string
-	calendarPhotos: { created: string; photo: string }[]
+	calendarPhotos: IPhotos[]
 	createdAt: string
 	favoritePhotos: { photoOne: string; photoTwo: string; photoThree: string }
 	firstName: string
@@ -20,10 +20,31 @@ export interface IFriend {
 	}[]
 }
 
+export interface IPhotos {
+	created: Date
+	photos: {
+		frontPhoto?: {
+			created: Date
+			photo: string
+			locate: string
+		}
+		backPhoto?: {
+			created: Date
+			photo: string
+			locate: string
+		}
+	}
+	comment: string
+	comments: {
+		_id: string
+		message: string
+	}[]
+}
+
 export interface ILatestPhoto {
 	calendarPhotos: {
 		created: Date
-		photos:{
+		photos: {
 			frontPhoto?: {
 				created: Date
 				photo: string
@@ -34,7 +55,7 @@ export interface ILatestPhoto {
 				photo: string
 				locate: string
 			}
-		} 
+		}
 		comment: string
 		comments: {
 			_id: string

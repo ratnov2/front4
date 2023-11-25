@@ -5,6 +5,7 @@ import { Image, Modal, Pressable, Text, View } from 'react-native'
 import clsx from 'clsx'
 import { Link } from '@react-navigation/native'
 import { BaseImageUrl } from '@/services/api/interceptors.api'
+import { ILatestPhoto, IPhotos } from '@/shared/types/profile.interface'
 declare global {
 	interface Date {
 		daysInMonth(): number
@@ -13,17 +14,15 @@ declare global {
 export const CalendarMin: FC = () => {
 	const [modalVisible, setModalVisible] = useState(false)
 	const [modalImg, setModalImg] = useState('')
-	const date = new Date()
 	const addDate = new Date()
 	const user = useQuery(['get-user-234'], () => ProfileService.getProfile())
 	Date.prototype.daysInMonth = function () {
 		return 33 - new Date(this.getFullYear(), this.getMonth(), 33).getDate()
 	}
 	addDate.setDate(addDate.getDate() - 14)
-	console.log(modalImg)
 
 	return (
-		<View className='bg-gray-700 rounded-xl p-4 mt-5'>
+		<View className='bg-gray-800 rounded-xl p-4 mt-5 '>
 			<Modal
 				animationType='slide'
 				transparent={true}
@@ -44,26 +43,32 @@ export const CalendarMin: FC = () => {
 					</View>
 				</View>
 			</Modal>
-			<Text className='text-white mb-4 text-2xl font-bold'>Last 14 days</Text>
+			<Text className='text-white mb-3 text-xl font-bold'>Last 14 days</Text>
 			{user.data && (
-				<View className='text-white flex-row w-full mx-2 flex-wrap '>
+				<View className='text-white flex-row w-full mx-[2px] flex-wrap '>
 					{(() => {
-						let photo: { created: string; photo: string }[] = []
+						let photo: IPhotos[] = []
 						photo = user.data.calendarPhotos.slice(-7)
 						let k = -1
+						//console.log('@',photo[0]);
 
 						return Array.from(Array(14)).map((el, key) => {
-							let [year, month, day] = photo[k + 1]?.created.split('-') || [
-								0, 0, 0
-							]
+							const date = new Date(photo[k + 1]?.created)
+							const currentDate = new Date()
+							const day = date.getDate()
+							const month = date.getMonth()
+							//const year = date.getFullYear()
+							// let [year, month, day] = photo[k + 1].calendarPhotos.created.split('-') || [
+							// 	0, 0, 0
+							// ]
 							addDate.setDate(addDate.getDate() + 1)
-							let photoImg: string = photo[k + 1]?.photo
-							if (
-								Number(month) === addDate.getMonth() &&
-								Number(day) === addDate.getDate()
-							)
-								k++
+							let photoImg: string =
+								photo[k + 1]?.photos.frontPhoto?.photo ||
+								photo[k + 1]?.photos.backPhoto?.photo ||
+								''
+							//console.log(photoImg);
 
+							if (month === addDate.getMonth() && day === addDate.getDate()) k++
 							return (
 								<View
 									key={key}
@@ -88,14 +93,17 @@ export const CalendarMin: FC = () => {
 											/>
 										</Pressable>
 									) : (
-										<Text
-											className={clsx(
-												'text-white text-xl',
-												date.getDate() === addDate.getDate() && ' text-black'
-											)}
-										>
-											{addDate.getDate()}
-										</Text>
+										<View className={clsx(currentDate.getDate() === addDate.getDate() && 'bg-white rounded-full p-0.5')}>
+											<Text
+												className={clsx(
+													'text-white text-xl',
+													currentDate.getDate() === addDate.getDate() &&
+														'text-black '
+												)}
+											>
+												{addDate.getDate()}
+											</Text>
+										</View>
 									)}
 								</View>
 							)
@@ -103,7 +111,7 @@ export const CalendarMin: FC = () => {
 					})()}
 				</View>
 			)}
-			<View className='mb-10 align-middle mx-auto'>
+			<View className='mb-2 align-middle mx-auto'>
 				<Link to={'/Calendar'} className=''>
 					<View className='p-3 rounded-lg border-2 border-white'>
 						<Text className='text-white text-xl'>View all my memories</Text>

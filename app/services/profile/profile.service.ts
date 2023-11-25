@@ -9,7 +9,6 @@ export const ProfileService = {
 			url: getUsersUrl('/profile'),
 			method: 'GET'
 		})
-
 		return response
 	},
 
