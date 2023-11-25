@@ -19,17 +19,19 @@ const Profile: FC = () => {
 	let { params } = useRoute()
 	const insets = useSafeAreaInsets()
 	return (
-		<View  style={{marginBottom:insets.bottom + 220}}>
+		<View>
 			{user && (
-				<View >
-					{(params as { id: string })?.id !== user._id &&
-					(params as { id: string })?.id ? (
-						<OtherUserProfile />
-					) : (
-						<View className='mt-20 px-5 ' >
-							<View>
-								<ProfileHeader />
-								<ScrollView >
+				<View style={{marginTop:insets.top}} className='relative px-5'>
+					<ProfileHeader />
+					<ScrollView>
+						{(params as { id: string })?.id !== user._id &&
+						(params as { id: string })?.id ? (
+							<OtherUserProfile />
+						) : (
+							<View className='mt-20  '>
+								<View>
+									{/* <ProfileHeader /> */}
+									{/* <ScrollView > */}
 									<Pressable
 										onPress={() =>
 											AuthService.logout().then(() => setUser(null))
@@ -41,10 +43,12 @@ const Profile: FC = () => {
 									<MainProfile />
 
 									<CalendarMin />
-								</ScrollView>
+									<View className='mb-10' />
+									{/* </ScrollView> */}
+								</View>
 							</View>
-						</View>
-					)}
+						)}
+					</ScrollView>
 				</View>
 			)}
 		</View>
