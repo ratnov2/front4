@@ -1,22 +1,26 @@
 import { FriendsService, IFriendsip } from '@/services/friends/friends.service'
 import { UseQueryResult, useMutation } from '@tanstack/react-query'
-import { FC } from 'react'
+import { FC, useRef, useState } from 'react'
 import { Text, TouchableOpacity, View } from 'react-native'
 import { FriendItem } from './ui/friend-item'
 import { NoFriend } from './ui/NoFriends'
 import { Entypo } from '@expo/vector-icons'
+import BottomDrawer, {
+	BottomDrawerMethods
+} from 'react-native-animated-bottom-drawer'
 
 interface IMyFriends {
 	friends: UseQueryResult<IFriendsip, unknown>
 }
 
 export const RequestFriends: FC<IMyFriends> = ({ friends }) => {
+	
 	const addFriend = useMutation(
 		['add-friend'],
 		(data: { friendId: string; status: '0' | '1' | '2' | '3' }) =>
 			FriendsService.addFriend(data)
 	)
-
+	
 	return (
 		<View className='mt-7'>
 			<Text className='text-lg text-white font-bold uppercase mb-4'>
@@ -62,6 +66,7 @@ export const RequestFriends: FC<IMyFriends> = ({ friends }) => {
 			) : (
 				<NoFriend />
 			)}
+			
 		</View>
 	)
 }
@@ -76,13 +81,6 @@ const FriendBody: FC<IFriendBody> = ({ name, login }) => (
 	</View>
 )
 
-// const GroupButtons = () => {
-// 	return (
-// 		<View>
-// 			<DeleteButton />
-// 		</View>
-// 	)
-// }
 interface IButtonGroup {
 	deleteFriend: () => void
 	addFriend: () => void

@@ -10,18 +10,25 @@ export interface IEditProfileFields {
 	isPassRequired?: boolean
 }
 
-const EditProfileFields: FC<IEditProfileFields> = ({ control, isPassRequired }) => {
+const EditProfileFields: FC<IEditProfileFields> = ({
+	control,
+	isPassRequired
+}) => {
 	return (
 		<>
-			<Field<TypeEditProfile>
-				control={control}
-				name='firstName'
-				placeholder='Enter firstName'
-				// rules={{
-				// 	required: 'firstName', 
-				// }}
-				keyboardType='default'
-			/>
+			<View className='mt-3'>
+				<Text className='text-white'>Введите ваше имя</Text>
+				<Field<TypeEditProfile>
+					control={control}
+					name='firstName'
+					placeholder='Enter firstName'
+					// rules={{
+					// 	required: 'firstName',
+					// }}
+					keyboardType='default'
+				/>
+			</View>
+			<Text className='text-white'>Введите вашу фамилию</Text>
 			<Field<TypeEditProfile>
 				control={control}
 				name='lastName'

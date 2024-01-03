@@ -15,7 +15,7 @@ export const SuggestionFriends = () => {
 
 				if (data.length > 0) {
 					//console.log(data);
-					
+
 					setContactUsers(data)
 				}
 			}
@@ -60,11 +60,13 @@ export const SuggestionFriends = () => {
 									number={contact.phoneNumbers?.[0].number || 'unknown'}
 								/>
 							}
+							key={key}
 							buttons={<InviteButton />}
 							styles='bg-transparent p-0 mb-5'
 						/>
 					))}
 			</View>
+			
 		</View>
 	)
 }
@@ -73,14 +75,14 @@ interface IFriendBody {
 	name: string
 	number: string
 }
-const FriendBody: FC<IFriendBody> = ({ name, number }) => (
+export const FriendBody: FC<IFriendBody> = ({ name, number }) => (
 	<View>
 		<Text className='text-white text-lg font-bold'>{name || 'Anonym'}</Text>
 		<Text className='text-stone-400 font-bold '>{number}</Text>
 	</View>
 )
 
-const InviteButton = ({ deleteFriend }: { deleteFriend: () => void }) => {
+export const InviteButton = ({ deleteFriend }: { deleteFriend: () => void }) => {
 	return (
 		<TouchableOpacity className='bg-zinc-700 p-2 rounded-full uppercase'>
 			<Text className='text-white font-bold'>Invite</Text>

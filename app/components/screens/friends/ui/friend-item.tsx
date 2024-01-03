@@ -1,5 +1,5 @@
 import { Entypo } from '@expo/vector-icons'
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import { Image, Text, View } from 'react-native'
 
 interface IFriendItem {
@@ -17,16 +17,21 @@ export const FriendItem: FC<IFriendItem> = ({
 	buttons,
 	styles = ''
 }) => {
+	const [isErrorAvatar, setIsErrorAvatar] = useState(false)
 	return (
 		<View
 			className={`flex-row bg-zinc-800 p-3 rounded-2xl items-center ${styles}`}
 		>
 			<View>
-				{avatar ? (
-					<Image className={`w-14 h-14 `} source={{ uri: avatar }} />
+				{avatar && !isErrorAvatar ? (
+					<Image
+						className={`w-14 h-14 `}
+						source={{ uri: avatar }}
+						onError={e => setIsErrorAvatar(true)}
+					/>
 				) : (
 					<View className='bg-red-600 w-12 h-12 rounded-full flex-row justify-center items-center'>
-						<Text className='text-white font-bold text-xl'>
+						<Text className='text-white font-bold text-xl uppercase'>
 							{name[0] || 'A'}
 						</Text>
 					</View>

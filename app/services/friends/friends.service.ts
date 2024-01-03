@@ -19,6 +19,20 @@ export const FriendsService = {
 		})
 
 		return response
+	},
+	async getUserByName(data: { name: string; id?: string }) {
+		const response = await request<
+			Pick<IProfile, '_id' | 'avatar' | 'firstName' | 'friendship'>[]
+		>({
+			url: getUsersUrl('/user-by-name'),
+			method: 'POST',
+			data: {
+				...data,
+				id: data.id || ''
+			}
+		})
+
+		return response
 	}
 }
 

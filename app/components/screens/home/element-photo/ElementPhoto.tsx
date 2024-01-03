@@ -121,7 +121,8 @@ export const ElementPhoto: FC<IElementPhoto> = ({ photo, refetch }) => {
 			}
 		}
 	)
-
+		console.log(photo);
+		
 	return (
 		<View className='' style={{ marginBottom: 70 }}>
 			{photo && (

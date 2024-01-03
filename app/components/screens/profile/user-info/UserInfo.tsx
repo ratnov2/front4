@@ -2,13 +2,32 @@ import { IProfile } from '@/shared/types/profile.interface'
 import { Entypo } from '@expo/vector-icons'
 import { Link } from '@react-navigation/native'
 import { FC } from 'react'
-import { Text, View } from 'react-native'
 
+import { Text, TouchableOpacity, View } from 'react-native'
+// import * as Sharing from 'expo-sharing'
+import { Share } from 'react-native'
 interface IUserInfo {
 	user: IProfile
 }
+const getProfileLink = (userId: string) => {
+	// Здесь должен быть ваш код для формирования ссылки на профиль
+	return `https://example.com/profile/${userId}`
+}
 
 export const UserInfo: FC<IUserInfo> = ({ user }) => {
+	const shareProfile = async (userId: string) => {
+		try {
+			const profileLink = getProfileLink(userId)
+			await Share.share({
+				title: 'App link',
+				message: 'Message + link: https://sparc.world',
+				url: 'https://sparc.world'
+			})
+		} catch (error: any) {
+			console.error('Ошибка при попытке поделиться:', error.message)
+		}
+	}
+
 	return (
 		<View>
 			<View className='w-20 h-20 rounded-full bg-red-600 flex justify-center items-center color-white'>
@@ -24,10 +43,12 @@ export const UserInfo: FC<IUserInfo> = ({ user }) => {
 						{user.firstName || 'anonym'}
 					</Text>
 				</Link>
-				<View className='bg-white rounded-full h-10 w-10 flex justify-center items-center '>
+				<TouchableOpacity
+					onPress={() => shareProfile('123')}
+					className='bg-white rounded-full h-10 w-10 flex justify-center items-center '
+				>
 					<Entypo name='share' size={24} color='black' />
-				</View>
-				
+				</TouchableOpacity>
 			</View>
 		</View>
 	)
@@ -38,19 +59,24 @@ export const JoinedDate = (date: string) => {
 	const normalDate = new Date(date)
 	const currentDate = new Date()
 
-	const differenceMonth = normalDate.getMonth() - currentDate.getMonth()
+	let differenceMonth =
+		(currentDate.getFullYear() - normalDate.getFullYear()) * 12
+
+	differenceMonth -= normalDate.getMonth()
+	differenceMonth += currentDate.getMonth()
+	console.log(differenceMonth)
+
 	if (
 		normalDate.getFullYear() === currentDate.getFullYear() &&
 		differenceMonth === 0
 	) {
 		return 'You joined BePrime in current month'
-	} else if (
-		normalDate.getFullYear() === currentDate.getFullYear() &&
-		differenceMonth > 1
-	) {
+	} else if (differenceMonth >= 1 && differenceMonth <= 12) {
 		return `You joined BePrime ${differenceMonth} month ago`
 	} else {
-		const differenceYear = normalDate.getFullYear() - currentDate.getFullYear()
-		return `You joined BePrime ${differenceYear} year and ${differenceMonth} month ago`
+		const differenceYear = currentDate.getFullYear() - normalDate.getFullYear()
+		return `You joined BePrime ${differenceYear} year and ${
+			differenceMonth % 12
+		} month ago`
 	}
 }

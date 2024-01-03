@@ -18,7 +18,8 @@ export const OtherUserProfile = () => {
 		(data: { friendId: string; status: '0' | '1' | '2' }) =>
 			FriendsService.addFriend(data)
 	)
-	const getUser = useQuery([''], () => ProfileService.getUser(params?.id))
+	const getUser = useQuery(['get-user-by-by-id'], () => ProfileService.getUser(params?.id))
+	const getMe = useQuery(['get-me'], () => ProfileService.getUser(String(user?._id)))
 
 	const myFriends = useQuery(['get-my-friends'], () =>
 		FriendsService.getAllFriends()
@@ -26,20 +27,22 @@ export const OtherUserProfile = () => {
 	const [typeFriend, setTypeFriend] = useState<'0' | '1' | '2' | '3' | null>(
 		null
 	)
-		//.log(getUser.data);
-		
+	//console.log(getUser.data?.friendship);
+
 	useEffect(() => {
-		if (!myFriends.isLoading && myFriends.data && user) {
-			for (let i = 0; i < user.friendship.length; i++) {
-				if (myFriends.data._id === user.friendship[i]._id) {
-					setTypeFriend(user.friendship[i].status)
+		if (!myFriends.isLoading && myFriends.data && !getMe.isLoading && getMe.data) {
+			//console.log(myFriends.data._id ,user.friendship);
+			for (let i = 0; i < getMe.data.friendship.length; i++) {	
+				if (myFriends.data._id === getMe.data.friendship[i]._id) {
+					setTypeFriend(getMe.data.friendship[i].status)
 					break
 				}
 				setTypeFriend(null)
 			}
 		}
-	}, [myFriends])
-
+	}, [myFriends,getMe])
+	//console.log(typeFriend);
+	
 	return (
 		<View>
 			{getUser.data && (
@@ -85,7 +88,11 @@ export const OtherUserProfile = () => {
 							<Text className='font-bold text-2xl mr-2'>+</Text>
 							<Text className='font-bold text-2xl'>Add Friend</Text>
 						</TouchableOpacity>
-					) : typeFriend === '3' ? null : typeFriend === '1' ? (
+					) : typeFriend === '2' ? (
+						<View className='flex-row justify-center mt-4 bg-white p-4 rounded-2xl'>
+							<Text className='font-bold text-2xl'>Invite was sented</Text>
+						</View>
+					) : typeFriend === '1' ? (
 						<View></View>
 					) : (
 						<View></View>

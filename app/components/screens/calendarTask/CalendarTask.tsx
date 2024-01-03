@@ -15,6 +15,7 @@ import {
 	View
 } from 'react-native'
 import { BaseImageUrl } from '@/services/api/interceptors.api'
+import { Camera, CameraType } from 'expo-camera'
 
 export const CalendarTask = () => {
 	const user = useQuery(['get-user-profile'], () => ProfileService.getProfile()) //@TASK
@@ -96,13 +97,19 @@ export const CalendarTask = () => {
 					{(() => {
 						const calendarPhotos = user.data.calendarPhotos
 						let date = new Date()
-						let begin = user.data.createdAt.split('T')[0].split('-')
-						begin[2] = '1'
-						let [lateYear, lateMonth, lateDay] = user.data.calendarPhotos[
-							user.data.calendarPhotos.length - 1
-						]?.created.split('-') || [100, date.getMonth(), date.getDate()]
+						let beginDate = new Date(user.data.createdAt)
+						//begin[2] = '1'
+						//console.log(begin)
 
-						let beginDate = new Date(begin.join('-'))
+						let getUserDate = new Date(
+							user.data.calendarPhotos[
+								user.data.calendarPhotos.length - 1
+							]?.created
+						)
+						const lateYear = getUserDate?.getFullYear()
+						const lateMonth = getUserDate?.getMonth()
+						const lateDay = getUserDate?.getDate()
+						//let beginDate = new Date(begin.join('-'))
 						let endDate = new Date(+lateYear, +lateMonth + 1, 1)
 
 						let i = 0
@@ -120,20 +127,26 @@ export const CalendarTask = () => {
 							let days = daysInMonth(beginDate)
 							let beginWhile = 1
 							while (beginWhile <= days) {
-								const [crYear, crMonth, crDay] = calendarPhotos[
-									k
-								]?.created.split('-') || [100, date.getMonth(), date.getDate()]
+								const calDPh = new Date(calendarPhotos[k]?.created)
+								const crYear = calDPh.getFullYear()
+								const crMonth = calDPh.getMonth()
+								const crDay = calDPh.getDate()
 								if (beginDate.getDate() === 1) {
 									obj.month = beginDate.toLocaleString('default', {
 										month: 'long'
 									})
 								}
 								if (
-									beginDate.getDate() === Number(crDay) &&
-									beginDate.getMonth() === Number(crMonth) &&
-									beginDate.getFullYear() === Number(crYear)
+									beginDate.getDate() === crDay &&
+									beginDate.getMonth() === crMonth &&
+									beginDate.getFullYear() === crYear
 								) {
-									obj.array.push(`${calendarPhotos[k]?.photo}`)
+									obj.array.push(
+										`${
+											calendarPhotos[k].photos.frontPhoto?.photo ||
+											calendarPhotos[k].photos.backPhoto?.photo
+										}`
+									)
 									k++
 								} else {
 									obj.array.push(beginDate.getDate())
@@ -147,6 +160,7 @@ export const CalendarTask = () => {
 
 							i++
 						}
+
 						return dateMassive.map((el, key) => {
 							return (
 								<View key={key}>
@@ -160,10 +174,10 @@ export const CalendarTask = () => {
 											return (
 												<View
 													key={key}
-													className='w-[40px] h-[40px] flex items-center justify-center rounded-lg '
+													className='w-[40px] h-[50px] flex items-center justify-center rounded-lg '
 												>
 													{String(el) === el ? (
-														<View className='border-2 rounded-lg'>
+														<View className='border-[1px] rounded-lg  border-white'>
 															<Pressable
 																onPress={() => {
 																	setModalImg(el)
@@ -172,16 +186,17 @@ export const CalendarTask = () => {
 															>
 																<Image
 																	width={40}
-																	height={40}
+																	height={50}
 																	className='rounded-lg'
 																	source={{
-																		uri: `http://192.168.233.227:4200${el}`
+																		uri: `${BaseImageUrl}${el}`
 																	}}
 																/>
+																<Text className='absolute text-white'>ef</Text>
 															</Pressable>
 														</View>
 													) : (
-														<Text className='text-white'>{el}</Text>
+														<Text className='text-white text-lg'>{el}</Text>
 													)}
 												</View>
 											)
@@ -191,7 +206,7 @@ export const CalendarTask = () => {
 							)
 						})
 					})()}
-					{}
+					
 					{/* {user.data?.calendarPhotos.map((el, key) => {
 					const [crYear, crMonth, crDay] = el.created.split('_')
 					if (key === 0) {

@@ -36,6 +36,7 @@ const IsTiming = (date: Date) => {
 	const day = userDate.getDate()
 	const month = userDate.getMonth()
 	const hours = userDate.getHours()
+	if(!date) return true
 	if (currYear >= year && currMonth >= month) {
 		if (currDay > day) {
 			return true
@@ -173,7 +174,7 @@ export const Inside = () => {
 					</DismissKeyboard>
 				</ScrollView>
 			)}
-			{user && IsTiming(user.latestPhoto.created) && !startCamera && (
+			{user && IsTiming(user.latestPhoto?.created) && !startCamera && (
 				<View>
 					<View
 						style={{ height: 50, flex: 1 }}

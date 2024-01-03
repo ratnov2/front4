@@ -49,6 +49,8 @@ export const CalendarMin: FC = () => {
 					{(() => {
 						let photo: IPhotos[] = []
 						photo = user.data.calendarPhotos.slice(-7)
+						//console.log(photo);
+
 						let k = -1
 						//console.log('@',photo[0]);
 
@@ -57,7 +59,7 @@ export const CalendarMin: FC = () => {
 							const currentDate = new Date()
 							const day = date.getDate()
 							const month = date.getMonth()
-							//const year = date.getFullYear()
+							const year = date.getFullYear()
 							// let [year, month, day] = photo[k + 1].calendarPhotos.created.split('-') || [
 							// 	0, 0, 0
 							// ]
@@ -66,20 +68,22 @@ export const CalendarMin: FC = () => {
 								photo[k + 1]?.photos.frontPhoto?.photo ||
 								photo[k + 1]?.photos.backPhoto?.photo ||
 								''
-							//console.log(photoImg);
+							//console.log(month === addDate.getMonth() && day === addDate.getDate());
 
-							if (month === addDate.getMonth() && day === addDate.getDate()) k++
+							const provPhoto =
+								month === addDate.getMonth() &&
+								day === addDate.getDate() &&
+								year === addDate.getFullYear()
+							if (provPhoto) k++
 							return (
 								<View
 									key={key}
 									className={clsx(
 										'w-10 rounded-lg items-center mb-5 h-10 flex justify-center mx-2',
-										date.getDate() === addDate.getDate() &&
-											'bg-white text-black'
+										provPhoto && 'bg-white text-black'
 									)}
 								>
-									{addDate.getDate() === Number(day) &&
-									addDate.getMonth() === Number(month) ? (
+									{provPhoto ? (
 										<Pressable
 											onPress={() => {
 												setModalImg(photoImg)
@@ -93,7 +97,12 @@ export const CalendarMin: FC = () => {
 											/>
 										</Pressable>
 									) : (
-										<View className={clsx(currentDate.getDate() === addDate.getDate() && 'bg-white rounded-full p-0.5')}>
+										<View
+											className={clsx(
+												currentDate.getDate() === addDate.getDate() &&
+													'bg-white rounded-full w-8 h-8 flex items-center justify-center'
+											)}
+										>
 											<Text
 												className={clsx(
 													'text-white text-xl',

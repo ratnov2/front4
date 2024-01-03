@@ -3,11 +3,12 @@ import { createConnection } from '@/services/api/socket'
 import { ProfileService } from '@/services/profile/profile.service'
 import { useRoute } from '@react-navigation/native'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import {
 	FlatList,
 	ScrollView,
 	Text,
+	TextInput,
 	TouchableOpacity,
 	View
 } from 'react-native'
@@ -35,15 +36,15 @@ export const Comments = () => {
 		}
 	)
 	const { user } = useAuth()
-	console.log(userPosts.data);
-	
+	const [value, setValue] = useState('')
+
 	// console.log(userPosts.data)
 	// console.log(params)
 
 	return (
 		<View style={{ marginTop: insets.top }} className='flex-1'>
 			{userPosts && (
-				<View>
+				<View className='mb-20'>
 					{/* {userPosts.data?.map((post, key) => (
 					<CommentElement
 						message={post.message}
@@ -65,18 +66,23 @@ export const Comments = () => {
 					/>
 				</View>
 			)}
-			<TouchableOpacity
-				onPress={() =>
-					addPost.mutate({
-						created: (params as any).created,
-						message: '!!!@##',
-						userId: (params as any)._id
-					})
-				}
-				className='absolute bottom-0 bg-red-700 w-full p-4'
-			>
-				<Text className='text-white text-center'>ADD MESSAGE</Text>
-			</TouchableOpacity>
+			<View className='absolute bottom-0 flex-row '>
+				<View className='border-2 border-gray-600 w-full'>
+					<TextInput value={value} onChangeText={e => setValue(e)} className='text-white p-2'/>
+					<TouchableOpacity
+						onPress={() =>
+							addPost.mutate({
+								created: (params as any).created,
+								message: value,
+								userId: (params as any)._id
+							})
+						}
+						className=' bg-red-700 p-4'
+					>
+						<Text className='text-white text-center'>ADD MESSAGE</Text>
+					</TouchableOpacity>
+				</View>
+			</View>
 		</View>
 	)
 }

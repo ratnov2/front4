@@ -11,15 +11,15 @@ import {
 import EditProfileFields, { IEditProfileFields } from './EditProfileFields'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { useEffect } from 'react'
+import { InsideLayout } from '@/ui/inside-layout/InsideLayout'
 
 export const EditProfile = () => {
 	const insets = useSafeAreaInsets()
 	const user = useQuery(['get-user'], () => ProfileService.getProfile())
-	const { handleSubmit, reset, control, setValue } =
-		useForm<TypeEditProfile>({
-			mode: 'onChange',
-			defaultValues: {}
-		})
+	const { handleSubmit, reset, control, setValue } = useForm<TypeEditProfile>({
+		mode: 'onChange',
+		defaultValues: {}
+	})
 	useEffect(() => {
 		if (user.data) {
 			reset({
@@ -48,18 +48,20 @@ export const EditProfile = () => {
 			}}
 		>
 			{user.data && (
-				<View>
-					<ProfileHeader />
-					<ScrollView>
-						<UserInfo user={user.data} />
-						<EditProfileFields control={control} />
-						<Pressable
-							className='bg-red-700 w-36 p-5 mx-auto mt-10  rounded-2xl'
-							onPress={handleSubmit(onSubmit)}
-						>
-							<Text className='text-white font-bold'>Send changes</Text>
-						</Pressable>
-					</ScrollView>
+				<View className='flex-1 '>
+					<ProfileHeader user={user} />
+					<InsideLayout>
+						<ScrollView className='pt-20'>
+							<UserInfo user={user.data} />
+							<EditProfileFields control={control} />
+							<Pressable
+								className='bg-red-700 w-36 p-5 mx-auto mt-10  rounded-2xl'
+								onPress={handleSubmit(onSubmit)}
+							>
+								<Text className='text-white font-bold'>Send changes</Text>
+							</Pressable>
+						</ScrollView>
+					</InsideLayout>
 				</View>
 			)}
 		</View>
