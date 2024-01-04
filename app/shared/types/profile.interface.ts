@@ -7,7 +7,7 @@ export interface IProfile {
 	firstName: string
 	friendship: {
 		_id: string
-		status: '0' | '1' | '2'
+		status: '0' | '1' | '2' | '3'
 	}[]
 	lastName: string
 	avatar: string
@@ -16,7 +16,7 @@ export interface IProfile {
 export interface IFriend {
 	friendship: {
 		_id: string
-		status: '0' | '1' | '2'
+		status: '0' | '1' | '2' | '3'
 	}[]
 }
 

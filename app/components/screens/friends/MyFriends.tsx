@@ -1,5 +1,5 @@
 import { FriendsService, IFriendsip } from '@/services/friends/friends.service'
-import { UseQueryResult, useMutation } from '@tanstack/react-query'
+import { QueryCache, UseQueryResult, useMutation } from '@tanstack/react-query'
 import { FC } from 'react'
 import { Text, TouchableOpacity, View } from 'react-native'
 import { FriendItem } from './ui/friend-item'
@@ -16,6 +16,7 @@ export const MyFriends: FC<IMyFriends> = ({ friends }) => {
 		(data: { friendId: string; status: '0' | '1' | '2' | '3' }) =>
 			FriendsService.addFriend(data)
 	)
+	
 	
 	return (
 		<View className='mt-7'>
