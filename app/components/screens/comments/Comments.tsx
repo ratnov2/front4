@@ -87,10 +87,10 @@ export const Comments = () => {
 		extrapolate: 'clamp'
 	})
 	const translateY = scrollY.interpolate({
-		inputRange: [0, 200],
-		outputRange: [0, 600],
-		extrapolate: 'clamp',
-	  });
+		inputRange: [0, 300],
+		outputRange: [0, 300],
+		extrapolate: 'clamp'
+	})
 	const imageScale = scrollY.interpolate({
 		inputRange: [0, 400],
 		outputRange: [1, 1], // Равномерное увеличение в 2 раза
@@ -161,8 +161,9 @@ export const Comments = () => {
 					<View className='bg-neutral-700 h-0.5'></View>
 				</Animated.View>
 				{/* </View> */}
-				<EmodziComment />
-				<View style={{ transform: [{  translateY }] }}>
+
+				<Animated.View style={{ transform: [{ translateY }] }}>
+					<EmodziComment />
 					{userPosts.data && (
 						<View className='mb-20'>
 							{/* <FlatList
@@ -189,7 +190,7 @@ export const Comments = () => {
 							))}
 						</View>
 					)}
-				</View>
+				</Animated.View>
 			</ScrollView>
 
 			<View className='absolute bottom-0 flex-1 w-full bg-[#111111]'>
