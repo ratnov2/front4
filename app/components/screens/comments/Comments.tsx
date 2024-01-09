@@ -24,7 +24,10 @@ import { BaseImageUrl } from '@/services/api/interceptors.api'
 import { Image } from 'react-native'
 import { BlurView } from 'expo-blur'
 import { Ionicons } from '@expo/vector-icons'
-import { EmodziComment } from './CommentEmodzi'
+import { Devider, EmodziComment } from './CommentEmodzi'
+import { LinearGradient } from 'expo-linear-gradient'
+import { useStorePhoto } from '../home/element-photo/useStorePhoto'
+import { ILatestPhoto } from '@/shared/types/profile.interface'
 
 export const Comments = () => {
 	// useEffect(() => {
@@ -32,10 +35,11 @@ export const Comments = () => {
 	// }, [])
 	const insets = useSafeAreaInsets()
 	const { params } = useRoute()
+	const typeParam = params as { created: string; _id: string }
 	const userPosts = useQuery(['profile/user-posts'], () =>
 		ProfileService.getPostUserByLink({
-			created: (params as any)?.created,
-			userId: (params as any)?._id
+			created: typeParam?.created,
+			userId: typeParam?._id
 		})
 	)
 	const addPost = useMutation(
@@ -52,13 +56,19 @@ export const Comments = () => {
 	const queryKey = 'get-latest-photo'
 
 	// Получите данные из кеша по ключу
-	const dataFromCache: any = queryClient.getQueryData([queryKey])
+	const dataFromCache: ILatestPhoto[] | undefined = queryClient.getQueryData([
+		queryKey
+	])
 	//get-latest-photo
-	const [userMainInfo, setUserMainInfo] = useState(
-		dataFromCache.map((user: { _id: any }) => {
-			return user._id == params._id ? user : {}
-		})[0]
+	const [userMainInfo, setUserMainInfo] = useState<ILatestPhoto>(
+		//@ts-ignore
+		(() =>
+			dataFromCache?.map(user => {
+				return user._id === typeParam._id ? user : {}
+			})[0])()
 	)
+	console.log('userMainInfo', userMainInfo)
+
 	// console.log('@@@',normalDate('2023-11-24T09:01:03.537Z'));
 
 	const { user } = useAuth()
@@ -67,19 +77,6 @@ export const Comments = () => {
 	// console.log(userPosts.data)
 	// console.log(params)
 	const scrollY = useRef(new Animated.Value(0)).current
-
-	const panResponder = useRef(
-		PanResponder.create({
-			onMoveShouldSetPanResponder: (evt, gestureState) => {
-				const { dy } = gestureState
-				// Разрешаем прокрутку, если скролл еще не достиг 300px
-				return dy > 0 || scrollY.__getValue() < 300
-			},
-			onPanResponderMove: Animated.event([null, { dy: scrollY }], {
-				useNativeDriver: false
-			})
-		})
-	).current
 
 	const headerHeight = scrollY.interpolate({
 		inputRange: [0, 300],
@@ -96,6 +93,29 @@ export const Comments = () => {
 		outputRange: [1, 1], // Равномерное увеличение в 2 раза
 		extrapolate: 'clamp'
 	})
+	const imageScale2 = scrollY.interpolate({
+		inputRange: [0, 300],
+		outputRange: [1, 0.5], // Равномерное увеличение в 2 раза
+		extrapolate: 'clamp'
+	})
+	const photosUser = {
+		frontPhoto:
+			{
+				created: userMainInfo.calendarPhotos.created || undefined,
+				photo: String(userMainInfo.calendarPhotos.photos.frontPhoto?.photo),
+				locate: ''
+			} || undefined,
+		backPhoto:
+			{
+				created: userMainInfo.calendarPhotos.created || undefined,
+				photo: String(userMainInfo.calendarPhotos.photos.backPhoto?.photo),
+				locate: ''
+			} || undefined
+	}
+
+	const { dispatch, store, UnCurrent } = useStorePhoto({ photosUser })
+	console.log(store)
+	if (!userMainInfo || !userMainInfo.calendarPhotos) return null
 	return (
 		<View style={{ marginTop: insets.top }} className='flex-1'>
 			<ScrollView
@@ -116,7 +136,7 @@ export const Comments = () => {
 				>
 					<Image
 						source={{
-							uri: `${BaseImageUrl}${userMainInfo.calendarPhotos.photos.backPhoto.photo}`
+							uri: `${BaseImageUrl}${userMainInfo.calendarPhotos.photos.backPhoto?.photo}`
 						}}
 						style={{
 							...{
@@ -136,10 +156,31 @@ export const Comments = () => {
 							}
 						}}
 					/>
-					<Text className='text-center mt-5 text-lg'>
-						{normalDate(userMainInfo.calendarPhotos.photos.backPhoto.created)}
+					<LinearGradient
+						colors={['#00000000', '#111111']}
+						style={{
+							height: '70%',
+							width: '100%',
+							position: 'absolute',
+							bottom: 0
+						}}
+					></LinearGradient>
+					<LinearGradient
+						colors={['#111111', '#00000000']}
+						style={{
+							height: '70%',
+							width: '100%',
+							position: 'absolute',
+							top: 0
+						}}
+					></LinearGradient>
+					<Text className='text-center mt-5  text-neutral-400'>
+						{normalDate(
+							String(userMainInfo.calendarPhotos?.photos?.backPhoto?.created)
+						)}
 					</Text>
-					<Animated.Image
+					<Animated.View
+						className='flex-1 relative mx-auto '
 						style={{
 							transform: [{ scaleX: imageScale }, { scaleY: imageScale }],
 							flex: 1,
@@ -150,15 +191,58 @@ export const Comments = () => {
 							resizeMode: 'cover',
 							marginTop: 10
 						}}
-						className='mx-auto rounded-3xl'
-						source={{
-							uri: `${BaseImageUrl}${userMainInfo.calendarPhotos.photos.frontPhoto.photo}`
-						}}
-					/>
-					<Text className='text-center my-5 mb-10'>
+					>
+						<Animated.Image
+							style={{
+								// transform: [{ scaleX: imageScale }, { scaleY: imageScale }],
+								flex: 1,
+								width: '100%',
+								maxWidth: '95%',
+								maxHeight: '95%',
+								aspectRatio: 16 / 9, // Пример соотношения сторон, замените на ваше
+								resizeMode: 'cover',
+								marginTop: 10
+							}}
+							className='mx-auto rounded-3xl'
+							source={{
+								uri: `${BaseImageUrl}${store[store.current || 'backPhoto']
+									?.photo}`
+							}}
+						/>
+						{store.length === 2 && (
+							<TouchableOpacity
+								className='flex-1 absolute left-[4%] top-[4%]  w-20'
+								onPress={() => dispatch({ type: store.current })}
+							>
+								<Animated.View
+									style={{
+										aspectRatio: 10/12,
+										transform: [
+											{ scaleX: imageScale2 },
+											{ scaleY: imageScale2 }
+										]
+									}}
+									className=' flex-1 border-2 border-solid border-stone-900 rounded-xl overflow-hidden'
+								>
+									<Animated.Image
+										className=''
+										style={{
+											aspectRatio: 9/16
+										}}
+										source={{
+											uri: `${BaseImageUrl}${store[UnCurrent(store.current)]
+												?.photo}`
+										}}
+									/>
+								</Animated.View>
+							</TouchableOpacity>
+						)}
+					</Animated.View>
+
+					<Text className='text-center my-5 mb-10 text-white text-bol'>
 						{userMainInfo.calendarPhotos.comment}
 					</Text>
-					<View className='bg-neutral-700 h-0.5'></View>
+					<Devider />
 				</Animated.View>
 				{/* </View> */}
 
@@ -233,7 +317,7 @@ export const Comments = () => {
 	)
 }
 
-const normalDate = (date: Date) => {
+const normalDate = (date: string) => {
 	const currentDate = new Date()
 	const userDate = new Date(date)
 

@@ -16,6 +16,7 @@ import { useMutation } from '@tanstack/react-query'
 import { ProfileService } from '@/services/profile/profile.service'
 import { ILatestPhoto } from '@/shared/types/profile.interface'
 import DismissKeyboard from '@/ui/form-elements/field/DismissKeyboard'
+import { useStorePhoto } from './useStorePhoto'
 
 interface IElementPhoto {
 	photo: ILatestPhoto
@@ -26,75 +27,14 @@ export type BaseExampleProps = {
 	className?: string
 }
 
-type State = {
-	frontPhoto?:
-		| {
-				created: Date
-				photo: string
-				locate: string
-		  }
-		| undefined
-	backPhoto?:
-		| {
-				created: Date
-				photo: string
-				locate: string
-		  }
-		| undefined
-	length: 0 | 1 | 2
-	current: null | 'frontPhoto' | 'backPhoto'
-}
-
-type Action = {
-	type: null | 'frontPhoto' | 'backPhoto'
-}
-
-const reducer = (state: State, action: Action): State => {
-	const { type } = action
-	switch (type) {
-		case 'frontPhoto':
-			return { ...state, current: 'backPhoto' }
-		case 'backPhoto':
-			return { ...state, current: 'frontPhoto' }
-		default:
-			return state
-	}
-}
-
 const ShareImageUrl = (photo?: string) => `${BaseImageUrl}${photo}`
-
-const UnCurrent = (type: 'frontPhoto' | 'backPhoto' | null) => {
-	if (type === 'frontPhoto') return 'backPhoto'
-	else return 'frontPhoto'
-}
 
 export const ElementPhoto: FC<IElementPhoto> = ({ photo, refetch }) => {
 	const navigate = useNavigation()
 	const { user } = useAuth()
 
 	const photosUser = photo.calendarPhotos.photos
-	const [store, dispatch] = useReducer(
-		reducer,
-		(() => {
-			const result: State = {
-				current: null,
-				length: 0
-			}
-			if (photosUser.frontPhoto?.photo) {
-				result.frontPhoto = photosUser.frontPhoto
-				result.current = 'frontPhoto'
-				result.length++
-			}
-			if (photosUser.backPhoto?.photo) {
-				result.backPhoto = photosUser.backPhoto
-				if (result.current !== 'frontPhoto') result.current = 'backPhoto'
-				result.length++
-			}
-
-			return result
-		})()
-	)
-
+	const { dispatch, store, UnCurrent } = useStorePhoto({ photosUser })
 	// const [photos, setPhotos] = useState(
 	// 	(() => {
 	// 		const current =
@@ -121,8 +61,8 @@ export const ElementPhoto: FC<IElementPhoto> = ({ photo, refetch }) => {
 			}
 		}
 	)
-		console.log(photo);
-		
+	console.log(photo)
+
 	return (
 		<View className='' style={{ marginBottom: 70 }}>
 			{photo && (
@@ -176,7 +116,8 @@ export const ElementPhoto: FC<IElementPhoto> = ({ photo, refetch }) => {
 							>
 								<View className=''>
 									<Image
-										className='w-28 h-32  '
+										className='w-32 h-36'
+										style={{ aspectRatio: 13 / 17 }}
 										source={{
 											uri: ShareImageUrl(store[UnCurrent(store.current)]?.photo)
 										}}

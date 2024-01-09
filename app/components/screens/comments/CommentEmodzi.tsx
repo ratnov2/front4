@@ -9,7 +9,6 @@ interface IEmodziComment {
 export const EmodziComment: FC<IEmodziComment> = ({ style = '' }) => {
 	return (
 		<View className={`mt-4 ${style} `}>
-			<Devider style='mb-4' />
 			<View className='flex-row'>
 				{emodzi.map((emodzi, key) => (
 					<View key={key} className='text-center mr-8 ml-2'>
@@ -35,7 +34,7 @@ interface IDevider {
 	style?: string
 }
 
-const Devider: FC<IDevider> = ({ style = '' }) => {
+export const Devider: FC<IDevider> = ({ style = '' }) => {
 	return <View className={`w-full bg-zinc-700 h-[0.5px] ${style}`} />
 }
 
