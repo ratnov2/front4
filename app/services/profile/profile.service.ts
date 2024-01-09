@@ -84,4 +84,6 @@ export type IPost = {
 	avatar: string
 	message: string
 	created:string
+	email:string
+	firstName:string
 }

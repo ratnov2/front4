@@ -1,25 +1,19 @@
 import {
 	ScrollView,
 	Text,
-	TextInput,
 	TouchableOpacity,
 	View
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { CameraComp } from './Camera'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { ProfileService } from '@/services/profile/profile.service'
-import { useEffect, useState } from 'react'
-import { Image } from 'react-native'
+import { useState } from 'react'
 import { Camera } from 'expo-camera'
-import userPng from '@/assets/user.png'
 import * as ImagePicker from 'expo-image-picker'
 // import CameraExpo from './CamerExpo'
-import { Link } from '@react-navigation/native'
 import { useAuth } from '@/hooks/useAuth'
 import { FilesService } from '@/services/files/files.service'
 import mime from 'mime'
-import { BaseImageUrl } from '@/services/api/interceptors.api'
 import { ElementPhoto } from './element-photo/ElementPhoto'
 import DismissKeyboard from '@/ui/form-elements/field/DismissKeyboard'
 import { Feather } from '@expo/vector-icons'
@@ -72,7 +66,7 @@ export const Inside = () => {
 	const { mutate } = useMutation(['push-photo'], (form: FormData) =>
 		FilesService.pushPhoto(form)
 	)
-
+	
 	const takePhoto = async () => {
 		try {
 			const cameraResp = await ImagePicker.launchCameraAsync({
