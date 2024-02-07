@@ -1,22 +1,24 @@
-import { FC, useEffect, useState } from 'react'
+import { FC, useContext, useEffect, useState } from 'react'
 import { Text, TouchableOpacity, View } from 'react-native'
 import * as Contacts from 'expo-contacts'
 import { FriendItem } from './ui/friend-item'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { ContactContext } from '@/providers/contacts/ContactsDataProvider'
 
 export const SuggestionFriends = () => {
-	const [contactUsers, setContactUsers] = useState<Contacts.Contact[]>()
+	const {contact} = useContext(ContactContext)
+	const [contactUsers, setContactUsers] = useState(contact)
+	
 	useEffect(() => {
-		;(async () => {
+		(async () => {
 			const { status } = await Contacts.requestPermissionsAsync()
 			if (status === 'granted') {
 				const { data } = await Contacts.getContactsAsync({
-					fields: [Contacts.Fields.Emails]
+					fields: [Contacts.Fields.Emails, Contacts.Fields.PhoneNumbers]
 				})
-
 				if (data.length > 0) {
-					//console.log(data);
-
 					setContactUsers(data)
+					AsyncStorage.setItem('cachedContacts', JSON.stringify(data));
 				}
 			}
 		})()

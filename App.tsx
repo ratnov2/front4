@@ -4,6 +4,7 @@ import AuthProvider from '@/providers/auth/AuthProvider'
 import { ScrollView, StatusBar, Text, View } from 'react-native'
 import Toast from '@/ui/Toast'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ContactsDataProvider } from '@/providers/contacts/ContactsDataProvider'
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -20,9 +21,11 @@ export default function App() {
 		<>
 			<QueryClientProvider client={queryClient}>
 				<AuthProvider>
-					<SafeAreaProvider>
+					<ContactsDataProvider>
+						<SafeAreaProvider>
 							<Navigation />
-					</SafeAreaProvider>
+						</SafeAreaProvider>
+					</ContactsDataProvider>
 				</AuthProvider>
 				<StatusBar barStyle='light-content' />
 				<Toast />
