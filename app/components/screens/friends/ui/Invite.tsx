@@ -1,6 +1,8 @@
-import { Image, Text, View } from 'react-native'
+import { Image, Pressable, Text, View } from 'react-native'
 import { useAuth } from '@/hooks/useAuth'
 import { Entypo } from '@expo/vector-icons'
+import { shareProfile } from '@/ui/share-profile/ShareProfile'
+import { WithShareProfile } from '@/ui/share-profile/WithShareProfile'
 
 export const Invite = () => {
 	const { user } = useAuth()
@@ -24,7 +26,9 @@ export const Invite = () => {
 						'@'
 					)[0]}`}</Text>
 				</View>
-				<Entypo name='share' size={28} color='white' />
+				<WithShareProfile>
+					<Entypo name='share' size={28} color='white' />
+				</WithShareProfile>
 			</View>
 		</View>
 	)

@@ -1,4 +1,6 @@
 import { IProfile } from '@/shared/types/profile.interface'
+import { shareProfile } from '@/ui/share-profile/ShareProfile'
+import { WithShareProfile } from '@/ui/share-profile/WithShareProfile'
 import { Entypo } from '@expo/vector-icons'
 import { Link } from '@react-navigation/native'
 import { FC } from 'react'
@@ -9,25 +11,8 @@ import { Share } from 'react-native'
 interface IUserInfo {
 	user: IProfile
 }
-const getProfileLink = (userId: string) => {
-	// Здесь должен быть ваш код для формирования ссылки на профиль
-	return `https://example.com/profile/${userId}`
-}
 
 export const UserInfo: FC<IUserInfo> = ({ user }) => {
-	const shareProfile = async (userId: string) => {
-		try {
-			const profileLink = getProfileLink(userId)
-			await Share.share({
-				title: 'App link',
-				message: 'Message + link: https://sparc.world',
-				url: 'https://sparc.world'
-			})
-		} catch (error: any) {
-			console.error('Ошибка при попытке поделиться:', error.message)
-		}
-	}
-
 	return (
 		<View>
 			<View className='w-20 h-20 rounded-full bg-red-600 flex justify-center items-center color-white'>
@@ -43,12 +28,11 @@ export const UserInfo: FC<IUserInfo> = ({ user }) => {
 						{user.firstName || 'anonym'}
 					</Text>
 				</Link>
-				<TouchableOpacity
-					onPress={() => shareProfile('123')}
-					className='bg-white rounded-full h-10 w-10 flex justify-center items-center '
-				>
-					<Entypo name='share' size={24} color='black' />
-				</TouchableOpacity>
+				<WithShareProfile>
+					<View className='bg-white rounded-full h-10 w-10 flex justify-center items-center '>
+						<Entypo name='share' size={24} color='black' />
+					</View>
+				</WithShareProfile>
 			</View>
 		</View>
 	)

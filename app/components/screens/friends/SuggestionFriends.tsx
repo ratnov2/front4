@@ -4,13 +4,15 @@ import * as Contacts from 'expo-contacts'
 import { FriendItem } from './ui/friend-item'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { ContactContext } from '@/providers/contacts/ContactsDataProvider'
+import { shareProfile } from '@/ui/share-profile/ShareProfile'
+import { WithShareProfile } from '@/ui/share-profile/WithShareProfile'
 
 export const SuggestionFriends = () => {
-	const {contact} = useContext(ContactContext)
+	const { contact } = useContext(ContactContext)
 	const [contactUsers, setContactUsers] = useState(contact)
-	
+
 	useEffect(() => {
-		(async () => {
+		;(async () => {
 			const { status } = await Contacts.requestPermissionsAsync()
 			if (status === 'granted') {
 				const { data } = await Contacts.getContactsAsync({
@@ -18,7 +20,7 @@ export const SuggestionFriends = () => {
 				})
 				if (data.length > 0) {
 					setContactUsers(data)
-					AsyncStorage.setItem('cachedContacts', JSON.stringify(data));
+					AsyncStorage.setItem('cachedContacts', JSON.stringify(data))
 				}
 			}
 		})()
@@ -68,7 +70,6 @@ export const SuggestionFriends = () => {
 						/>
 					))}
 			</View>
-			
 		</View>
 	)
 }
@@ -84,10 +85,16 @@ export const FriendBody: FC<IFriendBody> = ({ name, number }) => (
 	</View>
 )
 
-export const InviteButton = ({ deleteFriend }: { deleteFriend: () => void }) => {
+export const InviteButton = ({
+	deleteFriend
+}: {
+	deleteFriend: () => void
+}) => {
 	return (
-		<TouchableOpacity className='bg-zinc-700 p-2 rounded-full uppercase'>
-			<Text className='text-white font-bold'>Invite</Text>
-		</TouchableOpacity>
+		<WithShareProfile>
+			<View className='bg-zinc-700 p-2 rounded-full uppercase'>
+				<Text className='text-white font-bold'>Invite</Text>
+			</View>
+		</WithShareProfile>
 	)
 }
