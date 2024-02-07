@@ -75,7 +75,7 @@ export const ElementPhoto: FC<IElementPhoto> = ({ photo, refetch }) => {
 							marginBottom: 10
 						}}
 					>
-						<View>
+						<View className='ml-4'>
 							<Link
 								to={`/Profile${
 									user?._id !== photo._id ? `?id=${photo._id}` : ''
@@ -128,95 +128,96 @@ export const ElementPhoto: FC<IElementPhoto> = ({ photo, refetch }) => {
 					</View>
 				</View>
 			)}
-			{user?._id === photo._id ? (
-				!isMessage ? (
-					<TouchableOpacity
-						onPress={() => {
-							setIsMessage(true)
-						}}
-					>
+			<View className='ml-4'>
+				{user?._id === photo._id ? (
+					!isMessage ? (
+						<TouchableOpacity
+							onPress={() => {
+								setIsMessage(true)
+							}}
+						>
+							<Text className='text-white mt-4'>
+								{photo.calendarPhotos.comment || '...'}
+							</Text>
+						</TouchableOpacity>
+					) : (
+						<View>
+							<View
+								className={`flex-row items-center mt-4 border-[1px] border-solid border-stone-700 rounded-lg ${
+									addMainComment.isLoading && 'bg-stone-900 text-stone-800'
+								}`}
+								onPointerDown={() => console.log('@@@')}
+							>
+								<TextInput
+									value={value}
+									onChangeText={e => setValue(e)}
+									className={`p-2 rounded-lg flex-1 color-white ${
+										addMainComment.isLoading && ' text-stone-600'
+									}`}
+									pointerEvents={addMainComment.isLoading ? 'none' : 'auto'}
+									placeholder='input text'
+									keyboardType='default'
+									onBlur={() => setIsMessage(false)}
+								/>
+
+								{!addMainComment.isLoading ? (
+									<TouchableOpacity
+										className='mx-2'
+										onPress={() => {
+											addMainComment.mutate({
+												message: value,
+												created: photo.calendarPhotos.created
+											})
+										}}
+									>
+										<MaterialIcons name='send' size={24} color='white' />
+									</TouchableOpacity>
+								) : (
+									<ActivityIndicator className='mx-2' size={24} color='white' />
+								)}
+							</View>
+							<TouchableOpacity
+								className='bg-cyan-400 text-center rounded-xl'
+								onPress={() => setIsMessage(false)}
+							>
+								<Text className='text-stone-950 text-center p-2 font-bold'>
+									Close
+								</Text>
+							</TouchableOpacity>
+						</View>
+					)
+				) : (
+					<View>
 						<Text className='text-white mt-4'>
 							{photo.calendarPhotos.comment || '...'}
 						</Text>
-					</TouchableOpacity>
-				) : (
-					<View>
-						<View
-							className={`flex-row items-center mt-4 border-[1px] border-solid border-stone-700 rounded-lg ${
-								addMainComment.isLoading && 'bg-stone-900 text-stone-800'
-							}`}
-							onPointerDown={() => console.log('@@@')}
-						>
-							<TextInput
-								value={value}
-								onChangeText={e => setValue(e)}
-								className={`p-2 rounded-lg flex-1 color-white ${
-									addMainComment.isLoading && ' text-stone-600'
-								}`}
-								pointerEvents={addMainComment.isLoading ? 'none' : 'auto'}
-								placeholder='input text'
-								keyboardType='default'
-								onBlur={() => setIsMessage(false)}
-							/>
-
-							{!addMainComment.isLoading ? (
-								<TouchableOpacity
-									className='mx-2'
-									onPress={() => {
-										addMainComment.mutate({
-											message: value,
-											created: photo.calendarPhotos.created
-										})
-									}}
-								>
-									<MaterialIcons name='send' size={24} color='white' />
-								</TouchableOpacity>
-							) : (
-								<ActivityIndicator className='mx-2' size={24} color='white' />
-							)}
-						</View>
-						<TouchableOpacity
-							className='bg-cyan-400 text-center rounded-xl'
-							onPress={() => setIsMessage(false)}
-						>
-							<Text className='text-stone-950 text-center p-2 font-bold'>
-								Close
-							</Text>
-						</TouchableOpacity>
 					</View>
-				)
-			) : (
-				<View>
-					<Text className='text-white mt-4'>
-						{photo.calendarPhotos.comment || '...'}
-					</Text>
-				</View>
-			)}
-			<TouchableOpacity
-				className='text-center rounded-xl flex-row items-center justify-center mt-5 '
-				onPress={() => {
-					setIsMessage(false)
-					navigate.navigate({
-						name: 'Comments' as any,
-						params: {
-							_id: photo._id,
-							created: photo.calendarPhotos.created
-						}
-					} as never)
-				}}
-			>
-				{/* <Link
+				)}
+				<TouchableOpacity
+					className=' rounded-xl mt-1 '
+					onPress={() => {
+						setIsMessage(false)
+						navigate.navigate({
+							name: 'Comments' as any,
+							params: {
+								_id: photo._id,
+								created: photo.calendarPhotos.created
+							}
+						} as never)
+					}}
+				>
+					{/* <Link
 					to={`/Comments?_id=${photo._id}?created='2022-10-10'`}
 					className='items-center flex-row block '
 				> */}
-				<View className='text-center rounded-xl flex-row items-center justify-center mt-5'>
-					<MaterialIcons name='comment' size={24} color='white' />
-					<Text className='text-white text-center p-2 font-bold'>
-						Add comments
-					</Text>
-				</View>
-				{/* </Link> */}
-			</TouchableOpacity>
+					<View className='rounded-xl '>
+						<Text className='text-zinc-400'>
+							Add a comments...
+						</Text>
+					</View>
+					{/* </Link> */}
+				</TouchableOpacity>
+			</View>
 		</View>
 	)
 }

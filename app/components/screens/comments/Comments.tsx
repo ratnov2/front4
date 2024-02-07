@@ -93,6 +93,7 @@ export const Comments = () => {
 		outputRange: [1, 1], // Равномерное увеличение в 2 раза
 		extrapolate: 'clamp'
 	})
+	
 	const imageScale2 = scrollY.interpolate({
 		inputRange: [0, 300],
 		outputRange: [1, 0.5], // Равномерное увеличение в 2 раза
@@ -180,16 +181,15 @@ export const Comments = () => {
 						)}
 					</Text>
 					<Animated.View
-						className='flex-1 relative mx-auto '
+						className='flex-1 relative mx-auto rounded-3xl '
 						style={{
-							transform: [{ scaleX: imageScale }, { scaleY: imageScale }],
+							transform: [{ scaleX: imageScale2 }, { scaleY: imageScale }],
 							flex: 1,
 							width: '100%',
 							maxWidth: '95%',
 							maxHeight: '95%',
 							aspectRatio: 16 / 9, // Пример соотношения сторон, замените на ваше
-							resizeMode: 'cover',
-							marginTop: 10
+							marginTop: 10,
 						}}
 					>
 						<Animated.Image
@@ -203,7 +203,7 @@ export const Comments = () => {
 								resizeMode: 'cover',
 								marginTop: 10
 							}}
-							className='mx-auto rounded-3xl'
+							className='mx-auto rounded-3xl '
 							source={{
 								uri: `${BaseImageUrl}${store[store.current || 'backPhoto']
 									?.photo}`
@@ -216,7 +216,7 @@ export const Comments = () => {
 							>
 								<Animated.View
 									style={{
-										aspectRatio: 10/12,
+										aspectRatio: 10 / 12,
 										transform: [
 											{ scaleX: imageScale2 },
 											{ scaleY: imageScale2 }
@@ -227,7 +227,7 @@ export const Comments = () => {
 									<Animated.Image
 										className=''
 										style={{
-											aspectRatio: 9/16
+											aspectRatio: 9 / 16
 										}}
 										source={{
 											uri: `${BaseImageUrl}${store[UnCurrent(store.current)]

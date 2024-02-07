@@ -1,9 +1,4 @@
-import {
-	ScrollView,
-	Text,
-	TouchableOpacity,
-	View
-} from 'react-native'
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { ProfileService } from '@/services/profile/profile.service'
@@ -30,7 +25,7 @@ const IsTiming = (date: Date) => {
 	const day = userDate.getDate()
 	const month = userDate.getMonth()
 	const hours = userDate.getHours()
-	if(!date) return true
+	if (!date) return true
 	if (currYear >= year && currMonth >= month) {
 		if (currDay > day) {
 			return true
@@ -66,7 +61,7 @@ export const Inside = () => {
 	const { mutate } = useMutation(['push-photo'], (form: FormData) =>
 		FilesService.pushPhoto(form)
 	)
-	
+
 	const takePhoto = async () => {
 		try {
 			const cameraResp = await ImagePicker.launchCameraAsync({
@@ -138,7 +133,7 @@ export const Inside = () => {
 								<Text className='text-white'>Loading...</Text>
 							</View>
 						) : latestPhoto.data && latestPhoto.data.length > 0 ? (
-							<View className='h-full mx-10 '>
+							<View className='h-full '>
 								{latestPhoto.data?.map((photo, key) => {
 									return (
 										<ElementPhoto
