@@ -44,13 +44,37 @@ import { FriendItem } from './ui/friend-item'
 import { useSearchingFriends } from './useSearchingFriends'
 import { Entypo, EvilIcons } from '@expo/vector-icons'
 import DismissKeyboard from '@/ui/form-elements/field/DismissKeyboard'
+import { IProfile } from '@/shared/types/profile.interface'
 
 export const Friends = () => {
 	const insets = useSafeAreaInsets()
 	// const suggestions = useQuery(['get-suggestion']()=>'') TASK ADD suggestion
-	const myFriends = useQuery(['get-my-friends'], () =>
-		FriendsService.getAllFriends()
+	const myFriends = useQuery(
+		['get-my-friends'],
+		() => FriendsService.getAllFriends(),
+		{
+			onSuccess: data => {
+				if (!data) return false
+				const friendsByStatus: IFriendsStatus = {
+					friendStatus1: [],
+					friendStatus2: [],
+					friendStatus3: []
+				}
+				data.friendship.map(({ friends, status }) => {
+					if (status === '1') {
+						friendsByStatus.friendStatus1.push(friends)
+					} else if (status === '2') {
+						friendsByStatus.friendStatus2.push(friends)
+					} else if (status === '3') {
+						friendsByStatus.friendStatus3.push(friends)
+					}
+				})
+				setMyFriendByStatus(friendsByStatus)
+			}
+		}
 	)
+	const [myFriendByStatus, setMyFriendByStatus] = useState<IFriendsStatus>()
+
 	const { user } = useAuth()
 	const addFriend = useMutation(
 		['add-friend'],
@@ -108,7 +132,7 @@ export const Friends = () => {
 		}
 	}
 
-	// const [value, setValue] = useState('') @@
+
 	const handlerChangeText = (e: string) => {
 		setValue(e)
 		if (e === '') {
@@ -118,13 +142,11 @@ export const Friends = () => {
 		}
 		setModalVisible(true)
 	}
-	//console.log(getUserByName.data)
+	
 	const ref: any = useRef()
 	const [modalVisible, setModalVisible] = useState(false)
-	//const query = currentData.
-	//console.log('!!!', query)
-	const [isStartShouldSetResponder, setIsStartShouldSetResponder] =
-		useState(true)
+
+	
 	return (
 		<DismissKeyboard>
 			<View className='flex-1'>
@@ -135,9 +157,9 @@ export const Friends = () => {
 					>
 						BePrime
 					</Text>
-					<View style={{ flex: 1}}>
-						<ScrollView style={{ flex: 1, marginBottom: 0, paddingLeft: 14,paddingRight: 14 }}>
-							<View onStartShouldSetResponder={() => true}>
+					<View style={{ flex: 1 }}>
+						<ScrollView style={{ flex: 1, paddingLeft: 14, paddingRight: 14 }}>
+							<View className='flex-1' onStartShouldSetResponder={() => true}>
 								<View
 									className='relative z-20'
 									style={{ marginTop: insets.top + 50 }}
@@ -249,62 +271,66 @@ export const Friends = () => {
 								) : (
 									<View>
 										<Invite />
-										{typeFriend === 'suggestion' && <SuggestionFriends />}
-										{typeFriend === 'friends' && (
-											<MyFriends friends={myFriends} />
-										)}
-										{typeFriend === 'requests' && (
-											<RequestFriends friends={myFriends} />
-										)}
-										{typeFriend === 'suggestion' && (
+										{myFriendByStatus && (
 											<View>
-												<Text>//////</Text>
-												<Text className='text-white'>Add friends</Text>
-												{myFriends.data && (
-													//GET ADD FRIENDS
+												{typeFriend === 'suggestion' && <SuggestionFriends />}
+												{typeFriend === 'friends' && (
+													<MyFriends friends={myFriendByStatus.friendStatus1} />
+												)}
+												{typeFriend === 'requests' && (
+													<RequestFriends friends={myFriendByStatus.friendStatus2} />
+												)}
+												{typeFriend === 'suggestion' && (
 													<View>
-														{myFriends.data.friendship.map(friend => {
-															if (friend.status === '2')
-																return (
-																	<View className='flex-row  justify-between items-center'>
-																		<View>
-																			<View className='flex-row'>
-																				{friend.friends.avatar ? (
-																					<Image
-																						className='w-14 h-14'
-																						source={img}
-																					/>
-																				) : (
-																					<View className='bg-red-600 h-14 w-14 rounded-full items-center justify-center'>
-																						<Text className='text-white text-xl font-bold'>
-																							{friend.friends.firstName[0] ||
-																								'A'}
+														<Text>//////</Text>
+														<Text className='text-white'>Add friends</Text>
+														{myFriends.data && (
+															//GET ADD FRIENDS
+															<View>
+																{myFriends.data.friendship.map((friend, key) => {
+																	if (friend.status === '2')
+																		return (
+																			<View className='flex-row  justify-between items-center' key={key} >
+																				<View>
+																					<View className='flex-row'>
+																						{friend.friends.avatar ? (
+																							<Image
+																								className='w-14 h-14'
+																								source={img}
+																							/>
+																						) : (
+																							<View className='bg-red-600 h-14 w-14 rounded-full items-center justify-center'>
+																								<Text className='text-white text-xl font-bold'>
+																									{friend.friends
+																										.firstName[0] || 'A'}
+																								</Text>
+																							</View>
+																						)}
+
+																						<Text className='text-white'>
+																							{friend.friends.email}
 																						</Text>
 																					</View>
-																				)}
-
-																				<Text className='text-white'>
-																					{friend.friends.email}
-																				</Text>
+																				</View>
+																				<TouchableOpacity
+																					className='bg-gray-800 p-2 rounded-full h-8 '
+																					onPress={() =>
+																						handleAddFriend({
+																							friendId: friend.friends._id,
+																							status: '3'
+																						})
+																					}
+																				>
+																					<Text className='text-white font-bold'>
+																						INVITE
+																					</Text>
+																					{/* { <ActivityIndicator size="small" color="#0000ff" />} */}
+																				</TouchableOpacity>
 																			</View>
-																		</View>
-																		<TouchableOpacity
-																			className='bg-gray-800 p-2 rounded-full h-8 '
-																			onPress={() =>
-																				handleAddFriend({
-																					friendId: friend.friends._id,
-																					status: '3'
-																				})
-																			}
-																		>
-																			<Text className='text-white font-bold'>
-																				INVITE
-																			</Text>
-																			{/* { <ActivityIndicator size="small" color="#0000ff" />} */}
-																		</TouchableOpacity>
-																	</View>
-																)
-														})}
+																		)
+																})}
+															</View>
+														)}
 													</View>
 												)}
 											</View>
@@ -312,6 +338,7 @@ export const Friends = () => {
 									</View>
 								)}
 							</View>
+							<View className='h-20' />
 						</ScrollView>
 					</View>
 					<View
@@ -410,6 +437,11 @@ export const MyFriendButton = ({
 // 	)
 // }
 
+interface IFriendsStatus {
+	friendStatus1: IProfile[]
+	friendStatus2: IProfile[]
+	friendStatus3: IProfile[]
+}
 const HandleFriendButton = ({
 	title,
 	id,

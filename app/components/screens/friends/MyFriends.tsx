@@ -1,13 +1,14 @@
 import { FriendsService, IFriendsip } from '@/services/friends/friends.service'
 import { QueryCache, UseQueryResult, useMutation } from '@tanstack/react-query'
-import { FC } from 'react'
-import { Text, TouchableOpacity, View } from 'react-native'
+import { FC, useState } from 'react'
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { FriendItem } from './ui/friend-item'
 import { Entypo } from '@expo/vector-icons'
 import { NoFriend } from './ui/NoFriends'
+import { IProfile } from '@/shared/types/profile.interface'
 
 interface IMyFriends {
-	friends: UseQueryResult<IFriendsip, unknown>
+	friends: IProfile[]
 }
 
 export const MyFriends: FC<IMyFriends> = ({ friends }) => {
@@ -16,42 +17,36 @@ export const MyFriends: FC<IMyFriends> = ({ friends }) => {
 		(data: { friendId: string; status: '0' | '1' | '2' | '3' }) =>
 			FriendsService.addFriend(data)
 	)
-	
-	
+
 	return (
 		<View className='mt-7'>
 			<Text className='text-lg text-white font-bold uppercase mb-4'>
 				My Friends
 			</Text>
-			{friends.data && friends.data.friendship.length > 0 ? (
+			{friends.length > 0 ? (
 				<View>
-					{friends.data.friendship.map((friend, key) => {
-						if (friend.status === '3') {
-							return (
-								<FriendItem
-									styles={'mb-4 p-0 bg-transparent'}
-									avatar={friend.friends.avatar}
-									name={friend.friends.firstName}
-									body={
-										<FriendBody
-											name={friend.friends.firstName}
-											login={friend.friends.email}
-										/>
-									}
-									buttons={
-										<DeleteButton
-											deleteFriend={() =>
-												addFriend.mutate({
-													friendId: friend.friends._id,
-													status: '0'
-												})
-											}
-										/>
-									}
-									key={key}
-								/>
-							)
-						} else return null
+					{friends.map((friend, key) => {
+						return (
+							<FriendItem
+								styles={'mb-4 p-0 bg-transparent'}
+								avatar={friend.avatar}
+								name={friend.firstName}
+								body={
+									<FriendBody name={friend.firstName} login={friend.email} />
+								}
+								buttons={
+									<DeleteButton
+										deleteFriend={() =>
+											addFriend.mutate({
+												friendId: friend._id,
+												status: '0'
+											})
+										}
+									/>
+								}
+								key={key}
+							/>
+						)
 					})}
 				</View>
 			) : (

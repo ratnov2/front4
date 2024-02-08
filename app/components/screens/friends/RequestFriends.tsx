@@ -8,65 +8,59 @@ import { Entypo } from '@expo/vector-icons'
 import BottomDrawer, {
 	BottomDrawerMethods
 } from 'react-native-animated-bottom-drawer'
+import { IProfile } from '@/shared/types/profile.interface'
 
 interface IMyFriends {
-	friends: UseQueryResult<IFriendsip, unknown>
+	friends: IProfile[]
 }
 
 export const RequestFriends: FC<IMyFriends> = ({ friends }) => {
-	
 	const addFriend = useMutation(
 		['add-friend'],
 		(data: { friendId: string; status: '0' | '1' | '2' | '3' }) =>
 			FriendsService.addFriend(data)
 	)
-	
+
 	return (
 		<View className='mt-7'>
 			<Text className='text-lg text-white font-bold uppercase mb-4'>
 				My Friends
 			</Text>
-			{friends.data && friends.data.friendship.length > 0 ? (
+			{friends && friends.length > 0 ? (
 				<View>
-					{friends.data.friendship.map((friend, key) => {
-						if (friend.status === '1') {
-							return (
-								<FriendItem
-									styles={'mb-4 p-0 bg-transparent'}
-									avatar={friend.friends.avatar}
-									name={friend.friends.firstName}
-									body={
-										<FriendBody
-											name={friend.friends.firstName}
-											login={friend.friends.email}
-										/>
-									}
-									buttons={
-										<ButtonGroup
-											deleteFriend={() =>
-												addFriend.mutate({
-													friendId: friend.friends._id,
-													status: '0'
-												})
-											}
-											addFriend={() =>
-												addFriend.mutate({
-													friendId: friend.friends._id,
-													status: '3'
-												})
-											}
-										/>
-									}
-									key={key}
-								/>
-							)
-						} else return null
+					{friends.map((friend, key) => {
+						return (
+							<FriendItem
+								styles={'mb-4 p-0 bg-transparent'}
+								avatar={friend.avatar}
+								name={friend.firstName}
+								body={
+									<FriendBody name={friend.firstName} login={friend.email} />
+								}
+								buttons={
+									<ButtonGroup
+										deleteFriend={() =>
+											addFriend.mutate({
+												friendId: friend._id,
+												status: '0'
+											})
+										}
+										addFriend={() =>
+											addFriend.mutate({
+												friendId: friend._id,
+												status: '3'
+											})
+										}
+									/>
+								}
+								key={key}
+							/>
+						)
 					})}
 				</View>
 			) : (
 				<NoFriend />
 			)}
-			
 		</View>
 	)
 }
