@@ -1,34 +1,86 @@
 import { FriendsService, IFriendsip } from '@/services/friends/friends.service'
 import { UseQueryResult, useMutation } from '@tanstack/react-query'
 import { FC, useRef, useState } from 'react'
-import { Text, TouchableOpacity, View } from 'react-native'
+import { Dimensions, Text, TouchableOpacity, View } from 'react-native'
 import { FriendItem } from './ui/friend-item'
 import { NoFriend } from './ui/NoFriends'
 import { Entypo, MaterialIcons } from '@expo/vector-icons'
+
+import { IProfile } from '@/shared/types/profile.interface'
 import BottomDrawer, {
 	BottomDrawerMethods
-} from 'react-native-animated-bottom-drawer'
-import { IProfile } from '@/shared/types/profile.interface'
+} from '@/ui/bottom-driwer/bottomDrawer'
 
 interface IMyFriends {
 	friends: IProfile[]
 }
-
+const renderContent = () => (
+	<View style={{ alignItems: 'center', justifyContent: 'center' }}>
+		{/* Ваш кастомный компонент рядом с иконкой */}
+		<View style={{ flexDirection: 'row', alignItems: 'center' }}>
+			{/* Ваш кастомный компонент */}
+			<Text>Sent requests</Text>
+			{/* Иконка для перетаскивания */}
+			<Text>🔽</Text>
+		</View>
+		{/* Другие элементы внутри BottomDrawer */}
+		<Text>Содержимое нижнего ящика</Text>
+	</View>
+)
 export const RequestFriends: FC<IMyFriends> = ({ friends }) => {
 	const addFriend = useMutation(
 		['add-friend'],
 		(data: { friendId: string; status: '0' | '1' | '2' | '3' }) =>
 			FriendsService.addFriend(data)
 	)
-
+	const screenHeight = Dimensions.get('window').height
+	const bottomDrawerRef = useRef<BottomDrawerMethods>(null)
+	const openDrawer = () => {
+		if (bottomDrawerRef.current) {
+			bottomDrawerRef.current.open()
+		}
+	}
 	return (
 		<View className='mt-7'>
+			<BottomDrawer
+				ref={bottomDrawerRef}
+				initialHeight={screenHeight - 120}
+				customStyles={{ container: { backgroundColor: 'rgb(24 24 27)' } }}
+				renderHandle={
+					<View>
+						<View className='mt-4 mx-auto h-1 bg-white w-16 rounded-lg'></View>
+						<Text className='mt-4 text-white text-center text-xl font-bold'>
+							Sent requests
+						</Text>
+						<View className='mt-5 w-[100%] h-[2px] bg-stone-700' />
+					</View>
+				}
+			>
+				<View></View>
+			</BottomDrawer>
+			{/* <BottomDrawer
+				ref={bottomDrawerRef}
+				initialHeight={screenHeight - 120}
+				customStyles={{ container: { backgroundColor: 'rgb(24 24 27)' } }}
+				// safeTopOffset={200}
+				// draggableIcon={<View><Text>wefefw</Text></View>}
+				
+				
+			>
+				
+				
+			</BottomDrawer> */}
 			<View className='mb-4 flex-row text-center justify-between items-center'>
 				<Text className='text-lg text-white font-bold uppercase '>
 					Request Friends
 				</Text>
-				<TouchableOpacity className='flex-row items-center'>
-					<Text className='text-base text-neutral-600 font-bold pr-1'>Sent</Text>
+				<TouchableOpacity
+					className='flex-row items-center'
+					onPress={() => openDrawer()}
+				>
+					<Text className='text-base text-neutral-600 font-bold pr-1'>
+						Sent
+					</Text>
 					<MaterialIcons
 						name='arrow-forward-ios'
 						size={16}
@@ -74,6 +126,21 @@ export const RequestFriends: FC<IMyFriends> = ({ friends }) => {
 		</View>
 	)
 }
+
+const renderHandle = () => (
+	<View
+		style={{
+			flexDirection: 'row',
+			alignItems: 'center',
+			justifyContent: 'center'
+		}}
+	>
+		{/* Ваш собственный компонент */}
+		<Text>Пользовательский компонент</Text>
+		{/* Иконка для перетаскивания */}
+		<BottomDrawer.DraggableIcon />
+	</View>
+)
 interface IFriendBody {
 	name: string
 	login: string
