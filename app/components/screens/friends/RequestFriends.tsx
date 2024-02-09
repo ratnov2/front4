@@ -4,7 +4,7 @@ import { FC, useRef, useState } from 'react'
 import { Text, TouchableOpacity, View } from 'react-native'
 import { FriendItem } from './ui/friend-item'
 import { NoFriend } from './ui/NoFriends'
-import { Entypo } from '@expo/vector-icons'
+import { Entypo, MaterialIcons } from '@expo/vector-icons'
 import BottomDrawer, {
 	BottomDrawerMethods
 } from 'react-native-animated-bottom-drawer'
@@ -23,9 +23,19 @@ export const RequestFriends: FC<IMyFriends> = ({ friends }) => {
 
 	return (
 		<View className='mt-7'>
-			<Text className='text-lg text-white font-bold uppercase mb-4'>
-				My Friends
-			</Text>
+			<View className='mb-4 flex-row text-center justify-between items-center'>
+				<Text className='text-lg text-white font-bold uppercase '>
+					Request Friends
+				</Text>
+				<TouchableOpacity className='flex-row items-center'>
+					<Text className='text-base text-neutral-600 font-bold pr-1'>Sent</Text>
+					<MaterialIcons
+						name='arrow-forward-ios'
+						size={16}
+						color={'rgba(196,196,196,0.6)'}
+					/>
+				</TouchableOpacity>
+			</View>
 			{friends && friends.length > 0 ? (
 				<View>
 					{friends.map((friend, key) => {
