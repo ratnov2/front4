@@ -12,7 +12,8 @@ export const FriendsService = {
 		return response
 	},
 	async addFriend(data: { friendId: string; status: '0' | '1' | '2' | '3' }) {
-		const response = await request<IFriendsip[]>({
+
+		const response = await request<IProfile>({
 			url: getUsersUrl('/friends/add-friends'),
 			method: 'PUT',
 			data
@@ -21,9 +22,7 @@ export const FriendsService = {
 		return response
 	},
 	async getUserByName(data: { name: string; id?: string }) {
-		const response = await request<
-			Pick<IProfile, '_id' | 'avatar' | 'firstName' | 'friendship'>[]
-		>({
+		const response = await request<IGetUserByName[]>({
 			url: getUsersUrl('/user-by-name'),
 			method: 'POST',
 			data: {
@@ -42,4 +41,14 @@ export interface IFriendsip {
 		status: string
 	}[]
 	_id: string
+}
+
+export interface IGetUserByName
+	extends Pick<IProfile, '_id' | 'avatar' | 'firstName'> {
+	friendship:
+		| {
+				_id: string
+				status: '0' | '1' | '2' | '3'
+		  }[]
+		| null
 }

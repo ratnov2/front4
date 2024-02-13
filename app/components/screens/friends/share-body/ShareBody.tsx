@@ -23,7 +23,6 @@ export const ShareBody: FC<IShareBody> = ({
 	return (
 		<ScrollView className='px-4'>
 			<SearchInput value={value} handlerChangeText={handlerChangeText} />
-
 			{getUserByName.data || value ? (
 				<FriendsSearchResult />
 			) : (

@@ -58,18 +58,6 @@ export const RequestFriends: FC<IMyFriends> = ({ friends }) => {
 			>
 				<View></View>
 			</BottomDrawer>
-			{/* <BottomDrawer
-				ref={bottomDrawerRef}
-				initialHeight={screenHeight - 120}
-				customStyles={{ container: { backgroundColor: 'rgb(24 24 27)' } }}
-				// safeTopOffset={200}
-				// draggableIcon={<View><Text>wefefw</Text></View>}
-				
-				
-			>
-				
-				
-			</BottomDrawer> */}
 			<View className='mb-4 flex-row text-center justify-between items-center'>
 				<Text className='text-lg text-white font-bold uppercase '>
 					Request Friends
@@ -127,20 +115,6 @@ export const RequestFriends: FC<IMyFriends> = ({ friends }) => {
 	)
 }
 
-const renderHandle = () => (
-	<View
-		style={{
-			flexDirection: 'row',
-			alignItems: 'center',
-			justifyContent: 'center'
-		}}
-	>
-		{/* Ваш собственный компонент */}
-		<Text>Пользовательский компонент</Text>
-		{/* Иконка для перетаскивания */}
-		<BottomDrawer.DraggableIcon />
-	</View>
-)
 interface IFriendBody {
 	name: string
 	login: string
@@ -158,12 +132,15 @@ interface IButtonGroup {
 }
 const ButtonGroup: FC<IButtonGroup> = ({ deleteFriend, addFriend }) => {
 	return (
-		<View>
+		<View className='flex-row'>
+			<TouchableOpacity
+				onPress={addFriend}
+				className='bg-stone-800 w-16 flex justify-center rounded-2xl h-8 mr-2'
+			>
+				<Text className='text-white text-center uppercase font-bold'>add</Text>
+			</TouchableOpacity>
 			<TouchableOpacity onPress={deleteFriend}>
 				<Entypo name='cross' size={28} color='white' />
-			</TouchableOpacity>
-			<TouchableOpacity onPress={addFriend}>
-				<Text className='text-white'>add</Text>
 			</TouchableOpacity>
 		</View>
 	)

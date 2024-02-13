@@ -1,108 +1,69 @@
 import { FC, useState } from 'react'
-import {
-	ActivityIndicator,
-	Pressable,
-	Text,
-	TouchableOpacity,
-	View
-} from 'react-native'
+import { Pressable, Text, View } from 'react-native'
 import { FriendItem } from '../ui/friend-item'
 import { FriendBody } from '../SuggestionFriends'
 import { Loader } from '@/ui'
-import {
-	UseQueryResult,
-	useMutation,
-	useQueryClient
-} from '@tanstack/react-query'
-import { IProfile } from '@/shared/types/profile.interface'
 import { useNavigation } from '@react-navigation/native'
-import { FriendsService } from '@/services/friends/friends.service'
 import { useSearchingFriends } from '../useSearchingFriends'
 import { useAuth } from '@/hooks/useAuth'
+import { RenderButton } from './helper/render-button/RenderButton'
+import { CustomFriendModal } from './helper/modal/CustomFriendModal'
+import { NotFoundUser } from './helper/ui/NotFoundUser'
 
-interface IFriendsSearchResult {}
-
-export const FriendsSearchResult: FC<IFriendsSearchResult> = ({}) => {
-	const addFriend = useMutation(
-		['add-friend'],
-		(data: { friendId: string; status: '0' | '1' | '2' | '3' }) =>
-			FriendsService.addFriend(data),
-		{
-			onSuccess: () => {
-				const currentData = useQueryClient().getQueryData(['get-user-by-name'])
-			}
-		}
-	)
+export const FriendsSearchResult = () => {
 	const { user } = useAuth()
-	const { isDebouncing, setValue, value, getUserByName, isSearching } =
-		useSearchingFriends(String(user?._id))
+
+	const { isDebouncing, getUserByName } = useSearchingFriends(String(user?._id))
+
 	const navigate = useNavigation()
+	const [userDataForModal, setUserDataForModal] = useState({
+		username: '',
+		friendId: '',
+		status: '' as '0' | '1' | '2' | '3'
+	})
+	const [modalVisible, setModalVisible] = useState(false)
+	const handleModalVisible = (
+		username: string,
+		friendId: string,
+		status: '0' | '1' | '2' | '3'
+	) => {
+		const newUserData = { username, friendId, status }
+		setUserDataForModal({ ...newUserData })
+		setModalVisible(!modalVisible)
+	}
+
 	return (
 		<View className='flex-1 w-full z-[20] rounded-xl p-4 mt-6'>
-			{getUserByName?.data?.map(e => (
+			<CustomFriendModal
+				modalVisible={modalVisible}
+				setModalVisible={() =>
+					handleModalVisible('', '', '' as '0' | '1' | '2' | '3')
+				}
+				userData={userDataForModal}
+			/>
+			{getUserByName?.data?.map(usersByName => (
 				<Pressable
 					className='flex-1 '
 					onPress={() =>
 						navigate.navigate({
 							name: `Profile`,
 							params: {
-								id: ''
+								id: usersByName._id
 							}
 						} as never)
 					}
-					key={e._id}
+					key={usersByName._id}
 				>
 					<FriendItem
 						styles={'mb-4 p-0 bg-transparent flex-1'}
-						name={e.firstName}
-						avatar={e.avatar}
-						buttons={
-							e.friendship[0]?.status === '1' ? (
-								<HandleFriendButton
-									title='Request is sended'
-									id={e._id}
-									status='1'
-									loading
-								/>
-							) : e.friendship[0]?.status === '2' ? (
-								<HandleFriendButton
-									title='Take friend'
-									id={e._id}
-									status='1'
-									loading
-								/>
-							) : e.friendship[0]?.status === '3' ? (
-								<HandleFriendButton
-									title='My friend'
-									id={e._id}
-									status='1'
-									loading
-								/>
-							) : e._id === user?._id ? (
-								<View></View>
-							) : (
-								<HandleFriendButton
-									title='Add friend'
-									loading={addFriend.isLoading}
-									id={e._id}
-									status='1'
-								/>
-							)
-						}
-						body={<FriendBody name={e.firstName} number='' />}
+						name={usersByName.firstName}
+						avatar={usersByName.avatar}
+						buttons={RenderButton(usersByName, user, handleModalVisible)}
+						body={<FriendBody name={usersByName.firstName} number='' />}
 					/>
 				</Pressable>
-				// <View>
-				// 	<Text className='text-white'>{e._id}</Text>
-				// </View>
 			))}
-			{getUserByName?.data?.length === 0 && (
-				<View className='bg-zinc-600 p-10 rounded-2xl'>
-					<Text className='text-white font-bold'>
-						По вашему запросу ничего не найдено
-					</Text>
-				</View>
-			)}
+			{getUserByName?.data?.length === 0 && <NotFoundUser />}
 			{isDebouncing && (
 				<View className='absolute top-0 w-full '>
 					<Loader />
@@ -112,66 +73,44 @@ export const FriendsSearchResult: FC<IFriendsSearchResult> = ({}) => {
 	)
 }
 
-const HandleFriendButton = ({
-	title,
-	id,
-	status
-}: {
-	handleFriend?: () => void
-	title: string
-	loading: boolean
-	id: string
-	status: '0' | '1' | '2' | '3'
-}) => {
-	const [isLoading, setIsLoading] = useState(false)
-	const queryClient = useQueryClient()
-	const addFriend = useMutation(
-		[id],
-		(data: { friendId: string; status: '0' | '1' | '2' | '3' }) =>
-			FriendsService.addFriend(data),
-		{
-			onSuccess: e => {
-				//myFriends.refetch()
-				setTimeout(() => {
-					setIsLoading(false)
-				}, 500)
-				//@ts-ignore
-				queryClient.setQueryData(['get-user-by-name'], (prevData: any[]) => {
-					if (!prevData) {
-						return prevData
-					}
+// const RazrabTest = ({
+// 	title,
+// 	id,
+// 	status
+// }: {
+// 	handleFriend?: () => void
+// 	title: string
+// 	loading: boolean
+// 	id: string
+// 	status: '0' | '1' | '2' | '3' | 'add_All'
+// }) => {
+// 	//@ts-ignore
+// 	const { addFriend, isLoading, setIsLoading } = useMutateAddFriend(id, status)
 
-					//prevData = queryClient.getQueryData(['get-user-by-name'])
-					const updatedIndex = prevData.findIndex(
-						//@ts-ignore
-						(item: { _id: any }) => item._id === e._id
-					)
-					//currentData.map((e: any)=>)
-					if (updatedIndex !== -1) {
-						// Создайте новый массив данных с обновленной строкой
-						const newData = [...prevData]
-						newData[updatedIndex] = e
-						return newData
-					}
-
-					return prevData
-				})
-			}
-		}
-	)
-	return (
-		<TouchableOpacity
-			className='bg-zinc-700 p-2 rounded-full uppercase'
-			onPress={() => {
-				setIsLoading(true)
-				addFriend.mutate({ friendId: id, status })
-			}}
-		>
-			{!isLoading ? (
-				<Text className='text-white font-bold'>{title}</Text>
-			) : (
-				<ActivityIndicator size={'small'} className='w-16' />
-			)}
-		</TouchableOpacity>
-	)
+// 	return (
+// 		<TouchableOpacity
+// 			className={`bg-zinc-700 p-2 rounded-full uppercase ${
+// 				status === '2' && 'bg-yellow-400'
+// 			}`}
+// 			onPress={() => {
+// 				setIsLoading(true)
+// 				//@ts-ignore
+// 				addFriend.mutate({ friendId: id, status })
+// 			}}
+// 		>
+// 			{!isLoading ? (
+// 				<Text className='text-white font-bold'>{title}</Text>
+// 			) : (
+// 				<ActivityIndicator size={'small'} className='w-16' />
+// 			)}
+// 		</TouchableOpacity>
+// 	)
+// }
+{
+	/* <RazrabTest
+				title='Add friend'
+				id={'65587d69dbdf73a8b2a442fc'}
+				status='add_All'
+				loading
+			/> */
 }

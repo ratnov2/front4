@@ -6,7 +6,7 @@ interface IFriendItem {
 	avatar?: string
 	name: string
 	body: React.ReactElement
-	buttons: React.ReactElement
+	buttons: React.ReactElement | null
 	styles?: string
 }
 

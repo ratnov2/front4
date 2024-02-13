@@ -53,7 +53,6 @@ export const SwiperFriendList: FC<ISwiperFriendList> = ({
 			//onScroll={handleScroll}
 			//scrollEventThrottle={16}
 		>
-			{/* Написать сюда компонент и прокинуть сюда value, setValue */}
 			{componentsArray.map(component => (
 				<ShareBody
 					handlerChangeText={handlerChangeText}
