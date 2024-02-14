@@ -35,10 +35,11 @@ export const SwiperFriendList: FC<ISwiperFriendList> = ({
 	}
 	const componentsArray = [
 		<SuggestionFriends key='suggestion' />,
-		<MyFriends key='myFriends' friends={myFriendByStatus.friendStatus1} />,
+		<MyFriends key='myFriends' friends={myFriendByStatus.friendStatus3} />,
 		<RequestFriends
 			key='requestFriends'
-			friends={myFriendByStatus.friendStatus2}
+			friendsStatus1={myFriendByStatus.friendStatus1}
+			friendsStatus2={myFriendByStatus.friendStatus2}
 		/>
 	]
 	return (

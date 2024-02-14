@@ -1,97 +1,73 @@
-import { useAuth } from '@/hooks/useAuth'
-import { FriendsService } from '@/services/friends/friends.service'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { RefObject, useRef, useState } from 'react'
-import {
-	Animated,
-	Dimensions,
-	Keyboard,
-	ScrollView,
-	Text,
-	TextInput,
-	TouchableOpacity,
-	View
-} from 'react-native'
+import { FriendsService, IFriendsip } from '@/services/friends/friends.service'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { RefObject, createContext, useContext, useRef, useState } from 'react'
+import { Animated, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { SuggestionFriends } from './SuggestionFriends'
-import { Invite } from './ui/Invite'
-import { MyFriends } from './MyFriends'
-import { RequestFriends } from './RequestFriends'
-import { useSearchingFriends } from './useSearchingFriends'
-import { EvilIcons } from '@expo/vector-icons'
 import { IProfile } from '@/shared/types/profile.interface'
-import { FriendsSearchResult } from './search-result/SearchResult'
 import Swiper from 'react-native-swiper'
-import { SearchInput } from './search-result/SeacrhInput'
-import { ShareBody } from './share-body/ShareBody'
 import { SwiperFriendList } from './swiper-friendList/SwiperFriendList'
 import { ListButtonSwiperFriend } from './list-button-swiper-friend/ListButtonSwiperFriend'
 
+export const MyFriendContext = createContext<{
+	myFriendByStatus: IFriendsStatus
+	setMyFriendByStatus: any
+}>({
+	myFriendByStatus: { friendStatus1: [], friendStatus2: [], friendStatus3: [] },
+	setMyFriendByStatus: (e: any) => ''
+})
+
 export const Friends = () => {
 	const insets = useSafeAreaInsets()
+	const queryClient = useQueryClient()
 	// const suggestions = useQuery(['get-suggestion']()=>'') TASK ADD suggestion
-	const myFriends = useQuery(
+	const [myFriendByStatus, setMyFriendByStatus] = useState<IFriendsStatus>({
+		friendStatus1: [],
+		friendStatus2: [],
+		friendStatus3: []
+	})
+	const myFriends = useQuery<IFriendsip, Error, IFriendsStatus>(
 		['get-my-friends'],
 		() => FriendsService.getAllFriends(),
 		{
 			onSuccess: data => {
 				if (!data) return false
-				const friendsByStatus: IFriendsStatus = {
+				//@ts-ignore
+				data.friendship = []  //CHECK
+				
+			},
+			select: data => {
+				const myFriendByStatus: IFriendsStatus = {
 					friendStatus1: [],
 					friendStatus2: [],
 					friendStatus3: []
 				}
 				data.friendship.map(({ friends, status }) => {
 					if (status === '1') {
-						friendsByStatus.friendStatus1.push(friends)
+						myFriendByStatus.friendStatus1.push(friends)
 					} else if (status === '2') {
-						friendsByStatus.friendStatus2.push(friends)
+						myFriendByStatus.friendStatus2.push(friends)
 					} else if (status === '3') {
-						friendsByStatus.friendStatus3.push(friends)
+						myFriendByStatus.friendStatus3.push(friends)
 					}
 				})
-				setMyFriendByStatus(friendsByStatus)
-			}
-		}
-	)
-	const [myFriendByStatus, setMyFriendByStatus] = useState<IFriendsStatus>({
-		friendStatus1: [],
-		friendStatus2: [],
-		friendStatus3: []
-	})
-
-	//isFreind === 0  Add Friend
-	//isFriend === 1  (nothing or mutual friends)
-	//isFreind === 2 reqeust sent
-	//isFreind === 3 reqeust can take
-
-	const addFriend = useMutation(
-		['add-friend'],
-		(data: { friendId: string; status: '0' | '1' | '2' | '3' }) =>
-			FriendsService.addFriend(data),
-		{
-			onSuccess: () => {
-				const currentData = useQueryClient().getQueryData(['get-user-by-name'])
-			}
+			
+				return myFriendByStatus
+			}, 
 		}
 	)
 
-	// const handleAddFriend = (data: {
-	// 	friendId: string
-	// 	status: '0' | '1' | '2' | '3'
-	// }) => {
-	// 	if (!addFriend.isLoading) {
-	// 		addFriend.mutate(data)
-	// 	}
-	// }
+	//////
+	////////isFreind === 0  Add Friend
+	////////isFriend === 1  (nothing or mutual friends)
+	////////isFreind === 2 reqeust sent
+	////////isFreind === 3 reqeust can take
+	/////
 
 	const refButtonGroup = useRef<View>(null)
 	const refButton1 = useRef<TouchableOpacity>(null)
 	const refButton2 = useRef<TouchableOpacity>(null)
 	const refButton3 = useRef<TouchableOpacity>(null)
 	const measureButton = (refButton: RefObject<TouchableOpacity>) => {
-		console.log(refButton1.current)
-
 		refButton.current?.measure((x, y, width, height, pageX, pageY) => {
 			//return width
 		})
@@ -136,43 +112,36 @@ export const Friends = () => {
 	// 	setActiveIndex(index)
 	// 	animatedValue.setValue(index)
 	// }
+	//console.log(queryClient.getQueryData(['get-my-friends']));
+	
 	return (
-		<View className='flex-1'>
-			<View className='flex-1 '>
-				<Text
-					className='text-white text-2xl font-bold text-center left-0 right-0 z-40'
-					style={{ top: insets.top, position: 'absolute' }}
-				>
-					BePrime
-				</Text>
-				{myFriendByStatus && (
-					<SwiperFriendList
-						activeIndex={activeIndex}
-						myFriendByStatus={myFriendByStatus}
-						setActiveIndex={setActiveIndex}
-						swiperRef={swiperRef}
+		// <MyFriendContext.Provider value={{ myFriendByStatus, setMyFriendByStatus }}>
+			<View className='flex-1'>
+				<View className='flex-1 '>
+					<Text
+						className='text-white text-2xl font-bold text-center left-0 right-0 z-40'
+						style={{ top: insets.top, position: 'absolute' }}
+					>
+						BePrime
+					</Text>
+					{myFriends.data && (
+						<SwiperFriendList
+							activeIndex={activeIndex}
+							myFriendByStatus={myFriends.data}
+							setActiveIndex={setActiveIndex}
+							swiperRef={swiperRef}
+						/>
+					)}
+					<ListButtonSwiperFriend
+						animatedValue={animatedValue}
+						refButtonGroup={refButtonGroup}
+						scrollToPage={scrollToPage}
 					/>
-				)}
-				<ListButtonSwiperFriend
-					animatedValue={animatedValue}
-					refButtonGroup={refButtonGroup}
-					scrollToPage={scrollToPage}
-				/>
+				</View>
 			</View>
-		</View>
+		// </MyFriendContext.Provider>
 	)
 }
-
-// const setQuery = () => {
-// 	const currentData = useQueryClient().setQueryData(
-// 		['get-user-by-name'],
-// 		oldData => {
-// 			console.log(oldData)
-
-// 			return oldData
-// 		}
-// 	)
-// }
 
 export const MyFriendButton = ({
 	deleteFriend

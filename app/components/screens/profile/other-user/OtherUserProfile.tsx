@@ -21,8 +21,10 @@ export const OtherUserProfile = () => {
 	const getUser = useQuery(['get-user-by-by-id'], () => ProfileService.getUser(params?.id))
 	const getMe = useQuery(['get-me'], () => ProfileService.getUser(String(user?._id)))
 
-	const myFriends = useQuery(['get-my-friends'], () =>
-		FriendsService.getAllFriends()
+	const myFriends = useQuery(['get-my-friends'], () =>{
+		
+		return FriendsService.getAllFriends()
+	}
 	)
 	const [typeFriend, setTypeFriend] = useState<'0' | '1' | '2' | '3' | null>(
 		null

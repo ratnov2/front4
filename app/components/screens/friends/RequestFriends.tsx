@@ -1,7 +1,13 @@
 import { FriendsService, IFriendsip } from '@/services/friends/friends.service'
 import { UseQueryResult, useMutation } from '@tanstack/react-query'
 import { FC, useRef, useState } from 'react'
-import { Dimensions, Text, TouchableOpacity, View } from 'react-native'
+import {
+	Dimensions,
+	ScrollView,
+	Text,
+	TouchableOpacity,
+	View
+} from 'react-native'
 import { FriendItem } from './ui/friend-item'
 import { NoFriend } from './ui/NoFriends'
 import { Entypo, MaterialIcons } from '@expo/vector-icons'
@@ -10,24 +16,20 @@ import { IProfile } from '@/shared/types/profile.interface'
 import BottomDrawer, {
 	BottomDrawerMethods
 } from '@/ui/bottom-driwer/bottomDrawer'
+import { HandleFriendButton } from './search-result/helper/render-button/HandleFriendButton'
+import { CustomFriendModal } from './search-result/helper/modal/CustomFriendModal'
+import { useModalState } from './search-result/helper/modal/useModalState'
+import { ModalButton } from './search-result/helper/modal/ModalButton'
 
 interface IMyFriends {
-	friends: IProfile[]
+	friendsStatus1: IProfile[]
+	friendsStatus2: IProfile[]
 }
-const renderContent = () => (
-	<View style={{ alignItems: 'center', justifyContent: 'center' }}>
-		{/* Ваш кастомный компонент рядом с иконкой */}
-		<View style={{ flexDirection: 'row', alignItems: 'center' }}>
-			{/* Ваш кастомный компонент */}
-			<Text>Sent requests</Text>
-			{/* Иконка для перетаскивания */}
-			<Text>🔽</Text>
-		</View>
-		{/* Другие элементы внутри BottomDrawer */}
-		<Text>Содержимое нижнего ящика</Text>
-	</View>
-)
-export const RequestFriends: FC<IMyFriends> = ({ friends }) => {
+
+export const RequestFriends: FC<IMyFriends> = ({
+	friendsStatus1,
+	friendsStatus2
+}) => {
 	const addFriend = useMutation(
 		['add-friend'],
 		(data: { friendId: string; status: '0' | '1' | '2' | '3' }) =>
@@ -40,9 +42,11 @@ export const RequestFriends: FC<IMyFriends> = ({ friends }) => {
 			bottomDrawerRef.current.open()
 		}
 	}
+	const { handleModalVisible, modalVisible, userDataForModal } = useModalState()
 	return (
 		<View className='mt-7'>
 			<BottomDrawer
+				openOnMount
 				ref={bottomDrawerRef}
 				initialHeight={screenHeight - 120}
 				customStyles={{ container: { backgroundColor: 'rgb(24 24 27)' } }}
@@ -56,7 +60,45 @@ export const RequestFriends: FC<IMyFriends> = ({ friends }) => {
 					</View>
 				}
 			>
-				<View></View>
+				<View className='flex-1'>
+					<CustomFriendModal
+						modalVisible={modalVisible}
+						setModalVisible={() =>
+							handleModalVisible('', '', '' as '0' | '1' | '2' | '3')
+						}
+						userData={userDataForModal}
+					/>
+					{friendsStatus1 && friendsStatus1.length > 0 ? (
+						<ScrollView className='mx-4 py-5 flex-1'>
+							{friendsStatus1.map((friend, key) => {
+								return (
+									<FriendItem
+										styles={'mb-4 p-0 bg-transparent'}
+										avatar={friend.avatar}
+										name={friend.firstName}
+										body={
+											<FriendBody
+												name={friend.firstName}
+												login={friend.email}
+											/>
+										}
+										buttons={
+											<ModalButton
+												setModalVisible={() =>
+													handleModalVisible(friend.firstName, friend._id, '1')
+												}
+												text='request is sented'
+											/>
+										}
+										key={key}
+									/>
+								)
+							})}
+						</ScrollView>
+					) : (
+						<NoFriend />
+					)}
+				</View>
 			</BottomDrawer>
 			<View className='mb-4 flex-row text-center justify-between items-center'>
 				<Text className='text-lg text-white font-bold uppercase '>
@@ -76,9 +118,9 @@ export const RequestFriends: FC<IMyFriends> = ({ friends }) => {
 					/>
 				</TouchableOpacity>
 			</View>
-			{friends && friends.length > 0 ? (
+			{friendsStatus1 && friendsStatus1.length > 0 ? (
 				<View>
-					{friends.map((friend, key) => {
+					{friendsStatus1.map((friend, key) => {
 						return (
 							<FriendItem
 								styles={'mb-4 p-0 bg-transparent'}
@@ -88,20 +130,26 @@ export const RequestFriends: FC<IMyFriends> = ({ friends }) => {
 									<FriendBody name={friend.firstName} login={friend.email} />
 								}
 								buttons={
-									<ButtonGroup
-										deleteFriend={() =>
-											addFriend.mutate({
-												friendId: friend._id,
-												status: '0'
-											})
-										}
-										addFriend={() =>
-											addFriend.mutate({
-												friendId: friend._id,
-												status: '3'
-											})
-										}
+									<HandleFriendButton
+										id={friend._id}
+										loading
+										status='2'
+										title='add'
 									/>
+									// <ButtonGroup
+									// 	deleteFriend={() =>
+									// 		addFriend.mutate({
+									// 			friendId: friend._id,
+									// 			status: '0'
+									// 		})
+									// 	}
+									// 	addFriend={() =>
+									// 		addFriend.mutate({
+									// 			friendId: friend._id,
+									// 			status: '3'
+									// 		})
+									// 	}
+									// />
 								}
 								key={key}
 							/>

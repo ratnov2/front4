@@ -9,6 +9,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { RenderButton } from './helper/render-button/RenderButton'
 import { CustomFriendModal } from './helper/modal/CustomFriendModal'
 import { NotFoundUser } from './helper/ui/NotFoundUser'
+import { useModalState } from './helper/modal/useModalState'
 
 export const FriendsSearchResult = () => {
 	const { user } = useAuth()
@@ -16,21 +17,7 @@ export const FriendsSearchResult = () => {
 	const { isDebouncing, getUserByName } = useSearchingFriends(String(user?._id))
 
 	const navigate = useNavigation()
-	const [userDataForModal, setUserDataForModal] = useState({
-		username: '',
-		friendId: '',
-		status: '' as '0' | '1' | '2' | '3'
-	})
-	const [modalVisible, setModalVisible] = useState(false)
-	const handleModalVisible = (
-		username: string,
-		friendId: string,
-		status: '0' | '1' | '2' | '3'
-	) => {
-		const newUserData = { username, friendId, status }
-		setUserDataForModal({ ...newUserData })
-		setModalVisible(!modalVisible)
-	}
+	const { handleModalVisible, modalVisible, userDataForModal } = useModalState()
 
 	return (
 		<View className='flex-1 w-full z-[20] rounded-xl p-4 mt-6'>

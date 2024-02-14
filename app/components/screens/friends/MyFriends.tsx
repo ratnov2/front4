@@ -17,7 +17,7 @@ export const MyFriends: FC<IMyFriends> = ({ friends }) => {
 		(data: { friendId: string; status: '0' | '1' | '2' | '3' }) =>
 			FriendsService.addFriend(data)
 	)
-
+	
 	return (
 		<View className='mt-7'>
 			<Text className='text-lg text-white font-bold uppercase mb-4'>
