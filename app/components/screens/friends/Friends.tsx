@@ -20,11 +20,7 @@ export const Friends = () => {
 	const insets = useSafeAreaInsets()
 	const queryClient = useQueryClient()
 	// const suggestions = useQuery(['get-suggestion']()=>'') TASK ADD suggestion
-	const [myFriendByStatus, setMyFriendByStatus] = useState<IFriendsStatus>({
-		friendStatus1: [],
-		friendStatus2: [],
-		friendStatus3: []
-	})
+
 	const myFriends = useQuery<IFriendsip, Error, IFriendsStatus>(
 		['get-my-friends'],
 		() => FriendsService.getAllFriends(),
@@ -92,7 +88,7 @@ export const Friends = () => {
 		return 100
 	}
 
-	const [activeIndex, setActiveIndex] = useState(2)
+	const [activeIndex, setActiveIndex] = useState(1)
 	const animatedValue = new Animated.Value(activeIndex)
 	const scrollToPage = (index: number) => {
 		if (swiperRef.current) {

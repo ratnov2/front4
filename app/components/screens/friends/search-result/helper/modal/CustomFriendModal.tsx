@@ -10,7 +10,7 @@ export const CustomFriendModal: FC<ICustomFriendModal> = ({
 	setModalVisible,
 	userData
 }) => {
-	if (userData.status === '0' || userData.status === '2') return
+	if (userData.status === '2') return
 	const { addFriend, isLoading, setIsLoading } = useMutateAddFriend(
 		userData.friendId,
 		userData.status
@@ -31,6 +31,10 @@ export const CustomFriendModal: FC<ICustomFriendModal> = ({
 		'3': {
 			title1: `Вы уверены, что хотитите отменить запрос в друзья пользователю ${userData.username}?`,
 			title2: `Вы больше не сможете видеть запись ${userData.username} BePrime, а ваша больше не будет видна.`
+		},
+		'0': {
+			title1: `Вы уверены, что хотите удалить пользователя ${userData.username} из списка ваших друзей?`,
+			title2: `Вы больше не сможете видеть запись ${userData.username} BePrime, а ваша больше не будет видна.`
 		}
 	}
 	return (
@@ -49,7 +53,7 @@ export const CustomFriendModal: FC<ICustomFriendModal> = ({
 					alignItems: 'center',
 					backgroundColor: 'rgba(0, 0, 0, 0.5)'
 				}}
-				className='px-6'
+				className='px-6 z-[9999999]'
 			>
 				<View
 					style={{
@@ -62,7 +66,7 @@ export const CustomFriendModal: FC<ICustomFriendModal> = ({
 					<Text className='text-white font-bold text-xl text-center'>
 						{returnTextByStatus[userData.status]?.title1}
 					</Text>
-					{userData.status === '3' && (
+					{userData.status === '3' || userData.status === '0' && (
 						<Text className='mt-2 text-white text-lg text-center'>
 							{returnTextByStatus[userData.status]?.title2}
 						</Text>

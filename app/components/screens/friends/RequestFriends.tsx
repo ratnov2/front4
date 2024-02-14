@@ -45,8 +45,14 @@ export const RequestFriends: FC<IMyFriends> = ({
 	const { handleModalVisible, modalVisible, userDataForModal } = useModalState()
 	return (
 		<View className='mt-7'>
-			<BottomDrawer
-				openOnMount
+			<CustomFriendModal
+				modalVisible={modalVisible}
+				setModalVisible={() =>
+					handleModalVisible('', '', '' as '0' | '1' | '2' | '3')
+				}
+				userData={userDataForModal}
+			/>
+			<BottomDrawer	
 				ref={bottomDrawerRef}
 				initialHeight={screenHeight - 120}
 				customStyles={{ container: { backgroundColor: 'rgb(24 24 27)' } }}
@@ -118,9 +124,9 @@ export const RequestFriends: FC<IMyFriends> = ({
 					/>
 				</TouchableOpacity>
 			</View>
-			{friendsStatus1 && friendsStatus1.length > 0 ? (
+			{friendsStatus2 && friendsStatus2.length > 0 ? (
 				<View>
-					{friendsStatus1.map((friend, key) => {
+					{friendsStatus2.map((friend, key) => {
 						return (
 							<FriendItem
 								styles={'mb-4 p-0 bg-transparent'}
@@ -130,26 +136,12 @@ export const RequestFriends: FC<IMyFriends> = ({
 									<FriendBody name={friend.firstName} login={friend.email} />
 								}
 								buttons={
-									<HandleFriendButton
+									<ButtonGroup
+										handleModalVisible={() =>
+											handleModalVisible(friend.firstName, friend._id, '1')
+										}
 										id={friend._id}
-										loading
-										status='2'
-										title='add'
 									/>
-									// <ButtonGroup
-									// 	deleteFriend={() =>
-									// 		addFriend.mutate({
-									// 			friendId: friend._id,
-									// 			status: '0'
-									// 		})
-									// 	}
-									// 	addFriend={() =>
-									// 		addFriend.mutate({
-									// 			friendId: friend._id,
-									// 			status: '3'
-									// 		})
-									// 	}
-									// />
 								}
 								key={key}
 							/>
@@ -175,21 +167,19 @@ const FriendBody: FC<IFriendBody> = ({ name, login }) => (
 )
 
 interface IButtonGroup {
-	deleteFriend: () => void
-	addFriend: () => void
+	id: string
+	handleModalVisible: () => void
 }
-const ButtonGroup: FC<IButtonGroup> = ({ deleteFriend, addFriend }) => {
+const ButtonGroup: FC<IButtonGroup> = ({ handleModalVisible, id }) => {
 	return (
 		<View className='flex-row'>
-			<TouchableOpacity
-				onPress={addFriend}
-				className='bg-stone-800 w-16 flex justify-center rounded-2xl h-8 mr-2'
-			>
-				<Text className='text-white text-center uppercase font-bold'>add</Text>
-			</TouchableOpacity>
-			<TouchableOpacity onPress={deleteFriend}>
-				<Entypo name='cross' size={28} color='white' />
-			</TouchableOpacity>
+			<View className='mr-4'>
+				<HandleFriendButton id={id} loading status='3' title='Add friend' />
+			</View>
+			<ModalButton
+				setModalVisible={() => handleModalVisible()}
+				text='Cancel the request'
+			/>
 		</View>
 	)
 }
