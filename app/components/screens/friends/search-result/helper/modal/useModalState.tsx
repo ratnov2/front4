@@ -16,5 +16,6 @@ export const useModalState = () => {
 		setUserDataForModal({ ...newUserData })
 		setModalVisible(!modalVisible)
 	}
+	
 	return { modalVisible, handleModalVisible, userDataForModal }
 }

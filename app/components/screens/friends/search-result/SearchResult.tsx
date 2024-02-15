@@ -7,9 +7,9 @@ import { useNavigation } from '@react-navigation/native'
 import { useSearchingFriends } from '../useSearchingFriends'
 import { useAuth } from '@/hooks/useAuth'
 import { RenderButton } from './helper/render-button/RenderButton'
-import { CustomFriendModal } from './helper/modal/CustomFriendModal'
 import { NotFoundUser } from './helper/ui/NotFoundUser'
 import { useModalState } from './helper/modal/useModalState'
+import { WithCustomFriendModal } from './helper/modal/WithCustomFriendModal'
 
 export const FriendsSearchResult = () => {
 	const { user } = useAuth()
@@ -21,7 +21,7 @@ export const FriendsSearchResult = () => {
 
 	return (
 		<View className='flex-1 w-full z-[20] rounded-xl p-4 mt-6'>
-			<CustomFriendModal
+			<WithCustomFriendModal
 				modalVisible={modalVisible}
 				setModalVisible={() =>
 					handleModalVisible('', '', '' as '0' | '1' | '2' | '3')

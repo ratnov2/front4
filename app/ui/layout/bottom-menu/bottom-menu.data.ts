@@ -20,5 +20,9 @@ export const menuItems: IMenuItem[] = [
 	{
 		iconName: 'align-justify',
 		path: 'Profile'
+	},
+	{
+		iconName: 'align-justify',
+		path: 'Settings'
 	}
 ]

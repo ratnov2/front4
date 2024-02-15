@@ -1,15 +1,12 @@
-import { ReactNode } from "react"
-import { TouchableOpacityProps } from "react-native"
+import { ReactNode } from 'react'
+import { TouchableOpacityProps } from 'react-native'
 
 export interface ICustomFriendModal {
 	modalVisible: boolean
 	setModalVisible: (bool: boolean) => void
-	userData: {
-		username: string
-		friendId: string
-		status: '0' | '1' | '2' | '3'
-	}
-	
+	text: { title1: string; title2?: string }
+	isLoading?: boolean
+	onConfirm: () => void
 }
 
 export interface IStyledButton extends TouchableOpacityProps {

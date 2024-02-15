@@ -17,9 +17,9 @@ import BottomDrawer, {
 	BottomDrawerMethods
 } from '@/ui/bottom-driwer/bottomDrawer'
 import { HandleFriendButton } from './search-result/helper/render-button/HandleFriendButton'
-import { CustomFriendModal } from './search-result/helper/modal/CustomFriendModal'
 import { useModalState } from './search-result/helper/modal/useModalState'
 import { ModalButton } from './search-result/helper/modal/ModalButton'
+import { WithCustomFriendModal } from './search-result/helper/modal/WithCustomFriendModal'
 
 interface IMyFriends {
 	friendsStatus1: IProfile[]
@@ -45,7 +45,7 @@ export const RequestFriends: FC<IMyFriends> = ({
 	const { handleModalVisible, modalVisible, userDataForModal } = useModalState()
 	return (
 		<View className='mt-7'>
-			<CustomFriendModal
+			<WithCustomFriendModal
 				modalVisible={modalVisible}
 				setModalVisible={() =>
 					handleModalVisible('', '', '' as '0' | '1' | '2' | '3')
@@ -67,7 +67,7 @@ export const RequestFriends: FC<IMyFriends> = ({
 				}
 			>
 				<View className='flex-1'>
-					<CustomFriendModal
+					<WithCustomFriendModal
 						modalVisible={modalVisible}
 						setModalVisible={() =>
 							handleModalVisible('', '', '' as '0' | '1' | '2' | '3')

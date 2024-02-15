@@ -15,9 +15,10 @@ import { FC } from 'react'
 import { Icon } from '@expo/vector-icons/build/createIconSet'
 import { useNavigation } from '@react-navigation/native'
 import { AuthService } from '@/services/auth/auth.service'
-import { CustomFriendModal } from '../friends/search-result/helper/modal/CustomFriendModal'
 import { useModalState } from '../friends/search-result/helper/modal/useModalState'
 import { ModalButton } from '../friends/search-result/helper/modal/ModalButton'
+import { WithCustomFriendModal } from '../friends/search-result/helper/modal/WithCustomFriendModal'
+import { WithCustomLogoutModal } from './ui/WithCustomLogoutBotton/WithCustomLogoutBotton'
 
 export const Settings = () => {
 	const { user, setUser } = useAuth()
@@ -29,10 +30,9 @@ export const Settings = () => {
 	const { handleModalVisible, modalVisible, userDataForModal } = useModalState()
 	return (
 		<View className='flex-1 relative'>
-			<CustomFriendModal
+			<WithCustomLogoutModal
 				modalVisible={modalVisible}
 				setModalVisible={() => handleModalVisible('', '', '' as any)}
-				userData={userDataForModal}
 			/>
 			<View
 				className='absolute flex-row'
@@ -101,14 +101,6 @@ export const Settings = () => {
 						setModalVisible={() => handleModalVisible('', '', 'logout' as any)}
 						text='Logout'
 					/>
-					{/* <TouchableOpacity
-						onPress={() => AuthService.logout().then(() => setUser(null))}
-						className='mt-8 items-center flex-row justify-center bg-zinc-800 rounded-2xl p-3'
-					>
-						<Text className='text-red-500 text-2xl font-medium ml-2'>
-							Logout
-						</Text>
-					</TouchableOpacity> */}
 				</ScrollView>
 			)}
 		</View>

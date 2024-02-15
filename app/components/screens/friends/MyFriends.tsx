@@ -5,9 +5,10 @@ import { Text, View } from 'react-native'
 import { FriendItem } from './ui/friend-item'
 import { NoFriend } from './ui/NoFriends'
 import { IProfile } from '@/shared/types/profile.interface'
-import { CustomFriendModal } from './search-result/helper/modal/CustomFriendModal'
+
 import { useModalState } from './search-result/helper/modal/useModalState'
 import { ModalButton } from './search-result/helper/modal/ModalButton'
+import { WithCustomFriendModal } from './search-result/helper/modal/WithCustomFriendModal'
 
 interface IMyFriends {
 	friends: IProfile[]
@@ -18,7 +19,7 @@ export const MyFriends: FC<IMyFriends> = ({ friends }) => {
 
 	return (
 		<View className='mt-7'>
-			<CustomFriendModal
+			<WithCustomFriendModal
 				modalVisible={modalVisible}
 				setModalVisible={() =>
 					handleModalVisible('', '', '' as '0' | '1' | '2' | '3')
