@@ -4,17 +4,24 @@ import { Image, Text, View } from 'react-native'
 
 interface IFriendItem {
 	avatar?: string
+	avatarType?: 'small' | 'big'
 	name: string
 	body: React.ReactElement
-	buttons: React.ReactElement | null
+	buttons?: React.ReactElement | null
 	styles?: string
+}
+
+const avatarTypeStyle = {
+	small: 'w-14 h-14',
+	big: 'w-16 h-16'
 }
 
 export const FriendItem: FC<IFriendItem> = ({
 	avatar,
 	name,
 	body,
-	buttons,
+	avatarType = 'small',
+	buttons = null,
 	styles = ''
 }) => {
 	const [isErrorAvatar, setIsErrorAvatar] = useState(false)
@@ -25,12 +32,14 @@ export const FriendItem: FC<IFriendItem> = ({
 			<View>
 				{avatar && !isErrorAvatar ? (
 					<Image
-						className={`w-14 h-14 `}
+						className={avatarTypeStyle[avatarType]}
 						source={{ uri: avatar }}
 						onError={e => setIsErrorAvatar(true)}
 					/>
 				) : (
-					<View className='bg-red-600 w-12 h-12 rounded-full flex-row justify-center items-center'>
+					<View
+						className={`bg-red-600 w-12 h-12 rounded-full flex-row justify-center items-center ${avatarTypeStyle[avatarType]}`}
+					>
 						<Text className='text-white font-bold text-xl uppercase'>
 							{name[0] || 'A'}
 						</Text>

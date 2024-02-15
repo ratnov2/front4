@@ -15,6 +15,7 @@ export type TypeRootStackParamList = {
 	Friends: undefined
 	Screen404: undefined
 	Calendar: undefined
+	Settings:undefined
 	Home2: undefined
 	Home3: undefined
 	Home4: undefined

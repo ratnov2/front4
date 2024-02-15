@@ -22,10 +22,11 @@ const Navigation: FC = () => {
 		const listener = navRef.addListener('state', () =>
 			setCurrentRoute(navRef.getCurrentRoute()?.name)
 		)
-
 		return () => {
 			navRef.removeListener('state', listener)
 		}
+		
+		
 	}, [])
 
 	useCheckAuth(currentRoute)

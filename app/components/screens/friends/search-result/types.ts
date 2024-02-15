@@ -9,6 +9,7 @@ export interface ICustomFriendModal {
 		friendId: string
 		status: '0' | '1' | '2' | '3'
 	}
+	
 }
 
 export interface IStyledButton extends TouchableOpacityProps {

@@ -8,21 +8,22 @@ import { StyledButton } from '../../StyledButton'
 export const CustomFriendModal: FC<ICustomFriendModal> = ({
 	modalVisible,
 	setModalVisible,
-	userData
+	userData,
+	isLoading,
+	onConfirm
 }) => {
-	if (userData.status === '2') return
-	const { addFriend, isLoading, setIsLoading } = useMutateAddFriend(
-		userData.friendId,
-		userData.status
-	)
-	const handleAddFriend = () => {
-		setIsLoading(true)
-		addFriend.mutate({
-			friendId: userData.friendId,
-			status: '0'
-		})
-		setModalVisible(false)
-	}
+	// const { addFriend, isLoading, setIsLoading } = useMutateAddFriend(
+	// 	userData.friendId,
+	// 	userData.status
+	// )
+	// const handleAddFriend = () => {
+	// 	setIsLoading(true)
+	// 	addFriend.mutate({
+	// 		friendId: userData.friendId,
+	// 		status: '0'
+	// 	})
+	// 	setModalVisible(false)
+	// }
 
 	const returnTextByStatus = {
 		'1': {
@@ -35,6 +36,10 @@ export const CustomFriendModal: FC<ICustomFriendModal> = ({
 		'0': {
 			title1: `Вы уверены, что хотите удалить пользователя ${userData.username} из списка ваших друзей?`,
 			title2: `Вы больше не сможете видеть запись ${userData.username} BePrime, а ваша больше не будет видна.`
+		},
+		'2': { title1: '' },
+		logout: {
+			title1: 'Log out'
 		}
 	}
 	return (
@@ -66,11 +71,12 @@ export const CustomFriendModal: FC<ICustomFriendModal> = ({
 					<Text className='text-white font-bold text-xl text-center'>
 						{returnTextByStatus[userData.status]?.title1}
 					</Text>
-					{userData.status === '3' || userData.status === '0' && (
-						<Text className='mt-2 text-white text-lg text-center'>
-							{returnTextByStatus[userData.status]?.title2}
-						</Text>
-					)}
+					{userData.status === '3' ||
+						(userData.status === '0' && (
+							<Text className='mt-2 text-white text-lg text-center'>
+								{returnTextByStatus[userData.status]?.title2}
+							</Text>
+						))}
 					<View className='flex-row justify-center mt-5'>
 						<View className='flex-1 mr-6'>
 							<StyledButton

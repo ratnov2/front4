@@ -5,7 +5,7 @@ import { Image, Pressable, Text, View } from 'react-native'
 import { FontAwesome } from '@expo/vector-icons'
 import { Entypo } from '@expo/vector-icons'
 import { IProfile } from '@/shared/types/profile.interface'
-import { useNavigation } from '@react-navigation/native'
+import { Link, useNavigation } from '@react-navigation/native'
 
 interface IProfileHeader {
 	user: UseQueryResult<IProfile, unknown>
@@ -18,7 +18,9 @@ export const ProfileHeader: FC<IProfileHeader> = ({ user }) => {
 				<FontAwesome name='long-arrow-left' size={24} color='white' />
 			</Pressable>
 			<Text className='text-white '>{user.data?.email}</Text>
-			<Entypo name='dots-three-vertical' size={24} color='white' />
+			<Link to={'/Settings'}>
+				<Entypo name='dots-three-vertical' size={24} color='white' />
+			</Link>
 		</View>
 	)
 }
