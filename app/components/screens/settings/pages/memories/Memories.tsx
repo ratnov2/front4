@@ -1,10 +1,23 @@
-import { Text, TouchableOpacity, View } from 'react-native'
+import { TypeRootStackParamList } from '@/navigation/navigation.types'
+import { LayoutLight } from '@/navigation/ui/LayoutLight'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { FC } from 'react'
+import { Pressable, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-export const Memories = () => {
+type IMemories = NativeStackScreenProps<
+	TypeRootStackParamList,
+	'Memories_settings'
+>
+
+export const Memories: FC<IMemories> = ({ navigation }) => {
 	const insets = useSafeAreaInsets()
+
 	return (
-		<View style={{ marginTop: insets.top + 50 }} className='mx-2 '>
+		<LayoutLight
+			onGoBack={() => navigation.navigate('Settings')}
+			title='Memories'
+		>
 			<Text className='text-white text-2xl font-bold'>
 				Your Memories are activated
 			</Text>
@@ -27,6 +40,6 @@ export const Memories = () => {
 					</Text>
 				</TouchableOpacity>
 			</View>
-		</View>
+		</LayoutLight>
 	)
 }

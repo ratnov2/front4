@@ -93,7 +93,7 @@ export const Comments = () => {
 		outputRange: [1, 1], // Равномерное увеличение в 2 раза
 		extrapolate: 'clamp'
 	})
-	
+
 	const imageScale2 = scrollY.interpolate({
 		inputRange: [0, 300],
 		outputRange: [1, 0.5], // Равномерное увеличение в 2 раза
@@ -189,7 +189,7 @@ export const Comments = () => {
 							maxWidth: '95%',
 							maxHeight: '95%',
 							aspectRatio: 16 / 9, // Пример соотношения сторон, замените на ваше
-							marginTop: 10,
+							marginTop: 10
 						}}
 					>
 						<Animated.Image

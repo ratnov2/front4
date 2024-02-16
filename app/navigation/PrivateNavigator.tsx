@@ -1,11 +1,15 @@
 import { useAuth } from '@/hooks/useAuth'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { FC } from 'react'
-import { View, Text } from 'react-native'
 import { TypeRootStackParamList } from './navigation.types'
-import { routes, userRoutes } from './user.routes'
-import Screen404 from '@/components/screens/system/Screen404'
+import { routes } from './user.routes'
 import Auth from '@/components/screens/auth/Auth'
+import { Settings } from '@/components/screens/settings/Settings'
+import Home from '@/components/screens/home/Home'
+import { Friends } from '@/components/screens/friends/Friends'
+import Profile from '@/components/screens/profile/Profile'
+import { EditProfile } from '@/components/screens/edit-profile/EditProfile'
+import { Memories } from '@/components/screens/settings/pages/memories/Memories'
 
 const Stack = createNativeStackNavigator<TypeRootStackParamList>()
 
@@ -13,12 +17,20 @@ const PrivateNavigator: FC = () => {
 	const { user } = useAuth()
 	function Root() {
 		return (
-		  <Stack.Navigator>
-			{/* <Stack.Screen name="Profile" component={Profile} /> */}
-			{/* <Stack.Screen name="Settings" component={Settings} /> */}
-		  </Stack.Navigator>
-		);
-	  }
+			<Stack.Navigator>
+				{/* <Stack.Screen name="Profile" component={Profile} /> */}
+				<Stack.Screen name='Settings' component={Settings} />
+				<Stack.Screen name='Home' component={Home} />
+				<Stack.Screen name='Friends' component={Friends} />
+				<Stack.Screen name='Profile' component={Profile} />
+				<Stack.Screen name='EditProfile' component={EditProfile} />
+				<Stack.Screen name='Memories_settings' component={Memories} />
+				{/* <Stack.Screen name='Settings' component={Settings} />
+				<Stack.Screen name='Settings' component={Settings} />
+				<Stack.Screen name='Settings' component={Settings} /> */}
+			</Stack.Navigator>
+		)
+	}
 	return (
 		<Stack.Navigator
 			screenOptions={{

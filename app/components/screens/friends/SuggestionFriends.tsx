@@ -12,7 +12,7 @@ export const SuggestionFriends = () => {
 	const [contactUsers, setContactUsers] = useState(contact)
 
 	useEffect(() => {
-		;(async () => {
+		(async () => {
 			const { status } = await Contacts.requestPermissionsAsync()
 			if (status === 'granted') {
 				const { data } = await Contacts.getContactsAsync({

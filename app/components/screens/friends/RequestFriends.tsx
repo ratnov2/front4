@@ -30,11 +30,6 @@ export const RequestFriends: FC<IMyFriends> = ({
 	friendsStatus1,
 	friendsStatus2
 }) => {
-	const addFriend = useMutation(
-		['add-friend'],
-		(data: { friendId: string; status: '0' | '1' | '2' | '3' }) =>
-			FriendsService.addFriend(data)
-	)
 	const screenHeight = Dimensions.get('window').height
 	const bottomDrawerRef = useRef<BottomDrawerMethods>(null)
 	const openDrawer = () => {

@@ -1,3 +1,4 @@
+import { NavigatorScreenParams } from '@react-navigation/native'
 import { ComponentType } from 'react'
 
 export interface IRoute {
@@ -8,22 +9,39 @@ export interface IRoute {
 
 export type TypeRootStackParamList = {
 	Auth: undefined
+	Help: undefined
 	Home: undefined
+	Other: undefined
+	TimeZone: undefined
 	EditProfile: undefined
 	Notifications: undefined
 	Privacy: undefined
-	Comments: string
+	About: undefined
+	Comments: undefined
 	CalendarTask: undefined
 	Friends: undefined
 	Screen404: undefined
 	Calendar: undefined
 	Settings: undefined
 	Memories_settings: undefined
-	Home2: undefined
-	Home3: undefined
-	Home4: undefined
 	Profile: undefined
 } & TypeRootStackAdminList
+
+export type RootStackParamList = {
+	Home: NavigatorScreenParams<TypeRootStackParamList>
+	Help: NavigatorScreenParams<TypeRootStackParamList>
+	EditProfile: NavigatorScreenParams<TypeRootStackParamList>
+	Privacy: NavigatorScreenParams<TypeRootStackParamList>
+	Comments: NavigatorScreenParams<TypeRootStackParamList>
+	CalendarTask: NavigatorScreenParams<TypeRootStackParamList>
+	Friends: NavigatorScreenParams<TypeRootStackParamList>
+	Screen404: NavigatorScreenParams<TypeRootStackParamList>
+	Calendar: NavigatorScreenParams<TypeRootStackParamList>
+	Notifications: NavigatorScreenParams<TypeRootStackParamList>
+	Settings: NavigatorScreenParams<TypeRootStackParamList>
+	Memories_settings: NavigatorScreenParams<TypeRootStackParamList>
+	Profile: NavigatorScreenParams<TypeRootStackParamList>
+}
 
 type TypeRootStackAdminList = {
 	Admin: undefined

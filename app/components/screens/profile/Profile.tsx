@@ -12,8 +12,12 @@ import { useRoute } from '@react-navigation/native'
 import { OtherUserProfile } from './other-user/OtherUserProfile'
 import { FriendsService } from '@/services/friends/friends.service'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { TypeRootStackParamList } from '@/navigation/navigation.types'
 
-const Profile: FC = () => {
+type IProfile = NativeStackScreenProps<TypeRootStackParamList, 'Profile'>
+
+const Profile: FC<IProfile> = ({ navigation }) => {
 	const { user } = useAuth()
 	const { setUser } = useAuth()
 	let { params } = useRoute()
@@ -24,7 +28,11 @@ const Profile: FC = () => {
 		<View>
 			{user && (
 				<View style={{ marginTop: insets.top }} className='relativ '>
-					<ProfileHeader user={getUser} />
+					{/* <Pressable
+						className='w-40 h-40 bg-white'
+						onPress={() => navigation.navigate('Settings')}
+					></Pressable> */}
+					<ProfileHeader user={getUser} navigation={navigation} />
 					<ScrollView className='h-full'>
 						{(params as { id: string })?.id !== user._id &&
 						(params as { id: string })?.id ? (
