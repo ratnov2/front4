@@ -1,27 +1,17 @@
-import {
-	Image,
-	Pressable,
-	ScrollView,
-	Text,
-	TouchableOpacity,
-	View
-} from 'react-native'
+import { Pressable, ScrollView, Text, View } from 'react-native'
 import { FriendItem } from '../friends/ui/friend-item'
 import { useAuth } from '@/hooks/useAuth'
 import { FriendBody } from '../friends/SuggestionFriends'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { EvilIcons, FontAwesome, Ionicons } from '@expo/vector-icons'
 import { FC } from 'react'
-import { Icon } from '@expo/vector-icons/build/createIconSet'
 import { useNavigation } from '@react-navigation/native'
-import { AuthService } from '@/services/auth/auth.service'
 import { useModalState } from '../friends/search-result/helper/modal/useModalState'
 import { ModalButton } from '../friends/search-result/helper/modal/ModalButton'
-import { WithCustomFriendModal } from '../friends/search-result/helper/modal/WithCustomFriendModal'
-import { WithCustomLogoutModal } from './ui/WithCustomLogoutBotton/WithCustomLogoutBotton'
+import { WithCustomLogoutModal } from './ui/with-custom-logout-botton/WithCustomLogoutModal'
 
 export const Settings = () => {
-	const { user, setUser } = useAuth()
+	const { user } = useAuth()
 	const insets = useSafeAreaInsets()
 	const navigate = useNavigation()
 	const handleCardPress = (id: string) => {
@@ -137,8 +127,8 @@ const CardComponent: FC<ICardComponent> = ({
 }
 const featureComponents = [
 	{
-		id: 'like',
-		text: 'Like'
+		id: 'memories',
+		text: 'Memories'
 	}
 ]
 const StyleRounded = {
@@ -153,7 +143,7 @@ const settingsComponents = [
 		text: 'Notifications'
 	},
 	{
-		id: 'Privacy',
+		id: 'privacy',
 		text: 'Privacy'
 	},
 	{

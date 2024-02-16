@@ -9,12 +9,28 @@ import { EditProfile } from '@/components/screens/edit-profile/EditProfile'
 import { Friends } from '@/components/screens/friends/Friends'
 import { Comments } from '@/components/screens/comments/Comments'
 import { Settings } from '@/components/screens/settings/Settings'
+import { Memories } from '@/components/screens/settings/pages/memories/Memories'
+import { Notifications } from '@/components/screens/settings/pages/notifications/Notifications'
+import { Privacy } from '@/components/screens/settings/pages/privacy/Privacy'
 
 export const userRoutes: IRoute[] = [
+	{
+		name: 'Privacy',
+		component: Privacy
+	},
+	{
+		name: 'Notifications',
+		component: Notifications
+	},
+	{
+		name: 'Memories_settings',
+		component: Memories
+	},
 	{
 		name: 'Settings',
 		component: Settings
 	},
+
 	{
 		name: 'Friends',
 		component: Friends
