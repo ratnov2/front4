@@ -74,6 +74,7 @@ export const Settings: FC<ISettings> = ({ navigation }) => {
 								/>
 							</View>
 							<View>
+								<HeaderCardComponent text='Features' />
 								{featureComponents.map((item, index) => (
 									<CardComponent
 										icon={item.icon}
@@ -86,7 +87,8 @@ export const Settings: FC<ISettings> = ({ navigation }) => {
 										)}
 									/>
 								))}
-								<View className='mt-4' />
+								<HeaderCardComponent text='Settings' />
+
 								{settingsComponents.map((item, index) => (
 									<CardComponent
 										icon={item.icon}
@@ -99,7 +101,7 @@ export const Settings: FC<ISettings> = ({ navigation }) => {
 										)}
 									/>
 								))}
-								<View className='mt-4' />
+								<HeaderCardComponent text='About' />
 								{aboutComponents.map((item, index) => (
 									<CardComponent
 										icon={item.icon}
@@ -117,8 +119,12 @@ export const Settings: FC<ISettings> = ({ navigation }) => {
 								setModalVisible={() =>
 									handleModalVisible('', '', 'logout' as any)
 								}
-								text='Logout'
-							/>
+								style='bg-zinc-800 p-4 rounded-xl mt-8'
+							>
+								<Text className='text-center text-red-500 font-bold text-lg'>
+									Log out
+								</Text>
+							</ModalButton>
 						</View>
 					</LayoutLightOpacity>
 				)}
@@ -126,6 +132,11 @@ export const Settings: FC<ISettings> = ({ navigation }) => {
 		</View>
 	)
 }
+
+const HeaderCardComponent: FC<{ text: string }> = ({ text }) => (
+	<Text className='text-zinc-500 font-bold text-lg uppercase my-3'>{text}</Text>
+)
+
 type KeysOfCard =
 	| 'notifications'
 	| 'privacy'

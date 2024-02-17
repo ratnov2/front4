@@ -17,11 +17,11 @@ export const LayoutLightOpacity: FC<ILayoutLight> = ({
 	title
 }) => {
 	const insets = useSafeAreaInsets()
-
 	return (
-		<View className='flex-1 relative px-2'>
+		<View className='flex-1 relative'>
 			<ScrollView style={{ paddingTop: insets.top + 40 }} className='flex-1'>
 				{children}
+				<View style={{ height: insets.bottom + 150 }} />
 			</ScrollView>
 			<LinearGradient
 				colors={['#00000000', '#111111']}

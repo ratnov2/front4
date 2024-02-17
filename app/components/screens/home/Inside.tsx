@@ -1,4 +1,10 @@
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import {
+	Pressable,
+	ScrollView,
+	Text,
+	TouchableOpacity,
+	View
+} from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { ProfileService } from '@/services/profile/profile.service'
@@ -13,6 +19,7 @@ import { ElementPhoto } from './element-photo/ElementPhoto'
 import DismissKeyboard from '@/ui/form-elements/field/DismissKeyboard'
 import { Feather } from '@expo/vector-icons'
 import { LinearGradient } from 'expo-linear-gradient'
+import { useNavigation } from '@react-navigation/native'
 
 const IsTiming = (date: Date) => {
 	const current = new Date()
@@ -38,6 +45,7 @@ const IsTiming = (date: Date) => {
 }
 
 export const Inside = () => {
+	const { navigate } = useNavigation<any>()
 	const insets = useSafeAreaInsets()
 	const latestPhoto = useQuery(['get-latest-photo'], () =>
 		ProfileService.getLatestPhotos()
@@ -116,6 +124,9 @@ export const Inside = () => {
 					}}
 				>
 					<Text className='text-white text-2xl font-bold'>BePrime</Text>
+					<Pressable onPress={() => navigate('Profile')}>
+						<Text className='text-white'>Profile</Text>
+					</Pressable>
 				</View>
 			)}
 			{/* <CameraExpo /> */}

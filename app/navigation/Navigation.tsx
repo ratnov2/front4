@@ -37,9 +37,9 @@ const Navigation: FC = () => {
 				<PrivateNavigator />
 			</NavigationContainer>
 
-			{user && currentRoute && (
+			{/* {user && currentRoute && (
 				<BottomMenu nav={navRef.navigate} currentRoute={currentRoute} />
-			)}
+			)} */}
 		</>
 	)
 }
