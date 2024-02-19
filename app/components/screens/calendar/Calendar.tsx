@@ -25,7 +25,7 @@ export const Calendar = () => {
 	return (
 		<LayoutLightOpacity
 			title='Your Memories'
-			onGoBack={() => navigate.navigate('Profile')}
+			onGoBack={() => navigate('Profile')}
 			padding='px-2'
 		>
 			<Modal
@@ -138,7 +138,7 @@ export const Calendar = () => {
 													className='w-[40px] h-[50px] flex items-center justify-center rounded-lg '
 												>
 													{el.photo ? (
-														<View className='border-[1px] rounded-lg  border-white'>
+														<View className='border-[1px] rounded-lg border-white'>
 															<Pressable
 																onPress={() => {
 																	setModalImg(BaseImageUrl2(el.photo))
