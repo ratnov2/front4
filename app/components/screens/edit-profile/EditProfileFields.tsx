@@ -8,32 +8,37 @@ import { TypeEditProfile } from '@/services/profile/profile.service'
 export interface IEditProfileFields {
 	control: Control<TypeEditProfile> | any
 	isPassRequired?: boolean
+	isLoading: boolean
 }
 
 const EditProfileFields: FC<IEditProfileFields> = ({
 	control,
+	isLoading,
 	isPassRequired
 }) => {
 	return (
 		<>
 			<View className='mt-3'>
-				<Text className='text-white'>Введите ваше имя</Text>
+				<Text className='text-white text-xl'>Введите ваше имя</Text>
 				<Field<TypeEditProfile>
 					control={control}
 					name='firstName'
 					placeholder='Enter firstName'
+					isLoading={isLoading}
+					// isLoading={false}
 					// rules={{
 					// 	required: 'firstName',
 					// }}
 					keyboardType='default'
 				/>
 			</View>
-			<Text className='text-white'>Введите вашу фамилию</Text>
+			<Text className='text-white  text-xl'>Введите вашу фамилию</Text>
 			<Field<TypeEditProfile>
 				control={control}
 				name='lastName'
 				placeholder='Enter lastName'
-				secureTextEntry
+				isLoading={isLoading}
+				// secureTextEntry
 				// rules={{
 				// 	required: 'Password is required',
 				// }}

@@ -77,13 +77,14 @@ export type TypeEditProfile = {
 	firtsName: string
 	lastName: string
 	avatar: string
+	isLoading: boolean
 }
 
 export type IPost = {
 	_id: string
 	avatar: string
 	message: string
-	created:string
-	email:string
-	firstName:string
+	created: string
+	email: string
+	firstName: string
 }

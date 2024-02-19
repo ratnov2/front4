@@ -14,12 +14,13 @@ import {
 	Text,
 	View
 } from 'react-native'
-import { BaseImageUrl } from '@/services/api/interceptors.api'
+import { BaseImageUrl, BaseImageUrl2 } from '@/services/api/interceptors.api'
 import { Camera, CameraType } from 'expo-camera'
+import { LayoutLightOpacity } from '@/navigation/ui/LayoutLightOpacity'
 
 export const CalendarTask = () => {
 	const user = useQuery(['get-user-profile'], () => ProfileService.getProfile()) //@TASK
-	const navigate = useNavigation()
+	const navigate = useNavigation<any>()
 	let { params } = useRoute()
 	const updateFavoritePhoto = useMutation(
 		['update-favorite-photo-calendar'],
@@ -39,10 +40,11 @@ export const CalendarTask = () => {
 	const [modalImg, setModalImg] = useState('')
 
 	return (
-		<ScrollView className='mt-20 mx-5'>
-			<View className='mx-auto mb-10'>
-				<Text className='text-white font-bold text-3xl'>Pin photo</Text>
-			</View>
+		<LayoutLightOpacity
+			title='Pin Photo'
+			onGoBack={() => navigate.navigate('Profile')}
+			padding='px-2'
+		>
 			<Modal
 				animationType='slide'
 				transparent={true}
@@ -98,34 +100,34 @@ export const CalendarTask = () => {
 						const calendarPhotos = user.data.calendarPhotos
 						let date = new Date()
 						let beginDate = new Date(user.data.createdAt)
-						//begin[2] = '1'
-						//console.log(begin)
 
 						let getUserDate = new Date(
-							user.data.calendarPhotos[
-								user.data.calendarPhotos.length - 1
-							]?.created
+							user.data.calendarPhotos[user.data.calendarPhotos.length - 1]
+								?.created
 						)
 						const lateYear = getUserDate?.getFullYear()
 						const lateMonth = getUserDate?.getMonth()
 						const lateDay = getUserDate?.getDate()
-						//let beginDate = new Date(begin.join('-'))
 						let endDate = new Date(+lateYear, +lateMonth + 1, 1)
 
 						let i = 0
 						let k = 0
-
+						beginDate.setDate(1)
 						let dateMassive = []
 						while (
 							beginDate.getFullYear() < endDate.getFullYear() ||
 							beginDate.getMonth() < endDate.getMonth()
 						) {
-							let obj: { month: string; array: (number | string)[] } = {
+							let obj: {
+								month: string
+								array: { day: number; photo: string }[]
+							} = {
 								month: '',
 								array: []
 							}
 							let days = daysInMonth(beginDate)
 							let beginWhile = 1
+
 							while (beginWhile <= days) {
 								const calDPh = new Date(calendarPhotos[k]?.created)
 								const crYear = calDPh.getFullYear()
@@ -141,25 +143,31 @@ export const CalendarTask = () => {
 									beginDate.getMonth() === crMonth &&
 									beginDate.getFullYear() === crYear
 								) {
-									obj.array.push(
-										`${
+									let newObj = {
+										photo: `${
 											calendarPhotos[k].photos.frontPhoto?.photo ||
 											calendarPhotos[k].photos.backPhoto?.photo
-										}`
-									)
+										}`,
+										day: beginDate.getDate()
+									}
+									obj.array.push(newObj)
 									k++
 								} else {
-									obj.array.push(beginDate.getDate())
+									let newObj = {
+										photo: '',
+										day: beginDate.getDate()
+									}
+									obj.array.push(newObj)
 								}
 
 								beginWhile++
 								beginDate.setDate(beginDate.getDate() + 1)
 							}
-
 							dateMassive.push(obj)
 
 							i++
 						}
+						//console.log(dateMassive);
 
 						return dateMassive.map((el, key) => {
 							return (
@@ -169,18 +177,18 @@ export const CalendarTask = () => {
 											{el.month}
 										</Text>
 									</View>
-									<View className='flex-row flex-wrap justify-center'>
+									<View className='flex-row flex-wrap justify-around'>
 										{el.array.map((el, key) => {
 											return (
 												<View
 													key={key}
 													className='w-[40px] h-[50px] flex items-center justify-center rounded-lg '
 												>
-													{String(el) === el ? (
+													{el.photo ? (
 														<View className='border-[1px] rounded-lg  border-white'>
 															<Pressable
 																onPress={() => {
-																	setModalImg(el)
+																	setModalImg(el.photo)
 																	setModalVisible(true)
 																}}
 															>
@@ -189,14 +197,16 @@ export const CalendarTask = () => {
 																	height={50}
 																	className='rounded-lg'
 																	source={{
-																		uri: `${BaseImageUrl}${el}`
+																		uri: BaseImageUrl2(el.photo)
 																	}}
 																/>
-																<Text className='absolute text-white'>ef</Text>
+																<Text className='absolute left-3 top-4 text-white'>
+																	{el.day}
+																</Text>
 															</Pressable>
 														</View>
 													) : (
-														<Text className='text-white text-lg'>{el}</Text>
+														<Text className='text-white text-lg'>{el.day}</Text>
 													)}
 												</View>
 											)
@@ -206,7 +216,7 @@ export const CalendarTask = () => {
 							)
 						})
 					})()}
-					
+
 					{/* {user.data?.calendarPhotos.map((el, key) => {
 					const [crYear, crMonth, crDay] = el.created.split('_')
 					if (key === 0) {
@@ -222,7 +232,7 @@ export const CalendarTask = () => {
 				})} */}
 				</View>
 			)}
-		</ScrollView>
+		</LayoutLightOpacity>
 	)
 }
 

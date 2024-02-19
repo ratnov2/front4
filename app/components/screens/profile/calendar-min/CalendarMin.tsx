@@ -4,7 +4,7 @@ import { FC, useState } from 'react'
 import { Image, Modal, Pressable, Text, View } from 'react-native'
 import clsx from 'clsx'
 import { Link } from '@react-navigation/native'
-import { BaseImageUrl } from '@/services/api/interceptors.api'
+import { BaseImageUrl, BaseImageUrl2 } from '@/services/api/interceptors.api'
 import { ILatestPhoto, IPhotos } from '@/shared/types/profile.interface'
 declare global {
 	interface Date {
@@ -22,9 +22,9 @@ export const CalendarMin: FC = () => {
 	addDate.setDate(addDate.getDate() - 14)
 
 	return (
-		<View className='bg-gray-800 rounded-xl p-4 mt-5 '>
+		<View className='bg-zinc-900 rounded-xl p-4 mt-5'>
 			<Modal
-				animationType='slide'
+				animationType='fade'
 				transparent={true}
 				visible={modalVisible}
 				onRequestClose={() => {
@@ -37,7 +37,7 @@ export const CalendarMin: FC = () => {
 							<Image
 								className='w-[100%] h-[90%] rounded-2xl '
 								resizeMode='center'
-								source={{ uri: `${BaseImageUrl}${modalImg}` }}
+								source={{ uri: `${BaseImageUrl2(modalImg)}` }}
 							/>
 						</Pressable>
 					</View>
@@ -60,21 +60,18 @@ export const CalendarMin: FC = () => {
 							const day = date.getDate()
 							const month = date.getMonth()
 							const year = date.getFullYear()
-							// let [year, month, day] = photo[k + 1].calendarPhotos.created.split('-') || [
-							// 	0, 0, 0
-							// ]
 							addDate.setDate(addDate.getDate() + 1)
 							let photoImg: string =
 								photo[k + 1]?.photos.frontPhoto?.photo ||
 								photo[k + 1]?.photos.backPhoto?.photo ||
 								''
-							//console.log(month === addDate.getMonth() && day === addDate.getDate());
 
 							const provPhoto =
 								month === addDate.getMonth() &&
 								day === addDate.getDate() &&
 								year === addDate.getFullYear()
 							if (provPhoto) k++
+
 							return (
 								<View
 									key={key}
@@ -89,12 +86,22 @@ export const CalendarMin: FC = () => {
 												setModalImg(photoImg)
 												setModalVisible(true)
 											}}
-											className='w-full h-full roundex-2xl'
+											className='w-full h-full roundex-2xl relative'
 										>
 											<Image
 												className='w-full h-full rounded-lg'
-												source={{ uri: `${BaseImageUrl}${photoImg}` }}
+												source={{ uri: `${BaseImageUrl2(photoImg)}` }}
 											/>
+											<Text
+												className='text-white absolute text-xl'
+												style={{
+													top: '50%',
+													left: '50%',
+													transform: [{ translateX: -11 }, { translateY: -13 }]
+												}}
+											>
+												{addDate.getDate()}
+											</Text>
 										</Pressable>
 									) : (
 										<View

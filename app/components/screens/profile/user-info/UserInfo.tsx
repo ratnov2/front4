@@ -8,6 +8,7 @@ import { FC } from 'react'
 import { Text, TouchableOpacity, View } from 'react-native'
 // import * as Sharing from 'expo-sharing'
 import { Share } from 'react-native'
+import { UserAvatar } from './UserAvatar'
 interface IUserInfo {
 	user: IProfile
 }
@@ -15,13 +16,7 @@ interface IUserInfo {
 export const UserInfo: FC<IUserInfo> = ({ user }) => {
 	return (
 		<View>
-			<View className='w-20 h-20 rounded-full bg-red-600 flex justify-center items-center color-white'>
-				{/* <Link to={'/Home'} className='bg-red-300'> */}
-				<Text className='text-white uppercase font-bold text-3xl '>
-					{(user.firstName || 'anonym')[0]}
-				</Text>
-				{/* </Link> */}
-			</View>
+			<UserAvatar user={user} />
 			<View className='flex-row justify-between items-center mt-4'>
 				<Link to={'/EditProfile'} className='bg-red-300'>
 					<Text className='text-white text-5xl font-bold'>

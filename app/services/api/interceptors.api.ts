@@ -7,6 +7,8 @@ import { getNewTokens } from './helper.auth'
 export const baseURL = 'http://localhost:4200/api'
 export const BaseImageUrl = 'http://localhost:4200'
 
+export const BaseImageUrl2 = (path: string) => `http://localhost:4200${path}`
+
 const instance = axios.create({
 	//baseURL: API_URL,
 	baseURL,

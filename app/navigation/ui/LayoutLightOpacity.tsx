@@ -5,20 +5,22 @@ import { FC, ReactNode } from 'react'
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-interface ILayoutLight {
+interface LayoutLightOpacity {
 	children: ReactNode
 	onGoBack: () => void
 	title: string
+	padding?: string
 }
 
-export const LayoutLightOpacity: FC<ILayoutLight> = ({
+export const LayoutLightOpacity: FC<LayoutLightOpacity> = ({
 	children,
 	onGoBack,
-	title
+	title,
+	padding = ''
 }) => {
 	const insets = useSafeAreaInsets()
 	return (
-		<View className='flex-1 relative'>
+		<View className={`flex-1 relative ${padding}`}>
 			<ScrollView style={{ paddingTop: insets.top + 40 }} className='flex-1'>
 				{children}
 				<View style={{ height: insets.bottom + 150 }} />
@@ -43,7 +45,8 @@ export const LayoutLightOpacity: FC<ILayoutLight> = ({
 			></LinearGradient>
 			<View
 				style={{ top: insets.top }}
-				className='flex-row items-center absolute'
+				className={`flex-row items-center absolute ${padding}`}
+				
 			>
 				<TouchableOpacity onPress={onGoBack}>
 					<AntDesign name='arrowleft' size={30} color='white' />

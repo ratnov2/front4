@@ -8,9 +8,10 @@ const Field = <T extends Record<string, any>>({
 	control,
 	rules,
 	name,
+	isLoading = false,
 	className,
 	...rest
-}: IField<T>): JSX.Element => {
+}: IField<T> & { isLoading?: boolean }): JSX.Element => {
 	return (
 		<Controller
 			name={name}
@@ -24,7 +25,7 @@ const Field = <T extends Record<string, any>>({
 					<View
 						className={cn(
 							'bg-[#232323] w-full border rounded-lg pb-4 pt-2.5 px-4 my-1.5',
-							error ? 'border-red' : 'border-transparent'
+							error ? 'border-red' : isLoading ? '' : 'border-transparent'
 						)}
 					>
 						<TextInput
@@ -32,8 +33,12 @@ const Field = <T extends Record<string, any>>({
 							onChangeText={onChange}
 							onBlur={onBlur}
 							value={(value || '').toString()}
-							className='text-white text-base'
+							className={cn(
+								`text-white text-base`,
+								isLoading && 'text-white/60'
+							)}
 							{...rest}
+							editable={!isLoading}
 						/>
 					</View>
 					{error && <Text className='text-red-700'>{error.message}</Text>}

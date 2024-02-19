@@ -18,6 +18,10 @@ import { About } from '@/components/screens/settings/pages/About/About'
 
 export const userRoutes: IRoute[] = [
 	{
+		name: 'Profile',
+		component: Profile
+	},
+	{
 		name: 'Privacy',
 		component: Privacy
 	},
@@ -62,10 +66,7 @@ export const userRoutes: IRoute[] = [
 		name: 'EditProfile',
 		component: EditProfile
 	},
-	{
-		name: 'Profile',
-		component: Profile
-	},
+	
 	{
 		name: 'Settings',
 		component: Settings
