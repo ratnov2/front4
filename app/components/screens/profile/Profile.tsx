@@ -8,7 +8,7 @@ import {
 	ScrollView,
 	TouchableOpacity
 } from 'react-native'
-import { ProfileHeader } from './header/Header'
+// import { ProfileHeader } from './header/Header'
 import { MainProfile } from './main/MainProfile'
 import { CalendarMin } from './calendar-min/CalendarMin'
 import { Joined } from './ui/Joined'

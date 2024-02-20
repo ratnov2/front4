@@ -5,7 +5,6 @@ import {
 	Text,
 	View
 } from 'react-native'
-import { ProfileHeader } from '../profile/header/Header'
 import { MainProfile } from '../profile/main/MainProfile'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { UserInfo } from '../profile/user-info/UserInfo'

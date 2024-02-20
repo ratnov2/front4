@@ -1,4 +1,5 @@
 import {
+	Image,
 	Pressable,
 	ScrollView,
 	Text,
@@ -17,9 +18,11 @@ import { FilesService } from '@/services/files/files.service'
 import mime from 'mime'
 import { ElementPhoto } from './element-photo/ElementPhoto'
 import DismissKeyboard from '@/ui/form-elements/field/DismissKeyboard'
-import { Feather } from '@expo/vector-icons'
+import { AntDesign, Entypo, Feather, FontAwesome5 } from '@expo/vector-icons'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useNavigation } from '@react-navigation/native'
+import { LayoutOpacityItems } from '@/navigation/ui/LayoutOpacityItems'
+import { BaseImageUrl2 } from '@/services/api/interceptors.api'
 
 const IsTiming = (date: Date) => {
 	const current = new Date()
@@ -110,41 +113,16 @@ export const Inside = () => {
 	////
 
 	return (
-		<View style={{ paddingTop: insets.top, flex: 1 }}>
+		<View style={{ flex: 1 }}>
 			{!startCamera && (
-				<View
-					className='absolute left-1/2 z-30'
-					style={{
-						position: 'absolute',
-						top: insets.top + 15,
-						left: 0,
-						right: 0,
-						justifyContent: 'center',
-						alignItems: 'center'
-					}}
-				>
-					<Text className='text-white text-2xl font-bold'>BePrime</Text>
-					<Pressable onPress={() => navigate('Profile')}>
-						<Text className='text-white'>Profile</Text>
-					</Pressable>
-				</View>
-			)}
-			{/* <CameraExpo /> */}
-
-			{!startCamera && (
-				<ScrollView
-					style={{ paddingTop: insets.top, paddingBottom: 400 }}
-					// contentContainerStyle={{ flexGrow: 1 }}
-					// showsVerticalScrollIndicator={false}
-					// showsHorizontalScrollIndicator={false}
-				>
+				<LayoutOpacityItems ComponentRender={<HeaderHome />}>
 					<DismissKeyboard>
 						{latestPhoto.isLoading ? (
 							<View>
 								<Text className='text-white'>Loading...</Text>
 							</View>
 						) : latestPhoto.data && latestPhoto.data.length > 0 ? (
-							<View className='h-full '>
+							<View className='h-full'>
 								{latestPhoto.data?.map((photo, key) => {
 									return (
 										<ElementPhoto
@@ -172,7 +150,7 @@ export const Inside = () => {
 						)}
 						<View className='pb-28'></View>
 					</DismissKeyboard>
-				</ScrollView>
+				</LayoutOpacityItems>
 			)}
 			{user && IsTiming(user.latestPhoto?.created) && !startCamera && (
 				<View>
@@ -209,6 +187,46 @@ export const Inside = () => {
 					bottom: 0
 				}}
 			></LinearGradient>
+		</View>
+	)
+}
+
+export const HeaderHome = () => {
+	const { navigate } = useNavigation<any>()
+	const { user } = useAuth()
+	return (
+		<View className='flex-row justify-between flex-1 items-center relative'>
+			<TouchableOpacity onPress={() => navigate('Friends')}>
+				<FontAwesome5 name='user-friends' size={24} color='white' />
+			</TouchableOpacity>
+			<Text className='text-white text-2xl font-bold absolute text-center  w-full'>
+				BePrime
+			</Text>
+			{user && (
+				<View className='flex-row'>
+					<TouchableOpacity
+						onPress={() => navigate('Calendar')}
+						className='mr-4'
+					>
+						<Entypo name='calendar' size={26} color='white' />
+					</TouchableOpacity>
+					<TouchableOpacity onPress={() => navigate('Profile')}>
+						{user.avatar ? (
+							<Image
+								source={{ uri: BaseImageUrl2(user.avatar) }}
+								width={29}
+								height={29}
+								className='rounded-full'
+							/>
+						) : (
+							<Text className='text-white uppercase font-bold text-3xl '>
+								{(user.firstName || 'anonym')[0]}
+							</Text>
+						)}
+					</TouchableOpacity>
+				</View>
+			)}
+			{/* <TouchableOpacity onPress={() => navigate('Settings')}></TouchableOpacity> */}
 		</View>
 	)
 }

@@ -9,25 +9,25 @@ import { Link, useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { TypeRootStackParamList } from '@/navigation/navigation.types'
 
-interface IProfileHeader {
-	user: UseQueryResult<IProfile, unknown>
-	navigation: NativeStackNavigationProp<
-		TypeRootStackParamList,
-		'Profile',
-		undefined
-	>
-}
+// interface IProfileHeader {
+// 	user: UseQueryResult<IProfile, unknown>
+// 	navigation: NativeStackNavigationProp<
+// 		TypeRootStackParamList,
+// 		'Profile',
+// 		undefined
+// 	>
+// }
 
-export const ProfileHeader: FC<IProfileHeader> = ({ user, navigation }) => {
-	return (
-		<View className='bg-transparent text-white justify-between flex-row  absolute top-2 left-0 right-0 mx-4 z-10 '>
-			<Pressable onPress={() => navigation.navigate('Profile')}>
-				<FontAwesome name='long-arrow-left' size={24} color='white' />
-			</Pressable>
-			<Text className='text-white '>{user.data?.email}</Text>
-			<TouchableOpacity onPress={() => navigation.navigate('Settings')}>
-				<Entypo name='dots-three-vertical' size={24} color='white' />
-			</TouchableOpacity>
-		</View>
-	)
-}
+// export const ProfileHeader: FC<IProfileHeader> = ({ user, navigation }) => {
+// 	return (
+// 		<View className='bg-transparent text-white justify-between flex-row  absolute top-2 left-0 right-0 mx-4 z-10 '>
+// 			<Pressable onPress={() => navigation.navigate('Profile')}>
+// 				<FontAwesome name='long-arrow-left' size={24} color='white' />
+// 			</Pressable>
+// 			<Text className='text-white '>{user.data?.email}</Text>
+// 			<TouchableOpacity onPress={() => navigation.navigate('Settings')}>
+// 				<Entypo name='dots-three-vertical' size={24} color='white' />
+// 			</TouchableOpacity>
+// 		</View>
+// 	)
+// }
