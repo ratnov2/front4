@@ -22,6 +22,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { TypeRootStackParamList } from '@/navigation/navigation.types'
 import { LayoutOpacityItems } from '@/navigation/ui/LayoutOpacityItems'
 import { AntDesign, Entypo, FontAwesome } from '@expo/vector-icons'
+import { LayoutLightOpacityOtherProfile } from '@/navigation/ui/LayoutLightOpacityOtherProfile'
 
 type IProfile = NativeStackScreenProps<TypeRootStackParamList, 'Profile'>
 
@@ -42,21 +43,29 @@ export const HeaderProfile = () => {
 }
 const Profile: FC<IProfile> = ({ navigation }) => {
 	const { user } = useAuth()
-	let { params } = useRoute()
+	let { params } = useRoute<any>()
+	//const { navigate } = useNavigation<any>()
 	return (
 		<View className='flex-1'>
 			{user && (
-				<LayoutOpacityItems ComponentRender={<HeaderProfile />}>
+				<View className='flex-1'>
 					{(params as { id: string })?.id !== user._id &&
 					(params as { id: string })?.id ? (
-						<OtherUserProfile />
+						<LayoutLightOpacityOtherProfile
+							onGoBack={() => navigation.navigate('Home')}
+							title={user.email.split('@')[0]}
+						>
+							<OtherUserProfile />
+						</LayoutLightOpacityOtherProfile>
 					) : (
-						<View className='flex-1'>
-							<MainProfile />
-							<CalendarMin />
-						</View>
+						<LayoutOpacityItems ComponentRender={<HeaderProfile />}>
+							<View className='flex-1'>
+								<MainProfile />
+								<CalendarMin />
+							</View>
+						</LayoutOpacityItems>
 					)}
-				</LayoutOpacityItems>
+				</View>
 			)}
 		</View>
 	)

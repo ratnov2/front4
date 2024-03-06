@@ -20,7 +20,7 @@ export const HandleFriendButton = ({
 
 	return (
 		<TouchableOpacity
-			className={`bg-zinc-700 p-2 rounded-full uppercase ${
+			className={`bg-zinc-700 p-2 rounded-full uppercase  ${
 				status === '3' && 'bg-yellow-400'
 			}`}
 			onPress={() => {
@@ -29,7 +29,7 @@ export const HandleFriendButton = ({
 			}}
 		>
 			{!isLoading ? (
-				<Text className='text-white font-bold'>{title}</Text>
+				<Text className='text-white font-bold text-center'>{title}</Text>
 			) : (
 				<ActivityIndicator size={'small'} className='w-16' />
 			)}

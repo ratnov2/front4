@@ -1,5 +1,4 @@
-import { FC, useState } from 'react'
-import { Pressable, Text, View } from 'react-native'
+import { Pressable, View } from 'react-native'
 import { FriendItem } from '../ui/friend-item'
 import { FriendBody } from '../SuggestionFriends'
 import { Loader } from '@/ui'
@@ -28,7 +27,7 @@ export const FriendsSearchResult = () => {
 				}
 				userData={userDataForModal}
 			/>
-			{getUserByName?.data?.map(usersByName => (
+			{getUserByName.data?.map(usersByName => (
 				<Pressable
 					className='flex-1 '
 					onPress={() =>

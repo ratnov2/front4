@@ -1,10 +1,9 @@
 import { FC, useContext, useEffect, useState } from 'react'
-import { Text, TouchableOpacity, View } from 'react-native'
+import { Text, View } from 'react-native'
 import * as Contacts from 'expo-contacts'
 import { FriendItem } from './ui/friend-item'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { ContactContext } from '@/providers/contacts/ContactsDataProvider'
-import { shareProfile } from '@/ui/share-profile/ShareProfile'
 import { WithShareProfile } from '@/ui/share-profile/WithShareProfile'
 
 export const SuggestionFriends = () => {
@@ -12,7 +11,7 @@ export const SuggestionFriends = () => {
 	const [contactUsers, setContactUsers] = useState(contact)
 
 	useEffect(() => {
-		(async () => {
+		;(async () => {
 			const { status } = await Contacts.requestPermissionsAsync()
 			if (status === 'granted') {
 				const { data } = await Contacts.getContactsAsync({
@@ -36,26 +35,6 @@ export const SuggestionFriends = () => {
 				</View>
 				{contactUsers &&
 					contactUsers.map((contact, key) => (
-						// <View className='flex-row my-4 items-center' key={key}>
-						// 	<View className='w-14 h-14 bg-red-500 rounded-full text-center items-center  justify-center'>
-						// 		<Text className='font-bold text-white text-xl'>
-						// 			{contact.firstName?.[0]}
-						// 		</Text>
-						// 	</View>
-						// 	<View className='ml-4 flex-row justify-between flex-1 items-center'>
-						// 		<View>
-						// 			<Text className='text-white font-bold'>
-						// 				{contact.firstName}
-						// 			</Text>
-						// 			<Text className='text-zinc-600 font-bold'>
-						// 				Number Phone isnt
-						// 			</Text>
-						// 		</View>
-						// 		<TouchableOpacity className='bg-gray-800 p-2 rounded-full '>
-						// 			<Text className='text-white font-bold'>INVITE</Text>
-						// 		</TouchableOpacity>
-						// 	</View>
-						// </View>
 						<FriendItem
 							name={contact.firstName || 'Anonym'}
 							body={
@@ -85,11 +64,7 @@ export const FriendBody: FC<IFriendBody> = ({ name, number }) => (
 	</View>
 )
 
-export const InviteButton = ({
-	deleteFriend
-}: {
-	deleteFriend: () => void
-}) => {
+export const InviteButton = () => {
 	return (
 		<WithShareProfile>
 			<View className='bg-zinc-700 p-2 rounded-full uppercase'>

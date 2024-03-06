@@ -48,11 +48,8 @@ export const CalendarMin: FC = () => {
 				<View className='text-white flex-row w-full mx-[2px] flex-wrap '>
 					{(() => {
 						let photo: IPhotos[] = []
-						photo = user.data.calendarPhotos.slice(-7)
-						//console.log(photo);
-
+						photo = user.data.calendarPhotos.slice(-14)
 						let k = -1
-						//console.log('@',photo[0]);
 
 						return Array.from(Array(14)).map((el, key) => {
 							const date = new Date(photo[k + 1]?.created)

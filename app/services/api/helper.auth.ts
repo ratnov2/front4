@@ -18,6 +18,9 @@ export const getNewTokens = async () => {
 		)
 		if (response.data.accessToken) await saveToStorage(response.data)
         
+		
 		return response
-	} catch {}
+	} catch {
+	
+	}
 }

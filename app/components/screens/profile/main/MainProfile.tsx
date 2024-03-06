@@ -13,7 +13,6 @@ import { Joined } from '../ui/Joined'
 
 export const MainProfile: FC = () => {
 	const user = useQuery(['get-user'], () => ProfileService.getProfile())
-
 	return (
 		<View>
 			{user.data && (

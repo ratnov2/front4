@@ -102,13 +102,6 @@ export const Friends = () => {
 	}
 
 	const swiperRef = useRef<Swiper>(null)
-	// const handleScroll = (event: any) => {
-	// 	const offsetX = event.nativeEvent.contentOffset.x
-	// 	const index = Math.round(offsetX / 300)
-	// 	setActiveIndex(index)
-	// 	animatedValue.setValue(index)
-	// }
-	//console.log(queryClient.getQueryData(['get-my-friends']));
 	
 	return (
 		// <MyFriendContext.Provider value={{ myFriendByStatus, setMyFriendByStatus }}>

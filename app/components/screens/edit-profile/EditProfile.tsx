@@ -88,7 +88,7 @@ export const EditProfile = () => {
 				type: 'image/jpeg', 
 				name: 'photo.jpg'
 			})
-			mutate({ form: formData, path: 'avatar' })
+			mutate({ form: formData, path: 'folder=avatar' })
 		}
 	}
 	const { mutate, data } = useMutation(

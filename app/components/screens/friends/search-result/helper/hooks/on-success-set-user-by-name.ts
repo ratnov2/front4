@@ -25,7 +25,10 @@ export const onSuccessSetUserByName = (
 			return prevData
 		}
 	)
+	console.log('@R');
+	
 	queryClient.refetchQueries(["get-my-friends"])
+	//queryClient.refetchQueries(["get-my-friends"])
 	// queryClient.setQueryData(
 	// 	['get-my-friends'],
 	// 	(prevData: IFriendsip | undefined) => {

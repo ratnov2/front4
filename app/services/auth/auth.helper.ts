@@ -17,6 +17,10 @@ export const deleteTokensStorage = async () => {
 	await deleteItemAsync(EnumSecureStore.ACCESS_TOKEN)
 	await deleteItemAsync(EnumSecureStore.REFRESH_TOKEN)
 }
+export const deleteUserStorage = async () => {
+	await deleteTokensStorage()
+	await deleteItemAsync(EnumAsyncStorage.USER)
+}
 
 export const saveTokensStorage = async (data: ITokens) => {
 	await setItemAsync(EnumSecureStore.ACCESS_TOKEN, data.accessToken)
@@ -33,7 +37,6 @@ export const getUserFromStorage = async () => {
 	}
 }
 export const saveToStorage = async (data: IAuthResponse) => {
-	
 	await saveTokensStorage(data)
 	try {
 		return JSON.parse(

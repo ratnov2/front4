@@ -8,6 +8,8 @@ interface ISharePinBlock {
 }
 
 export const SharePinBlock: FC<ISharePinBlock> = ({ user }) => {
+	console.log('!!!',user);
+	
 	return (
 		<View>
 			<View className='flex-row justify-between my-4 items-center'>

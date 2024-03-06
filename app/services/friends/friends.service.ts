@@ -38,7 +38,7 @@ export const FriendsService = {
 export interface IFriendsip {
 	friendship: {
 		friends: IProfile
-		status: string
+		status: '0' | '1' | '2' | '3'
 	}[]
 	_id: string
 }

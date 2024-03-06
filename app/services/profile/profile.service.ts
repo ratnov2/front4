@@ -40,7 +40,7 @@ export const ProfileService = {
 		return response
 	},
 	async addMainComment(data: { message: string; created: Date }) {
-		const response = await request({
+		const response = await instance({
 			url: getUsersUrl(`/profile/main-message`),
 			method: 'POST',
 			data
@@ -60,7 +60,7 @@ export const ProfileService = {
 		return response
 	},
 	async getPostUserByLink(data: { created: string; userId: string }) {
-		const response = await request<IPost[]>({
+		const response = await instance<IPost[]>({
 			url: getUsersUrl(`/profile/user-posts`),
 			method: 'POST',
 			data

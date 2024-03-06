@@ -17,19 +17,18 @@ const AuthProvider: FC<PropsWithChildren<unknown>> = ({ children }) => {
 
 	useEffect(() => {
 		let isMounted = true
-
 		const checkAccessToken = async () => {
 			try {
 				const accessToken = await getAccessToken()
-
 				if (accessToken) {
 					const user = await getUserFromStorage()
-					
 					if (isMounted) {
 						setUser(user)
 					}
 				}
 			} catch {
+				console.log('AuthProvider');
+				
 			} finally {
 				await SplashScreen.hideAsync()
 			}

@@ -1,5 +1,7 @@
+import { UserAvatar } from '@/ui/user-avatar/UserAvatar'
+import { useNavigation } from '@react-navigation/native'
 import { FC } from 'react'
-import { Text, View } from 'react-native'
+import { Pressable, Text, Touchable, View } from 'react-native'
 
 interface ICommentElement {
 	message: string
@@ -7,6 +9,7 @@ interface ICommentElement {
 	created: string
 	email: string
 	firstName: string
+	id: string
 }
 
 export const CommentElement: FC<ICommentElement> = ({
@@ -14,21 +17,23 @@ export const CommentElement: FC<ICommentElement> = ({
 	avatar,
 	created,
 	email,
-	firstName
+	firstName,
+	id
 }) => {
-	let date = new Date(created)
-
+	const { navigate } = useNavigation<any>()
 	return (
-		<View className='my-6  relative mr-2 flex-row '>
-			<View className='bg-red-600 rounded-full w-10 h-10 flex-row justify-center items-center'>
-				<Text className='text-white '>{firstName[0] || 'A'}</Text>
-			</View>
+		<View className='my-6  relative mr-2 flex-row'>
+			<Pressable onPress={() => navigate('Profile', { id })}>
+				<UserAvatar avatar={avatar} firstName={firstName} />
+			</Pressable>
 			<View className='pl-2 rounded-lg mr-2'>
 				<View className='flex-row text-center'>
 					<Text className='color-white font-bold mb-0.5 '>{email}</Text>
-					<Text className='text-neutral-700 text-xs text-bold ml-2 '>{normalDate(created)}</Text>
+					<Text className='text-neutral-700 text-xs text-bold ml-2 '>
+						{normalDate(created)}
+					</Text>
 				</View>
-				<Text className='color-white mb-1'>{message}</Text> 
+				<Text className='color-white mb-1'>{message}</Text>
 			</View>
 		</View>
 	)

@@ -41,7 +41,7 @@ export const CustomModal: FC<ICustomFriendModal> = ({
 					</Text>
 					{text.title2 && (
 						<Text className='mt-2 text-white text-lg text-center'>
-							text.title2
+							{text.title2}
 						</Text>
 					)}
 					<View className='flex-row justify-center mt-5'>

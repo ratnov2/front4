@@ -23,6 +23,7 @@ import { LinearGradient } from 'expo-linear-gradient'
 import { useNavigation } from '@react-navigation/native'
 import { LayoutOpacityItems } from '@/navigation/ui/LayoutOpacityItems'
 import { BaseImageUrl2 } from '@/services/api/interceptors.api'
+import { UserAvatar } from '@/ui/user-avatar/UserAvatar'
 
 const IsTiming = (date: Date) => {
 	const current = new Date()
@@ -48,6 +49,31 @@ const IsTiming = (date: Date) => {
 }
 
 export const Inside = () => {
+	const [frontImage, setFrontImage] = useState<string | null>(null)
+	const [backImage, setBackImage] = useState<string | null>(null)
+	//const cameraRef = useRef(null);
+	// const takeFrontPhoto = async () => {
+	// 	if (cameraRef.current) {
+	// 	  const { uri } = await cameraRef.current.takePictureAsync();
+	// 	  setFrontImage(uri);
+	// 	}
+	//   };
+
+	const takeBackPhoto = async () => {
+		const backPhoto = await ImagePicker.launchCameraAsync({
+			mediaTypes: ImagePicker.MediaTypeOptions.Images,
+			allowsEditing: false,
+			aspect: [4, 3],
+			quality: 1,
+			cameraType: 'back' as any
+		})
+
+		if (!backPhoto.canceled) {
+			setBackImage(backPhoto.assets[0].uri)
+		}
+	}
+	console.log(backImage)
+
 	const { navigate } = useNavigation<any>()
 	const insets = useSafeAreaInsets()
 	const latestPhoto = useQuery(['get-latest-photo'], () =>
@@ -69,8 +95,10 @@ export const Inside = () => {
 	////
 	const [permission, requestPermission] = ImagePicker.useCameraPermissions()
 	const [files, setFiles] = useState([])
-	const { mutate } = useMutation(['push-photo'], (form: FormData) =>
-		FilesService.pushPhoto(form)
+	const { mutate } = useMutation(
+		['push-photo'],
+		({ form, path }: { form: FormData; path: string }) =>
+			FilesService.pushPhoto(form, path)
 	)
 
 	const takePhoto = async () => {
@@ -85,14 +113,15 @@ export const Inside = () => {
 				const { uri } = cameraResp.assets[0]
 				const fileName = uri.split('/').pop()
 				const formData = new FormData()
+
 				//@ts-ignore
 				formData.append('image', {
-					uri: uri,
-					type: mime.getType(uri),
-					name: uri.split('/').pop()
+					uri,
+					type: 'image/jpeg',
+					name: 'photo.jpg'
 				})
-				mutate(formData)
-
+				mutate({ form: formData, path: 'folder=main&type=frontPhoto' })
+				setStartCamera(false)
 				// const uploadResp = await uploadToFirebase(uri, fileName, (v) =>
 				//   console.log(v)
 				// );
@@ -162,7 +191,8 @@ export const Inside = () => {
 							<TouchableOpacity
 								onPress={() => {
 									__startCamera()
-									takePhoto()
+									takeFrontPhoto()
+									//takePhoto()
 								}}
 								style={{
 									height: 80
@@ -196,12 +226,12 @@ export const HeaderHome = () => {
 	const { user } = useAuth()
 	return (
 		<View className='flex-row justify-between flex-1 items-center relative'>
-			<TouchableOpacity onPress={() => navigate('Friends')}>
-				<FontAwesome5 name='user-friends' size={24} color='white' />
-			</TouchableOpacity>
 			<Text className='text-white text-2xl font-bold absolute text-center  w-full'>
 				BePrime
 			</Text>
+			<TouchableOpacity onPress={() => navigate('Friends')}>
+				<FontAwesome5 name='user-friends' size={24} color='white' />
+			</TouchableOpacity>
 			{user && (
 				<View className='flex-row'>
 					<TouchableOpacity
@@ -211,18 +241,7 @@ export const HeaderHome = () => {
 						<Entypo name='calendar' size={26} color='white' />
 					</TouchableOpacity>
 					<TouchableOpacity onPress={() => navigate('Profile')}>
-						{user.avatar ? (
-							<Image
-								source={{ uri: BaseImageUrl2(user.avatar) }}
-								width={29}
-								height={29}
-								className='rounded-full'
-							/>
-						) : (
-							<Text className='text-white uppercase font-bold text-3xl '>
-								{(user.firstName || 'anonym')[0]}
-							</Text>
-						)}
+						<UserAvatar avatar={user.avatar} firstName={user.firstName} />
 					</TouchableOpacity>
 				</View>
 			)}
