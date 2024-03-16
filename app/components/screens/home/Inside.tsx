@@ -70,7 +70,6 @@ export const Inside = () => {
 	const [isMakingPhoto, setIsMakingPhoto] = useState<boolean>(false)
 	const [isFrontCamera, setIsFrontCamera] = useState<boolean>(true)
 	const [isCompletePhoto, setIsCompletePhoto] = useState(false)
-	const backCameraRef = useRef(null)
 	const cameraRef = useRef(null)
 
 	const takeFrontPhoto = async () => {
@@ -114,7 +113,7 @@ export const Inside = () => {
 	const { navigate } = useNavigation<any>()
 	const insets = useSafeAreaInsets()
 	const latestPhoto = useQuery(['get-latest-photo'], () =>
-		ProfileService.getLatestPhotos()
+		ProfileService.getLatestPhotosFriends()
 	)
 	//console.log(latestPhoto.data);
 
@@ -158,19 +157,21 @@ export const Inside = () => {
 		(form: FormData) => FilesService.pushTwoPhoto(form),
 		{
 			onSuccess: () => setStartCamera(false)
-			
 		}
 	)
-
 	///
 
 	///
+	const [typeOfCalendarPhotos, setTypeOfCalendarPhotos] = useState<
+		'my_friends' | 'other'
+	>('my_friends')
 	return (
 		<View style={{ flex: 1 }}>
 			{/* {backImage && <Image className='w-40 h-40' source={{ uri: backImage }} />}
 			{frontImage && (
 				<Image className='w-40 h-40' source={{ uri: frontImage }} />
 			)} */}
+
 			{startCamera && (
 				<View className='flex-1'>
 					<View className='h-[13%] bg-black justify-center'>
@@ -209,6 +210,7 @@ export const Inside = () => {
 							</View>
 						)}
 					</View>
+
 					<View className='h-[23%] bg-black flex justify-center items-center z-[99999]'>
 						{!frontImage && !backImage && !isMakingPhoto ? (
 							<View className='flex-row items-center'>
@@ -275,6 +277,32 @@ export const Inside = () => {
 
 			{!startCamera && (
 				<LayoutOpacityItems ComponentRender={<HeaderHome />}>
+					<View className='flex-row justify-center'>
+						<Pressable
+							className='p-2'
+							onPress={() => setTypeOfCalendarPhotos('my_friends')}
+						>
+							<Text
+								className={`text-white font-bold ${
+									typeOfCalendarPhotos === 'other' && 'text-white/70'
+								}`}
+							>
+								My friends
+							</Text>
+						</Pressable>
+						<Pressable
+							onPress={() => setTypeOfCalendarPhotos('other')}
+							className='ml-1 p-2'
+						>
+							<Text
+								className={`text-white font-bold ${
+									typeOfCalendarPhotos === 'my_friends' && 'text-white/70'
+								}`}
+							>
+								Other people
+							</Text>
+						</Pressable>
+					</View>
 					<DismissKeyboard>
 						{latestPhoto.isLoading ? (
 							<View>

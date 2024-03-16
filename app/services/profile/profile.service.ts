@@ -23,12 +23,12 @@ export const ProfileService = {
 		const response = await instance.put(getUsersUrl('/profile/info'), data)
 		return response
 	},
-	async getLatestPhotos() {
+	async getLatestPhotosFriends() {
 		const response = await request<ILatestPhoto[]>({
-			url: getUsersUrl('/latest-photo'),
+			url: getUsersUrl('/latest-photo-friends'),
 			method: 'GET'
 		})
-		//console.log(response)
+		console.log(response)
 
 		return response
 	},
