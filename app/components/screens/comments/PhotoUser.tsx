@@ -14,8 +14,7 @@ interface IPhotoUser {
 }
 
 export const PhotoUser: FC<IPhotoUser> = ({ photo }) => {
-    
-	console.log(`${BaseImageUrl}${photo.photos.backPhoto.photo}`)
+
 
 	return (
 		<View>

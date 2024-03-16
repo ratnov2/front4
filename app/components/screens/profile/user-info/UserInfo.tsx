@@ -43,7 +43,7 @@ export const JoinedDate = (date: string) => {
 
 	differenceMonth -= normalDate.getMonth()
 	differenceMonth += currentDate.getMonth()
-	console.log(differenceMonth)
+	//(differenceMonth)
 
 	if (
 		normalDate.getFullYear() === currentDate.getFullYear() &&

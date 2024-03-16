@@ -3,10 +3,12 @@ import { deleteUserStorage, getAccessToken } from '../auth/auth.helper'
 import { errorCatch } from './error.api'
 import { getNewTokens } from './helper.auth'
 
-export const baseURL = 'http://192.168.73.227:4200/api'
-export const BaseImageUrl = 'http://192.168.73.227:4200'
+let url = '192.168.189.227'
 
-export const BaseImageUrl2 = (path: string) => `http://192.168.73.227:4200${path}`
+export const baseURL = `http://${url}:4200/api`
+export const BaseImageUrl = `http://${url}:4200`
+
+export const BaseImageUrl2 = (path: string) => `http://${url}:4200${path}`
 
 const instance = axios.create({
 	baseURL,
@@ -17,7 +19,7 @@ const instance = axios.create({
 
 export const $files = axios.create({
 	baseURL,
-	headers: { 'content-type': 'multipart/form-data' }
+	headers: { 'Content-Type': 'multipart/form-data' }
 })
 
 instance.interceptors.request.use(async config => {
@@ -43,7 +45,6 @@ instance.interceptors.response.use(
 				await getNewTokens()
 				return await instance.request(originalRequest)
 			} catch (error) {
-				console.log(errorCatch(error))
 				if (
 					errorCatch(error) === 'jwt expired' ||
 					errorCatch(error) === 'Unauthorized'

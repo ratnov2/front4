@@ -80,7 +80,7 @@ export const EditProfile = () => {
 			// Обработка выбранного изображения
 			//console.log(result.uri)
 			setChooseAvatar(result.assets[0].uri)
-			console.log(result.assets[0].uri)
+			//console.log(result.assets[0].uri)
 			const formData = new FormData()
 			//@ts-ignore
 			formData.append('image', {

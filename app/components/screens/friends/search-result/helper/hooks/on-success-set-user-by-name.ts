@@ -25,7 +25,7 @@ export const onSuccessSetUserByName = (
 			return prevData
 		}
 	)
-	console.log('@R');
+
 	
 	queryClient.refetchQueries(["get-my-friends"])
 	//queryClient.refetchQueries(["get-my-friends"])

@@ -97,7 +97,7 @@ export const PhotoComment: FC<IElementPhoto> = ({ photo }) => {
 
 	const [value, setValue] = useState(photo.calendarPhotos.comment)
 	const [isMessage, setIsMessage] = useState(false)
-	console.log(photo.calendarPhotos)
+	//console.log(photo.calendarPhotos)
 
 	// console.log(photo)
 

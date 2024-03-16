@@ -8,7 +8,7 @@ interface ISharePinBlock {
 }
 
 export const SharePinBlock: FC<ISharePinBlock> = ({ user }) => {
-	console.log('!!!',user);
+	//console.log('!!!',user);
 	
 	return (
 		<View>

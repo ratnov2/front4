@@ -27,7 +27,7 @@ const AuthProvider: FC<PropsWithChildren<unknown>> = ({ children }) => {
 					}
 				}
 			} catch {
-				console.log('AuthProvider');
+				//console.log('AuthProvider');
 				
 			} finally {
 				await SplashScreen.hideAsync()

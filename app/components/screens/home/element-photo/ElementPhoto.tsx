@@ -61,7 +61,7 @@ export const ElementPhoto: FC<IElementPhoto> = ({ photo, refetch }) => {
 			}
 		}
 	)
-	console.log(photo)
+	//console.log(photo)
 
 	return (
 		<View className='' style={{ marginBottom: 70 }}>
@@ -146,7 +146,7 @@ export const ElementPhoto: FC<IElementPhoto> = ({ photo, refetch }) => {
 								className={`flex-row items-center mt-4 border-[1px] border-solid border-stone-700 rounded-lg ${
 									addMainComment.isLoading && 'bg-stone-900 text-stone-800'
 								}`}
-								onPointerDown={() => console.log('@@@')}
+								//onPointerDown={() => console.log('@@@')}
 							>
 								<TextInput
 									value={value}
