@@ -12,11 +12,7 @@ export const ElementHeaderForCamera: FC<IElementHeaderForCamera> = ({
 	cron
 }) => {
 	const insets = useSafeAreaInsets()
-	const [timer, setTimer] = useState()
-	const receivedTime = new Date()
-	receivedTime.setMinutes(new Date().getMinutes() - 4)
-	receivedTime.setSeconds(new Date().getSeconds() - 59)
-	//receivedTime.setHours(new Date().getHours() -2)
+
 	return (
 		<View
 			className={`bg-black justify-center`}
@@ -26,7 +22,7 @@ export const ElementHeaderForCamera: FC<IElementHeaderForCamera> = ({
 				My BePrime
 			</Text>
 			<Text className='text-white text-2xl font-bold text-center justify-center '>
-				<TimerComponent receivedTime={receivedTime} />
+				<TimerComponent receivedTime={new Date(cron)} />
 			</Text>
 		</View>
 	)
