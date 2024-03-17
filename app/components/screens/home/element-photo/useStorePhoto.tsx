@@ -12,7 +12,7 @@ const reducer = (state: State, action: Action): State => {
 	}
 }
 interface IUseStorePhoto {
-	photosUser: {
+	photos: {
 		frontPhoto?:
 			| {
 					created: Date
@@ -29,7 +29,7 @@ interface IUseStorePhoto {
 			| undefined
 	}
 }
-export const useStorePhoto = ({ photosUser }: IUseStorePhoto) => {
+export const useStorePhoto = ({ photos }: IUseStorePhoto) => {
 	const [store, dispatch] = useReducer(
 		reducer,
 		(() => {
@@ -37,13 +37,13 @@ export const useStorePhoto = ({ photosUser }: IUseStorePhoto) => {
 				current: null,
 				length: 0
 			}
-			if (photosUser.frontPhoto?.photo) {
-				result.frontPhoto = photosUser.frontPhoto
+			if (photos.frontPhoto?.photo) {
+				result.frontPhoto = photos.frontPhoto
 				result.current = 'frontPhoto'
 				result.length++
 			}
-			if (photosUser.backPhoto?.photo) {
-				result.backPhoto = photosUser.backPhoto
+			if (photos.backPhoto?.photo) {
+				result.backPhoto = photos.backPhoto
 				if (result.current !== 'frontPhoto') result.current = 'backPhoto'
 				result.length++
 			}

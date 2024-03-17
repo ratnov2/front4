@@ -12,8 +12,8 @@ export const FilesService = {
 		return response
 	},
 	async pushTwoPhoto(photo: FormData) {
-		console.log('E@',);
-		console.log(photo);
+		//console.log('E@',);
+		//console.log(photo);
 		const response = await instance.post(
 			`/files/two?folder=main&type=frontPhoto_backPhoto`,
 			photo,
@@ -21,7 +21,7 @@ export const FilesService = {
 				headers: { 'Content-Type': 'multipart/form-data' }
 			}
 		)
-		console.log("RESPONSE",response);
+		//console.log("RESPONSE",response);
 		
 		return response
 	}

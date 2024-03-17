@@ -1,6 +1,10 @@
 import { request } from '../api/request.api'
 import { getUsersUrl } from '@/config/api.config'
-import { ILatestPhoto, IProfile } from '@/shared/types/profile.interface'
+import {
+	ILatestInside,
+	ILatestPhoto,
+	IProfile
+} from '@/shared/types/profile.interface'
 import instance from '../api/interceptors.api'
 
 export const ProfileService = {
@@ -24,12 +28,17 @@ export const ProfileService = {
 		return response
 	},
 	async getLatestPhotosFriends() {
-		const response = await request<ILatestPhoto[]>({
+		const response = await request<ILatestInside[]>({
 			url: getUsersUrl('/latest-photo-friends'),
 			method: 'GET'
 		})
-		console.log(response)
-
+		return response
+	},
+	async getLatestPhotosOther() {
+		const response = await request<ILatestInside[]>({
+			url: getUsersUrl('/latest-photo-people'),
+			method: 'GET'
+		})
 		return response
 	},
 	async getUser(id: string) {
@@ -60,10 +69,17 @@ export const ProfileService = {
 		return response
 	},
 	async getPostUserByLink(data: { created: string; userId: string }) {
-		const response = await instance<IPost[]>({
+		const response = await request<IPost[]>({
 			url: getUsersUrl(`/profile/user-posts`),
 			method: 'POST',
 			data
+		})
+		return response
+	},
+	async getCronTime() {
+		const response = await request<string>({
+			url: getUsersUrl(`/cron`),
+			method: 'GET'
 		})
 		return response
 	}
@@ -83,8 +99,7 @@ export type TypeEditProfile = {
 export type IPost = {
 	_id: string
 	avatar: string
-	message: string
+	comment: string
 	created: string
-	email: string
 	firstName: string
 }

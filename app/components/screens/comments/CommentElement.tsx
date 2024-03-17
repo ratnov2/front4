@@ -38,10 +38,10 @@ export const CommentElement: FC<ICommentElement> = ({
 		</View>
 	)
 }
-const normalDate = (date: string) => {
+export const normalDate = (date: string) => {
 	const commentDate = new Date(date)
 	const hours = commentDate.getHours()
 	const minutes = commentDate.getMinutes()
 	const seconds = commentDate.getSeconds()
-	return `${hours} : ${minutes} : ${seconds}`
+	return `${hours < 10 ? `0${hours}` : hours} : ${minutes < 10 ? `0${minutes}` : minutes} : ${seconds < 10 ? `0${seconds}` : seconds}`
 }

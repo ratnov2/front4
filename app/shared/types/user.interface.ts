@@ -14,7 +14,7 @@ export interface IUser {
 		photoThree: string | null
 	}
 	latestPhoto: {
-		created: Date
+		created: string
 		photos: {
 			frontPhoto?: {
 				created: Date

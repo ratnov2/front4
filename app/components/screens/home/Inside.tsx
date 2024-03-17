@@ -9,13 +9,15 @@ import {
 	View
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import {
+	QueryClient,
+	useMutation,
+	useQuery,
+	useQueryClient
+} from '@tanstack/react-query'
 import { ProfileService } from '@/services/profile/profile.service'
-import { useEffect, useRef, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import { Camera } from 'expo-camera'
-import * as ImagePicker from 'expo-image-picker'
-import bg from '@/assets/bg-red.jpg'
-import bg2 from '@/assets/user.png'
 // import CameraExpo from './CamerExpo'
 import { useAuth } from '@/hooks/useAuth'
 import { FilesService } from '@/services/files/files.service'
@@ -39,28 +41,13 @@ import { UserAvatar } from '@/ui/user-avatar/UserAvatar'
 import { PhotoLoader } from '@/ui/photo-loader/PhotoLoader'
 import { PanResponder } from 'react-native'
 import { ElementTest } from './ElementTest'
+import { ILatestInside, ILatestPhoto } from '@/shared/types/profile.interface'
+import { ElementHeaderForCamera } from './ui/ElementHeaderForCamera'
 
-const IsTiming = (date: Date) => {
-	const current = new Date()
-	const userDate = new Date(date)
-	const currYear = current.getFullYear()
-	const currDay = current.getDate()
-	const currHours = current.getHours()
-	const currMonth = current.getMonth()
-	const year = userDate.getFullYear()
-	const day = userDate.getDate()
-	const month = userDate.getMonth()
-	const hours = userDate.getHours()
-	if (!date) return true
-	if (currYear >= year && currMonth >= month) {
-		if (currDay > day) {
-			return true
-		} else if (currDay === day && currHours >= 12) {
-			return true
-		} else {
-			return false
-		}
-	}
+const IsTiming = (cron?: string, date?: string) => {
+	if (!cron || !date) return false
+	if (new Date(cron).getTime() > new Date(date).getTime()) return true
+	else return false
 }
 
 export const Inside = () => {
@@ -95,7 +82,7 @@ export const Inside = () => {
 
 	useEffect(() => {
 		if (!isInitialRender && (frontImage || backImage)) {
-			console.log('isFrontCamera', isFrontCamera)
+			//console.log('isFrontCamera', isFrontCamera)
 			!backImage && takeBackPhoto()
 			!frontImage && takeFrontPhoto()
 		} else {
@@ -112,11 +99,12 @@ export const Inside = () => {
 
 	const { navigate } = useNavigation<any>()
 	const insets = useSafeAreaInsets()
-	const latestPhoto = useQuery(['get-latest-photo'], () =>
+	const latestPhoto = useQuery(['get-latest-friends'], () =>
 		ProfileService.getLatestPhotosFriends()
 	)
-	//console.log(latestPhoto.data);
-
+	const latestPhotoOther = useQuery(['get-latest-people'], () =>
+		ProfileService.getLatestPhotosOther()
+	)
 	const { user } = useAuth()
 
 	const [startCamera, setStartCamera] = useState(false)
@@ -165,6 +153,15 @@ export const Inside = () => {
 	const [typeOfCalendarPhotos, setTypeOfCalendarPhotos] = useState<
 		'my_friends' | 'other'
 	>('my_friends')
+
+	const cron = useQuery(['get-cron-time'], ProfileService.getCronTime)
+	const queryClient = useQueryClient()
+	const userQuery = (queryClient.getQueryData(['get-user']) as ILatestInside)
+		.latestPhoto
+	const latestPhotoUse = {
+		latestPhoto: userQuery
+	}
+	
 	return (
 		<View style={{ flex: 1 }}>
 			{/* {backImage && <Image className='w-40 h-40' source={{ uri: backImage }} />}
@@ -173,20 +170,16 @@ export const Inside = () => {
 			)} */}
 
 			{startCamera && (
-				<View className='flex-1'>
-					<View className='h-[13%] bg-black justify-center'>
-						<Text className='text-white text-2xl font-bold text-center justify-center '>
-							My BePrime
-						</Text>
-					</View>
+				<View className='flex-1 bg-black'>
+					{cron.data && <ElementHeaderForCamera cron={cron.data} />}
 					<View className='mx-2 flex-1 rounded-3xl bg-red-50 overflow-hidden relative'>
 						<Camera
 							style={{ flex: 1 }}
 							className=''
 							type={
 								isFrontCamera
-									? Camera.Constants.Type.front
-									: Camera.Constants.Type.back
+									? (Camera.Constants.Type as any).front
+									: (Camera.Constants.Type as any).back
 							}
 							ratio='4:3'
 							ref={cameraRef}
@@ -276,70 +269,96 @@ export const Inside = () => {
 			)}
 
 			{!startCamera && (
-				<LayoutOpacityItems ComponentRender={<HeaderHome />}>
-					<View className='flex-row justify-center'>
-						<Pressable
-							className='p-2'
-							onPress={() => setTypeOfCalendarPhotos('my_friends')}
-						>
-							<Text
-								className={`text-white font-bold ${
-									typeOfCalendarPhotos === 'other' && 'text-white/70'
-								}`}
-							>
-								My friends
-							</Text>
-						</Pressable>
-						<Pressable
-							onPress={() => setTypeOfCalendarPhotos('other')}
-							className='ml-1 p-2'
-						>
-							<Text
-								className={`text-white font-bold ${
-									typeOfCalendarPhotos === 'my_friends' && 'text-white/70'
-								}`}
-							>
-								Other people
-							</Text>
-						</Pressable>
-					</View>
-					<DismissKeyboard>
-						{latestPhoto.isLoading ? (
-							<View>
-								<Text className='text-white'>Loading...</Text>
-							</View>
-						) : latestPhoto.data && latestPhoto.data.length > 0 ? (
-							<View className='h-full'>
-								{latestPhoto.data?.map((photo, key) => {
-									return (
-										<ElementPhoto
-											photo={photo}
-											key={key}
-											refetch={() => latestPhoto.refetch()}
-										/>
-									)
-								})}
-							</View>
-						) : (
-							<View
-								style={{
-									justifyContent: 'center',
-									flex: 1,
-									alignItems: 'center'
-								}}
-							>
+				<LayoutOpacityItems
+					ComponentRender={
+						<HeaderHome
+							setTypeFriends={() => setTypeOfCalendarPhotos('my_friends')}
+							setTypeOther={() => setTypeOfCalendarPhotos('other')}
+							typeOfCalendarPhotos={typeOfCalendarPhotos}
+						/>
+					}
+				>
+					<View className='h-10' />
+					{typeOfCalendarPhotos === 'my_friends' ? (
+						<DismissKeyboard>
+							{user && !IsTiming(cron.data, userQuery.created) && (
+								<ElementPhoto
+									photo={latestPhotoUse as any}
+									refetch={() => ''}
+								/>
+							)}
+							{latestPhoto.isLoading ? (
 								<View>
-									<Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>
-										Здесь пока ничего нет
-									</Text>
+									<Text className='text-white'>Loading...</Text>
 								</View>
-							</View>
-						)}
-						<View className='pb-28'></View>
-					</DismissKeyboard>
+							) : latestPhoto.data && latestPhoto.data.length > 0 ? (
+								<View className='h-full'>
+									{latestPhoto.data?.map((photo, key) => {
+										return (
+											<ElementPhoto
+												photo={photo}
+												key={key}
+												refetch={() => latestPhoto.refetch()}
+											/>
+										)
+									})}
+								</View>
+							) : (
+								<View
+									style={{
+										justifyContent: 'center',
+										flex: 1,
+										alignItems: 'center'
+									}}
+								>
+									<View>
+										<Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>
+											Здесь пока ничего нет
+										</Text>
+									</View>
+								</View>
+							)}
+							<View className='pb-28'></View>
+						</DismissKeyboard>
+					) : (
+						<DismissKeyboard>
+							{latestPhotoOther.isLoading ? (
+								<View>
+									<Text className='text-white'>Loading...</Text>
+								</View>
+							) : latestPhoto.data && latestPhoto.data.length > 0 ? (
+								<View className='h-full'>
+									{latestPhotoOther.data?.map((photo, key) => {
+										return (
+											<ElementPhoto
+												photo={photo}
+												key={key}
+												refetch={() => latestPhotoOther.refetch()}
+											/>
+										)
+									})}
+								</View>
+							) : (
+								<View
+									style={{
+										justifyContent: 'center',
+										flex: 1,
+										alignItems: 'center'
+									}}
+								>
+									<View>
+										<Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>
+											Здесь пока ничего нет
+										</Text>
+									</View>
+								</View>
+							)}
+							<View className='pb-28'></View>
+						</DismissKeyboard>
+					)}
 				</LayoutOpacityItems>
 			)}
-			{!startCamera && user && IsTiming(user.latestPhoto?.created) && (
+			{!startCamera && user && IsTiming(cron.data, userQuery.created) && (
 				<View>
 					<View
 						style={{ height: 50, flex: 1 }}
@@ -392,31 +411,62 @@ export const Inside = () => {
 	)
 }
 
-export const HeaderHome = () => {
+interface IHeaderHome {
+	setTypeFriends: () => void
+	setTypeOther: () => void
+	typeOfCalendarPhotos: 'my_friends' | 'other'
+}
+
+export const HeaderHome: FC<IHeaderHome> = ({
+	setTypeFriends,
+	setTypeOther,
+	typeOfCalendarPhotos
+}) => {
 	const { navigate } = useNavigation<any>()
 	const { user } = useAuth()
 	return (
-		<View className='flex-row justify-between flex-1 items-center relative'>
-			<Text className='text-white text-2xl font-bold absolute text-center  w-full'>
-				BePrime
-			</Text>
-			<TouchableOpacity onPress={() => navigate('Friends')}>
-				<FontAwesome5 name='user-friends' size={24} color='white' />
-			</TouchableOpacity>
-			{user && (
-				<View className='flex-row'>
-					<TouchableOpacity
-						onPress={() => navigate('Calendar')}
-						className='mr-4'
+		<View className='flex-1'>
+			<View className='flex-row justify-between flex-1 items-center relative'>
+				<Text className='text-white text-2xl font-bold absolute text-center w-full'>
+					BePrime
+				</Text>
+				<TouchableOpacity onPress={() => navigate('Friends')}>
+					<FontAwesome5 name='user-friends' size={24} color='white' />
+				</TouchableOpacity>
+				{user && (
+					<View className='flex-row'>
+						<TouchableOpacity
+							onPress={() => navigate('Calendar')}
+							className='mr-4'
+						>
+							<Entypo name='calendar' size={26} color='white' />
+						</TouchableOpacity>
+						<TouchableOpacity onPress={() => navigate('Profile')}>
+							<UserAvatar avatar={user.avatar} firstName={user.firstName} />
+						</TouchableOpacity>
+					</View>
+				)}
+			</View>
+			<View className='flex-row justify-center mt-3 '>
+				<Pressable className='p-2' onPress={setTypeFriends}>
+					<Text
+						className={`text-white font-bold ${
+							typeOfCalendarPhotos === 'other' && 'text-white/70'
+						}`}
 					>
-						<Entypo name='calendar' size={26} color='white' />
-					</TouchableOpacity>
-					<TouchableOpacity onPress={() => navigate('Profile')}>
-						<UserAvatar avatar={user.avatar} firstName={user.firstName} />
-					</TouchableOpacity>
-				</View>
-			)}
-			{/* <TouchableOpacity onPress={() => navigate('Settings')}></TouchableOpacity> */}
+						My friends
+					</Text>
+				</Pressable>
+				<Pressable onPress={setTypeOther} className='ml-1 p-2'>
+					<Text
+						className={`text-white font-bold ${
+							typeOfCalendarPhotos === 'my_friends' && 'text-white/70'
+						}`}
+					>
+						Other people
+					</Text>
+				</Pressable>
+			</View>
 		</View>
 	)
 }

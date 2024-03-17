@@ -27,8 +27,7 @@ import { Feather, Ionicons } from '@expo/vector-icons'
 import { Devider, EmodziComment } from './CommentEmodzi'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useStorePhoto } from '../home/element-photo/useStorePhoto'
-import { ILatestPhoto } from '@/shared/types/profile.interface'
-import { LayoutOpacityItems } from '@/navigation/ui/LayoutOpacityItems'
+import { ILatestInside, ILatestPhoto } from '@/shared/types/profile.interface'
 import { HeaderProfile } from '../profile/Profile'
 import { LayoutOpacityComment } from '@/navigation/ui/LayoutOpacityComment'
 
@@ -60,11 +59,11 @@ export const Comments = () => {
 	const queryKey = 'get-latest-photo'
 
 	// Получите данные из кеша по ключу
-	const dataFromCache: ILatestPhoto[] | undefined = queryClient.getQueryData([
+	const dataFromCache: ILatestInside[] | undefined = queryClient.getQueryData([
 		queryKey
 	])
 	//get-latest-photo
-	const [userMainInfo, setUserMainInfo] = useState<ILatestPhoto>(
+	const [userMainInfo, setUserMainInfo] = useState<ILatestInside>(
 		//@ts-ignore
 		(() =>
 			dataFromCache?.map(user => {
@@ -97,24 +96,26 @@ export const Comments = () => {
 		outputRange: [1, 0.5], // Равномерное увеличение в 2 раза
 		extrapolate: 'clamp'
 	})
-	const photosUser = {
-		frontPhoto:
-			{
-				created: userMainInfo.calendarPhotos.created || undefined,
-				photo: String(userMainInfo.calendarPhotos.photos.frontPhoto?.photo),
-				locate: ''
-			} || undefined,
-		backPhoto:
-			{
-				created: userMainInfo.calendarPhotos.created || undefined,
-				photo: String(userMainInfo.calendarPhotos.photos.backPhoto?.photo),
-				locate: ''
-			} || undefined
-	}
+	// const photosUser = {
+	// 	frontPhoto:
+	// 		{
+	// 			created: userMainInfo.calendarPhotos.created || undefined,
+	// 			photo: String(userMainInfo.calendarPhotos.photos.frontPhoto?.photo),
+	// 			locate: ''
+	// 		} || undefined,
+	// 	backPhoto:
+	// 		{
+	// 			created: userMainInfo.calendarPhotos.created || undefined,
+	// 			photo: String(userMainInfo.calendarPhotos.photos.backPhoto?.photo),
+	// 			locate: ''
+	// 		} || undefined
+	// }
 
-	const { dispatch, store, UnCurrent } = useStorePhoto({ photosUser })
+	const { photos } = userMainInfo.latestPhoto
 
-	if (!userMainInfo || !userMainInfo.calendarPhotos) return null
+	const { dispatch, store, UnCurrent } = useStorePhoto({ photos })
+	
+	if (!userMainInfo || !userMainInfo.latestPhoto) return null
 	return (
 		<View className='flex-1'>
 			{/* <TouchableOpacity onPress={() => navigate('Home')}>
@@ -128,7 +129,7 @@ export const Comments = () => {
 				// )}
 				//{...panResponder.panHandlers} */}
 
-				{/* <Animated.View
+				 <Animated.View
 					style={{
 						height: headerHeight,
 						overflow: 'hidden',
@@ -140,7 +141,7 @@ export const Comments = () => {
 					<View style={{ height: insets.top + 20 }} />
 					<ImageBackground
 						source={{
-							uri: `${BaseImageUrl}${userMainInfo.calendarPhotos.photos.backPhoto?.photo}`
+							uri: `${BaseImageUrl}${userMainInfo.latestPhoto.photos.backPhoto?.photo}`
 						}}
 						style={{
 							position: 'absolute',
@@ -233,12 +234,12 @@ export const Comments = () => {
 							</TouchableOpacity>
 						)}
 						<Text className='text-center my-5 mb-10 text-white text-bol'>
-							{userMainInfo.calendarPhotos.comment}
+							{userMainInfo.latestPhoto.comment}
 						</Text>
 					</Animated.View>
 
 					<Devider />
-				</Animated.View> */}
+				</Animated.View> 
 				{/* </View> */}
 
 				<Animated.View style={{ transform: [{ translateY }] }}>
@@ -247,14 +248,14 @@ export const Comments = () => {
 						<View className='mb-20'>
 							<FlatList
 								data={userPosts.data}
-								// inverted
+								inverted
 								contentContainerStyle={{ flexDirection: 'column-reverse' }}
 								renderItem={({ item }) => (
 									<CommentElement
-										message={item.message}
+										message={item.comment}
 										avatar={item.avatar}
 										created={item.created}
-										email={item.email}
+										email={item.firstName}
 										key={item.created}
 										firstName={item.firstName}
 										id={item._id}
@@ -318,7 +319,7 @@ export const Comments = () => {
 	)
 }
 
-const normalDate = (date: string) => {
+export const normalDate = (date: string) => {
 	const currentDate = new Date()
 	const userDate = new Date(date)
 

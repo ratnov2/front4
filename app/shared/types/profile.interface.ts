@@ -65,3 +65,27 @@ export interface ILatestPhoto {
 	name: string
 	_id: string
 }
+export interface ILatestInside {
+	latestPhoto: {
+		created: string
+		photos: {
+			frontPhoto?: {
+				created: Date
+				photo: string
+				locate: string
+			}
+			backPhoto?: {
+				created: Date
+				photo: string
+				locate: string
+			}
+		}
+		comment: string
+		comments: {
+			_id: string
+			message: string
+		}
+	}
+	firstName: string
+	_id: string
+}

@@ -14,12 +14,12 @@ import userPng from '@/assets/user.png'
 import { MaterialIcons } from '@expo/vector-icons'
 import { useMutation } from '@tanstack/react-query'
 import { ProfileService } from '@/services/profile/profile.service'
-import { ILatestPhoto } from '@/shared/types/profile.interface'
+import { ILatestInside, ILatestPhoto } from '@/shared/types/profile.interface'
 import DismissKeyboard from '@/ui/form-elements/field/DismissKeyboard'
 import { useStorePhoto } from './useStorePhoto'
 
 interface IElementPhoto {
-	photo: ILatestPhoto
+	photo: ILatestInside
 	refetch: () => void
 }
 
@@ -33,8 +33,8 @@ export const ElementPhoto: FC<IElementPhoto> = ({ photo, refetch }) => {
 	const navigate = useNavigation()
 	const { user } = useAuth()
 
-	const photosUser = photo.calendarPhotos.photos
-	const { dispatch, store, UnCurrent } = useStorePhoto({ photosUser })
+	const { photos } = photo.latestPhoto
+	const { dispatch, store, UnCurrent } = useStorePhoto({ photos })
 	// const [photos, setPhotos] = useState(
 	// 	(() => {
 	// 		const current =
@@ -46,7 +46,7 @@ export const ElementPhoto: FC<IElementPhoto> = ({ photo, refetch }) => {
 	// )
 	// console.log(photos)
 
-	const [value, setValue] = useState(photo.calendarPhotos.comment)
+	const [value, setValue] = useState(photo.latestPhoto.comment)
 	const [isMessage, setIsMessage] = useState(false)
 	//console.log(photo.calendarPhotos)
 
@@ -93,7 +93,7 @@ export const ElementPhoto: FC<IElementPhoto> = ({ photo, refetch }) => {
 							</Link>
 						</View>
 						<Text style={{ marginLeft: 10 }} className='text-white'>
-							{photo.name || 'Anonym'}
+							{photo.firstName || 'Anonym'}
 						</Text>
 					</View>
 					<View style={{ aspectRatio: 9 / 16 }} className='relative'>
@@ -137,7 +137,7 @@ export const ElementPhoto: FC<IElementPhoto> = ({ photo, refetch }) => {
 							}}
 						>
 							<Text className='text-white mt-4'>
-								{photo.calendarPhotos.comment || '...'}
+								{photo.latestPhoto.comment || '...'}
 							</Text>
 						</TouchableOpacity>
 					) : (
@@ -166,7 +166,7 @@ export const ElementPhoto: FC<IElementPhoto> = ({ photo, refetch }) => {
 										onPress={() => {
 											addMainComment.mutate({
 												message: value,
-												created: photo.calendarPhotos.created
+												created: photo.latestPhoto.created
 											})
 										}}
 									>
@@ -189,7 +189,7 @@ export const ElementPhoto: FC<IElementPhoto> = ({ photo, refetch }) => {
 				) : (
 					<View>
 						<Text className='text-white mt-4'>
-							{photo.calendarPhotos.comment || '...'}
+							{photo.latestPhoto.comment || '...'}
 						</Text>
 					</View>
 				)}
@@ -201,7 +201,7 @@ export const ElementPhoto: FC<IElementPhoto> = ({ photo, refetch }) => {
 							name: 'Comments' as any,
 							params: {
 								_id: photo._id,
-								created: photo.calendarPhotos.created
+								created: photo.latestPhoto.created
 							}
 						} as never)
 					}}
@@ -211,9 +211,7 @@ export const ElementPhoto: FC<IElementPhoto> = ({ photo, refetch }) => {
 					className='items-center flex-row block '
 				> */}
 					<View className='rounded-xl '>
-						<Text className='text-zinc-400'>
-							Add a comments...
-						</Text>
+						<Text className='text-zinc-400'>Add a comments...</Text>
 					</View>
 					{/* </Link> */}
 				</TouchableOpacity>
