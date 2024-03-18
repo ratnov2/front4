@@ -2,6 +2,7 @@ import { request } from '../api/request.api'
 import { getUsersUrl } from '@/config/api.config'
 import {
 	ILatestInside,
+	ILatestInside2,
 	ILatestPhoto,
 	IProfile
 } from '@/shared/types/profile.interface'
@@ -35,7 +36,7 @@ export const ProfileService = {
 		return response
 	},
 	async getLatestPhotosOther() {
-		const response = await request<ILatestInside[]>({
+		const response = await request<ILatestInside2[]>({
 			url: getUsersUrl('/latest-photo-people'),
 			method: 'GET'
 		})

@@ -161,6 +161,7 @@ export const Inside = () => {
 	const latestPhotoUse = {
 		latestPhoto: userQuery
 	}
+	console.log(typeOfCalendarPhotos);
 	
 	return (
 		<View style={{ flex: 1 }}>
@@ -326,12 +327,19 @@ export const Inside = () => {
 								<View>
 									<Text className='text-white'>Loading...</Text>
 								</View>
-							) : latestPhoto.data && latestPhoto.data.length > 0 ? (
+							) : latestPhotoOther.data && latestPhotoOther.data.length > 0 ? (
 								<View className='h-full'>
 									{latestPhotoOther.data?.map((photo, key) => {
+										console.log(photo);
+										
+										const photoChange:ILatestInside = {
+											_id:photo._id._id,
+											firstName:photo._id.firstName,
+											latestPhoto:photo.latestPhoto
+										}
 										return (
 											<ElementPhoto
-												photo={photo}
+												photo={photoChange}
 												key={key}
 												refetch={() => latestPhotoOther.refetch()}
 											/>
