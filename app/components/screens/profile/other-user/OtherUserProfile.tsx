@@ -4,7 +4,7 @@ import { View } from 'react-native'
 import img from '@/assets/adaptive-icon.png'
 import { LinearGradient } from 'expo-linear-gradient'
 import { FriendsService } from '@/services/friends/friends.service'
-import { useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { ProfileService } from '@/services/profile/profile.service'
 import { useNavigation, useRoute } from '@react-navigation/native'
@@ -17,8 +17,8 @@ import { BaseImageUrl2 } from '@/services/api/interceptors.api'
 export const OtherUserProfile = () => {
 	const { params } = useRoute<any>()
 
-	// let params = { id: '65587d67dbdf73a8b2a442f9' }
 	const { user } = useAuth()
+
 	const addFriend = useMutation(
 		['add-friend'],
 		(data: { friendId: string; status: '0' | '1' | '2' }) =>
@@ -60,6 +60,8 @@ export const OtherUserProfile = () => {
 	const navigate = useNavigation()
 	const { handleModalVisible, modalVisible, userDataForModal } = useModalState()
 	const [error, setError] = useState(false)
+	console.log(getUser.data);
+	
 	return (
 		<View>
 			<WithCustomFriendModal
@@ -110,29 +112,86 @@ export const OtherUserProfile = () => {
 						</View>
 					</ImageBackground>
 					{RenderButton(typeFriend, getUser.data, handleModalVisible)}
-					{/* {typeFriend === null ? (
-						<TouchableOpacity
-							onPress={() =>
-								addFriend.mutate({
-									friendId: getUser.data._id,
-									status: '1'
-								})
-							}
-							className='flex-row justify-center mt-4 bg-white p-4 rounded-2xl'
-						>
-							<Text className='font-bold text-2xl mr-2'>+</Text>
-							<Text className='font-bold text-2xl'>Add Friend</Text>
-						</TouchableOpacity>
-					) : typeFriend === '2' ? (
-						<View className='flex-row justify-center mt-4 bg-white p-4 rounded-2xl'>
-							<Text className='font-bold text-2xl'>Invite was sented</Text>
-						</View>
-					) : typeFriend === '1' ? (
-						<View></View>
-					) : (
-						<View></View>
-					)} */}
 				</View>
+			)}
+		</View>
+	)
+}
+
+type TSizeAvatar = 'small-photo' | 'profile' | 'friends-pal' | 'friends-item'
+
+const sizeAvatar = {
+	'small-photo': {
+		w: 30,
+		h: 30,
+		fontSize: 15,
+		left: 9.5,
+		top: 6
+	},
+	profile: {
+		w: 100,
+		h: 100,
+		fontSize: 35,
+		left: 37,
+		top: 28
+	},
+	'friends-pal': {
+		w: 70,
+		h: 70,
+		fontSize: 25,
+		left: 26,
+		top: 19
+	},
+	'friends-item': {
+		w: 35,
+		h: 35,
+		fontSize: 15,
+		left: 12,
+		top: 8.5
+	}
+}
+
+interface IImgAvatar {
+	avatar: string
+	size?: TSizeAvatar
+	name?: string
+}
+export const ImgAvatar: FC<IImgAvatar> = ({ avatar, size, name }) => {
+	const [error, setError] = useState(false)
+	size = !size ? 'small-photo' : size
+	name = !name ? 'Anonym' : name
+	//console.log(avatar)
+
+	return (
+		<View
+			className='rounded-full overflow-hidden relative '
+			style={{ width: sizeAvatar[size].w, height: sizeAvatar[size].h }}
+		>
+			<ImageBackground
+				style={{ position: 'relative' }}
+				className='flex-1'
+				source={
+					!error
+						? {
+								uri: BaseImageUrl2(avatar)
+						  }
+						: bgImage
+				}
+				onError={() => {
+					setError(true)
+				}}
+			/>
+			{(error || !avatar) && (
+				<Text
+					className='absolute flex-1 justify-center items-center text-white font-bold uppercase'
+					style={{
+						left: sizeAvatar[size].left,
+						top: sizeAvatar[size].top,
+						fontSize: sizeAvatar[size].fontSize
+					}}
+				>
+					{name[0]}
+				</Text>
 			)}
 		</View>
 	)

@@ -23,6 +23,8 @@ import { TypeRootStackParamList } from '@/navigation/navigation.types'
 import { LayoutOpacityItems } from '@/navigation/ui/LayoutOpacityItems'
 import { AntDesign, Entypo, FontAwesome } from '@expo/vector-icons'
 import { LayoutLightOpacityOtherProfile } from '@/navigation/ui/LayoutLightOpacityOtherProfile'
+import { useNotifications } from './PERMISSIONS/Notefications'
+
 
 type IProfile = NativeStackScreenProps<TypeRootStackParamList, 'Profile'>
 
@@ -44,7 +46,7 @@ export const HeaderProfile = () => {
 const Profile: FC<IProfile> = ({ navigation }) => {
 	const { user } = useAuth()
 	let { params } = useRoute<any>()
-	//const { navigate } = useNavigation<any>()
+
 	return (
 		<View className='flex-1'>
 			{user && (
@@ -53,7 +55,7 @@ const Profile: FC<IProfile> = ({ navigation }) => {
 					(params as { id: string })?.id ? (
 						<LayoutLightOpacityOtherProfile
 							onGoBack={() => navigation.navigate('Home')}
-							title={user.email.split('@')[0]}
+							title={"be-prime"}
 						>
 							<OtherUserProfile />
 						</LayoutLightOpacityOtherProfile>

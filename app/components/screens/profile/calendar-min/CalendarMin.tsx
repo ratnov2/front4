@@ -1,11 +1,18 @@
-import { ProfileService } from '@/services/profile/profile.service'
-import { useQuery } from '@tanstack/react-query'
+import {
+	ProfileService,
+	TypeUpdateFavoritePhoto
+} from '@/services/profile/profile.service'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { FC, useState } from 'react'
 import { Image, Modal, Pressable, Text, View } from 'react-native'
 import clsx from 'clsx'
 import { Link } from '@react-navigation/native'
 import { BaseImageUrl, BaseImageUrl2 } from '@/services/api/interceptors.api'
 import { ILatestPhoto, IPhotos } from '@/shared/types/profile.interface'
+import { ImageBackground } from 'react-native'
+import { normalDate } from '../../comments/CommentElement'
+import { text } from '../../calendarTask/CalendarTask'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 declare global {
 	interface Date {
 		daysInMonth(): number
@@ -13,14 +20,31 @@ declare global {
 } //@TASK
 export const CalendarMin: FC = () => {
 	const [modalVisible, setModalVisible] = useState(false)
-	const [modalImg, setModalImg] = useState('')
+	const [modalImg, setModalImg] = useState(0)
 	const addDate = new Date()
-	const user = useQuery(['get-user-234'], () => ProfileService.getProfile())
+	const user = useQuery(['get-user-234'], () => ProfileService.getProfile(), {
+		select: data => {
+			const calendarPhotos = data.calendarPhotos.slice(-14)
+			return { ...data, calendarPhotos }
+		}
+	})
 	Date.prototype.daysInMonth = function () {
 		return 33 - new Date(this.getFullYear(), this.getMonth(), 33).getDate()
 	}
+	const queryClient = useQueryClient()
+	const updateFavoritePhoto = useMutation(
+		['update-favorite-photo-calendar'],
+		(data: TypeUpdateFavoritePhoto) => ProfileService.updateFavoritePhoto(data),
+		{
+			onSuccess: () => {
+				setModalVisible(false)
+				queryClient.refetchQueries(['get-user'])
+			}
+		}
+	)
 	addDate.setDate(addDate.getDate() - 14)
-
+	//console.log(user.data?.calendarPhotos);
+	const { top } = useSafeAreaInsets()
 	return (
 		<View className='bg-zinc-900 rounded-xl p-4 mt-5'>
 			<Modal
@@ -31,15 +55,76 @@ export const CalendarMin: FC = () => {
 					setModalVisible(!modalVisible)
 				}}
 			>
-				<View className='bg-red-400  flex-1 justify-center items-center'>
-					<View className='w-[100%] h-[100%] p-5'>
-						<Pressable onPress={() => setModalVisible(!modalVisible)}>
-							<Image
-								className='w-[100%] h-[90%] rounded-2xl '
-								resizeMode='center'
-								source={{ uri: `${BaseImageUrl2(modalImg)}` }}
-							/>
+				<View className='flex-1 justify-center items-center'>
+					<View className='flex-1 w-full bg-black px-10 '>
+						<Pressable
+							onPress={() => setModalVisible(!modalVisible)}
+							className='flex-1'
+						>
+							<View className='h-[15%] items-center' style={{ marginTop: top }}>
+								<Text className='text-white font-bold text-xl'>
+									{user.data &&
+										text(user.data?.calendarPhotos[modalImg].created || '')}
+								</Text>
+								<Text className='text-white/70 text-base -mt-1'>
+									{normalDate(
+										user.data?.calendarPhotos[modalImg].created || ''
+									)}
+								</Text>
+							</View>
+							<View className='flex-1 bg-white rounded-2xl overflow-hidden border-2 border-white'>
+								<ImageBackground
+									className='h-full w-full rounded-2xl'
+									source={{
+										uri: BaseImageUrl2(
+											user.data?.calendarPhotos[modalImg].photos.frontPhoto
+												?.photo ||
+												user.data?.calendarPhotos[modalImg].photos.backPhoto
+													?.photo ||
+												''
+										)
+									}}
+								/>
+							</View>
 						</Pressable>
+						{'params' && (
+							<View className='text-center h-[25%]'>
+								<Pressable
+									className='border-2  m-auto p-3 rounded-2xl bg-white w-full'
+									onPress={() =>
+										updateFavoritePhoto.mutate({
+											key: 'photoOne',
+											photo:
+												user.data?.calendarPhotos[modalImg].photos.frontPhoto
+													?.photo ||
+												user.data?.calendarPhotos[modalImg].photos.backPhoto
+													?.photo ||
+												'',
+											created:
+												user.data?.calendarPhotos[modalImg].photos.frontPhoto
+													?.created ||
+												user.data?.calendarPhotos[modalImg].photos.backPhoto
+													?.created ||
+												''
+										})
+									}
+								>
+									{!updateFavoritePhoto.isLoading ? (
+										<Text className='text-center text-xl font-bold'>
+											Pin photo
+										</Text>
+									) : (
+										<View className=''>
+											{/* <SvgUri width={100} height={100} uri={infinitySvg} /> */}
+											{/* <Image source={infinitySvg} /> */}
+											<Text className='text-center text-xl font-bold '>
+												Loading...
+											</Text>
+										</View>
+									)}
+								</Pressable>
+							</View>
+						)}
 					</View>
 				</View>
 			</Modal>
@@ -48,27 +133,29 @@ export const CalendarMin: FC = () => {
 				<View className='text-white flex-row w-full mx-[2px] flex-wrap '>
 					{(() => {
 						let photo: IPhotos[] = []
-						photo = user.data.calendarPhotos.slice(-14)
+						photo = user.data.calendarPhotos
 						let k = -1
-
-						return Array.from(Array(14)).map((el, key) => {
+						// for (let i = 0; i < photo.length; i++) {
+						// 	console.log('photo~!!',photo[i].created);
+							
+							
+						// }
+						return Array.from(Array(14)).map((_, key) => {
 							const date = new Date(photo[k + 1]?.created)
 							const currentDate = new Date()
 							const day = date.getDate()
 							const month = date.getMonth()
 							const year = date.getFullYear()
 							addDate.setDate(addDate.getDate() + 1)
-							let photoImg: string =
-								photo[k + 1]?.photos.frontPhoto?.photo ||
-								photo[k + 1]?.photos.backPhoto?.photo ||
-								''
+							let photoImg: number = k
 
 							const provPhoto =
 								month === addDate.getMonth() &&
 								day === addDate.getDate() &&
 								year === addDate.getFullYear()
 							if (provPhoto) k++
-
+							console.log(k,photo[k]?.created);
+							
 							return (
 								<View
 									key={key}
@@ -87,7 +174,13 @@ export const CalendarMin: FC = () => {
 										>
 											<Image
 												className='w-full h-full rounded-lg'
-												source={{ uri: `${BaseImageUrl2(photoImg)}` }}
+												source={{
+													uri: `${BaseImageUrl2(
+														photo[k]?.photos.frontPhoto?.photo ||
+															photo[k]?.photos.frontPhoto?.photo ||
+															''
+													)}`
+												}}
 											/>
 											<Text
 												className='text-white absolute text-xl'

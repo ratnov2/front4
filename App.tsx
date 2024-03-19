@@ -6,6 +6,8 @@ import Toast from '@/ui/Toast'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ContactsDataProvider } from '@/providers/contacts/ContactsDataProvider'
 
+import { NotificationsContextProvider } from '@/components/screens/profile/PERMISSIONS/Notefications'
+
 const queryClient = new QueryClient({
 	defaultOptions: {
 		queries: {
@@ -21,11 +23,13 @@ export default function App() {
 		<>
 			<QueryClientProvider client={queryClient}>
 				<AuthProvider>
-					<ContactsDataProvider>
-						<SafeAreaProvider>
-							<Navigation />
-						</SafeAreaProvider>
-					</ContactsDataProvider>
+					<NotificationsContextProvider>
+						<ContactsDataProvider>
+							<SafeAreaProvider>
+								<Navigation />
+							</SafeAreaProvider>
+						</ContactsDataProvider>
+					</NotificationsContextProvider>
 				</AuthProvider>
 				<StatusBar barStyle='light-content' />
 				<Toast />

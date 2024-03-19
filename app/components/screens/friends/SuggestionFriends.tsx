@@ -60,7 +60,7 @@ interface IFriendBody {
 export const FriendBody: FC<IFriendBody> = ({ name, number }) => (
 	<View>
 		<Text className='text-white text-lg font-bold'>{name || 'Anonym'}</Text>
-		<Text className='text-stone-400 font-bold '>{number}</Text>
+		{/* <Text className='text-stone-400 font-bold '>{number}</Text> */}
 	</View>
 )
 

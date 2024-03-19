@@ -1,5 +1,12 @@
 import { FC } from 'react'
-import { Image, Pressable, Text, TouchableOpacity, View } from 'react-native'
+import {
+	Image,
+	ImageBackground,
+	Pressable,
+	Text,
+	TouchableOpacity,
+	View
+} from 'react-native'
 import { AntDesign } from '@expo/vector-icons'
 import clsx from 'clsx'
 import {
@@ -13,9 +20,10 @@ import { BaseImageUrl } from '@/services/api/interceptors.api'
 interface IPinBlock {
 	img: string
 	pin: 'photoOne' | 'photoTwo' | 'photoThree'
+	created: string
 }
 //?pin=${pin}
-export const PinBlock: FC<IPinBlock> = ({ img, pin }) => {
+export const PinBlock: FC<IPinBlock> = ({ img, pin, created }) => {
 	let navigate = useNavigation()
 
 	if (!!img) {
@@ -34,12 +42,21 @@ export const PinBlock: FC<IPinBlock> = ({ img, pin }) => {
 						})
 					}
 				>
-					<View className='bg-red w-[100%] h-[100%] block w-30 '>
+					<View className='bg-red w-[100%] h-[100%] block w-30 relative'>
 						<Image
-							className='w-[100%] h-[100%] rounded-2xl'
+							className='rounded-2xl flex-1'
 							resizeMode='cover'
+							// style={{aspectRatio:4/3}}
 							source={{ uri: `${BaseImageUrl}${img}` }}
 						/>
+						<View className='absolute bottom-1 left-0.5'>
+							<Text className='text-white text-base font-bold'>
+								{text(created)}
+							</Text>
+							<Text className='text-white -mt-1.5'>
+								{new Date(created).getFullYear()}
+							</Text>
+						</View>
 					</View>
 				</TouchableOpacity>
 				{/* </Link> */}
@@ -68,4 +85,8 @@ export const PinBlock: FC<IPinBlock> = ({ img, pin }) => {
 			</View>
 		</TouchableOpacity>
 	)
+}
+const text = (created: string) => {
+	const date = new Date(created)
+	return `${date.getDate()} ${date.toLocaleString('ru', { month: 'long' })}`
 }

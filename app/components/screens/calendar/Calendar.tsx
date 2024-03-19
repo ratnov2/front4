@@ -1,8 +1,11 @@
 import { LayoutLightOpacity } from '@/navigation/ui/LayoutLightOpacity'
 import { BaseImageUrl2 } from '@/services/api/interceptors.api'
-import { ProfileService } from '@/services/profile/profile.service'
-import { useNavigation } from '@react-navigation/native'
-import { useQuery } from '@tanstack/react-query'
+import {
+	ProfileService,
+	TypeUpdateFavoritePhoto
+} from '@/services/profile/profile.service'
+import { useNavigation, useRoute } from '@react-navigation/native'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import {
 	Alert,
@@ -13,15 +16,33 @@ import {
 	Text,
 	View
 } from 'react-native'
+import { text } from '../calendarTask/CalendarTask'
+import { ImageBackground } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { normalDate } from '../comments/CommentElement'
 
 export const Calendar = () => {
 	const user = useQuery(['get-user-profile'], () => ProfileService.getProfile()) //@TASK
+	const queryClient = useQueryClient()
 	const { navigate } = useNavigation<any>()
 	let daysInMonth = function (date: Date) {
 		return 33 - new Date(date.getFullYear(), date.getMonth(), 33).getDate()
 	}
+	const { top } = useSafeAreaInsets()
+	const updateFavoritePhoto = useMutation(
+		['update-favorite-photo-calendar'],
+		(data: TypeUpdateFavoritePhoto) => ProfileService.updateFavoritePhoto(data),
+		{
+			onSuccess: () => {
+				setModalVisible(false)
+				queryClient.refetchQueries(['get-user'])
+				//@ts-ignore
+				navigate.navigate(`Profile`, { pr: '' })
+			}
+		}
+	)
 	const [modalVisible, setModalVisible] = useState(false)
-	const [modalImg, setModalImg] = useState('')
+	const [modalImg, setModalImg] = useState(0)
 	return (
 		<LayoutLightOpacity
 			title='Your Memories'
@@ -38,14 +59,75 @@ export const Calendar = () => {
 				}}
 			>
 				<View className='bg-red-400  flex-1 justify-center items-center'>
-					<View className='w-[100%] h-[100%] p-5'>
-						<Pressable onPress={() => setModalVisible(!modalVisible)}>
-							<Image
-								className='w-[100%] h-[100%] rounded-2xl '
-								resizeMode='center'
-								source={{ uri: modalImg }}
-							/>
+					<View className='flex-1 w-full bg-black px-10 '>
+						<Pressable
+							onPress={() => setModalVisible(!modalVisible)}
+							className='flex-1'
+						>
+							<View className='h-[15%] items-center' style={{ marginTop: top }}>
+								<Text className='text-white font-bold text-xl'>
+									{user.data &&
+										text(user.data?.calendarPhotos[modalImg].created || '')}
+								</Text>
+								<Text className='text-white/70 text-base -mt-1'>
+									{normalDate(
+										user.data?.calendarPhotos[modalImg].created || ''
+									)}
+								</Text>
+							</View>
+							<View className='flex-1 bg-white rounded-2xl overflow-hidden border-2 border-white'>
+								<ImageBackground
+									className='h-full w-full rounded-2xl'
+									source={{
+										uri: BaseImageUrl2(
+											user.data?.calendarPhotos[modalImg].photos.frontPhoto
+												?.photo ||
+												user.data?.calendarPhotos[modalImg].photos.backPhoto
+													?.photo ||
+												''
+										)
+									}}
+								/>
+							</View>
 						</Pressable>
+						{'params' && (
+							<View className='text-center h-[25%]'>
+								<Pressable
+									className='border-2  m-auto p-3 rounded-2xl bg-white w-full'
+									onPress={() =>
+										updateFavoritePhoto.mutate({
+											key: 'photoOne',
+											photo:
+												user.data?.calendarPhotos[modalImg].photos.frontPhoto
+													?.photo ||
+												user.data?.calendarPhotos[modalImg].photos.backPhoto
+													?.photo ||
+												'',
+											created:
+												user.data?.calendarPhotos[modalImg].photos.frontPhoto
+													?.created ||
+												user.data?.calendarPhotos[modalImg].photos.backPhoto
+													?.created ||
+												''
+										})
+									}
+								>
+									{!updateFavoritePhoto.isLoading ? (
+										<Text className='text-center text-xl font-bold'>
+											Pin photo
+										</Text>
+									) : (
+										<View className=''>
+											{/* <SvgUri width={100} height={100} uri={infinitySvg} /> */}
+											{/* <Image source={infinitySvg} /> */}
+											<Text className='text-center text-xl font-bold '>
+												Loading...
+											</Text>
+										</View>
+									)}
+								</Pressable>
+							</View>
+						)}
 					</View>
 				</View>
 			</Modal>
@@ -75,7 +157,7 @@ export const Calendar = () => {
 						) {
 							let obj: {
 								month: string
-								array: { day: number; photo: string }[]
+								array: { day: number; photo: number }[]
 							} = {
 								month: '',
 								array: []
@@ -99,17 +181,14 @@ export const Calendar = () => {
 									beginDate.getFullYear() === crYear
 								) {
 									let newObj = {
-										photo: `${
-											calendarPhotos[k].photos.frontPhoto?.photo ||
-											calendarPhotos[k].photos.backPhoto?.photo
-										}`,
+										photo: k,
 										day: beginDate.getDate()
 									}
 									obj.array.push(newObj)
 									k++
 								} else {
 									let newObj = {
-										photo: '',
+										photo: -1,
 										day: beginDate.getDate()
 									}
 									obj.array.push(newObj)
@@ -137,11 +216,11 @@ export const Calendar = () => {
 													key={key}
 													className='w-[40px] h-[50px] flex items-center justify-center rounded-lg '
 												>
-													{el.photo ? (
+													{el.photo !== -1 ? (
 														<View className='border-[1px] rounded-lg border-white'>
 															<Pressable
 																onPress={() => {
-																	setModalImg(BaseImageUrl2(el.photo))
+																	setModalImg(el.photo)
 																	setModalVisible(true)
 																}}
 															>
@@ -150,7 +229,13 @@ export const Calendar = () => {
 																	height={50}
 																	className='rounded-lg'
 																	source={{
-																		uri: BaseImageUrl2(el.photo)
+																		uri: BaseImageUrl2(
+																			calendarPhotos[el.photo].photos.frontPhoto
+																				?.photo ||
+																				calendarPhotos[el.photo].photos
+																					.backPhoto?.photo ||
+																				''
+																		)
 																	}}
 																/>
 																<Text className='absolute left-3 top-4 text-white'>

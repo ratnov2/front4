@@ -1,7 +1,7 @@
 import { FriendsService } from '@/services/friends/friends.service'
 import { useMutation } from '@tanstack/react-query'
 import { FC } from 'react'
-import { Text, View } from 'react-native'
+import { Pressable, Text, View } from 'react-native'
 import { FriendItem } from './ui/friend-item'
 import { NoFriend } from './ui/NoFriends'
 import { IProfile } from '@/shared/types/profile.interface'
@@ -9,6 +9,7 @@ import { IProfile } from '@/shared/types/profile.interface'
 import { useModalState } from './search-result/helper/modal/useModalState'
 import { ModalButton } from './search-result/helper/modal/ModalButton'
 import { WithCustomFriendModal } from './search-result/helper/modal/WithCustomFriendModal'
+import { useNavigation } from '@react-navigation/native'
 
 interface IMyFriends {
 	friends: IProfile[]
@@ -16,7 +17,7 @@ interface IMyFriends {
 
 export const MyFriends: FC<IMyFriends> = ({ friends }) => {
 	const { handleModalVisible, modalVisible, userDataForModal } = useModalState()
-
+	const navigate = useNavigation()
 	return (
 		<View className='mt-7'>
 			<WithCustomFriendModal
@@ -34,23 +35,36 @@ export const MyFriends: FC<IMyFriends> = ({ friends }) => {
 				<View>
 					{friends.map((friend, key) => {
 						return (
-							<FriendItem
-								styles={'mb-4 p-0 bg-transparent'}
-								avatar={friend.avatar}
-								name={friend.firstName}
-								body={
-									<FriendBody name={friend.firstName} login={friend.email} />
-								}
-								buttons={
-									<ModalButton
-										setModalVisible={() =>
-											handleModalVisible(friend.firstName, friend._id, '0')
+							<Pressable
+								className='flex-1 '
+								onPress={() =>
+									navigate.navigate({
+										name: `Profile`,
+										params: {
+											id: friend._id
 										}
-										text='Delete friend'
-									/>
+									} as never)
 								}
-								key={key}
-							/>
+								key={friend._id}
+							>
+								<FriendItem
+									styles={'mb-4 p-0 bg-transparent'}
+									avatar={friend.avatar}
+									name={friend.firstName}
+									body={
+										<FriendBody name={friend.firstName} login={friend.email} />
+									}
+									buttons={
+										<ModalButton
+											setModalVisible={() =>
+												handleModalVisible(friend.firstName, friend._id, '0')
+											}
+											text='Delete friend'
+										/>
+									}
+									key={key}
+								/>
+							</Pressable>
 						)
 					})}
 				</View>

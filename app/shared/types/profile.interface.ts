@@ -3,7 +3,20 @@ export interface IProfile {
 	email: string
 	calendarPhotos: IPhotos[]
 	createdAt: string
-	favoritePhotos: { photoOne: string; photoTwo: string; photoThree: string }
+	favoritePhotos: {
+		photoOne: {
+			photo: string
+			created: string
+		} | null
+		photoTwo: {
+			photo: string
+			created: string
+		} | null
+		photoThree: {
+			photo: string
+			created: string
+		} | null
+	}
 	firstName: string
 	friendship: {
 		_id: string
@@ -21,7 +34,7 @@ export interface IFriend {
 }
 
 export interface IPhotos {
-	created: Date
+	created: string
 	photos: {
 		frontPhoto?: {
 			created: Date
@@ -62,6 +75,7 @@ export interface ILatestPhoto {
 			message: string
 		}[]
 	}
+	avatar: string
 	name: string
 	_id: string
 }
@@ -80,6 +94,7 @@ export interface ILatestInside {
 				locate: string
 			}
 		}
+		avatar: string
 		comment: string
 		comments: {
 			_id: string

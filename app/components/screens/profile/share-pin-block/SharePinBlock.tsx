@@ -8,8 +8,6 @@ interface ISharePinBlock {
 }
 
 export const SharePinBlock: FC<ISharePinBlock> = ({ user }) => {
-	//console.log('!!!',user);
-	
 	return (
 		<View>
 			<View className='flex-row justify-between my-4 items-center'>
@@ -18,9 +16,21 @@ export const SharePinBlock: FC<ISharePinBlock> = ({ user }) => {
 			</View>
 			<View>
 				<View className='flex-row justify-between'>
-					<PinBlock img={user.favoritePhotos.photoOne} pin='photoOne' />
-					<PinBlock img={user.favoritePhotos.photoTwo} pin='photoTwo' />
-					<PinBlock img={user.favoritePhotos.photoThree} pin='photoThree' />
+					<PinBlock
+						img={user.favoritePhotos.photoOne?.photo || ''}
+						pin='photoOne'
+						created={user.favoritePhotos.photoOne?.created || ''}
+					/>
+					<PinBlock
+						img={user.favoritePhotos.photoTwo?.photo || ''}
+						pin='photoTwo'
+						created={user.favoritePhotos.photoTwo?.created || ''}
+					/>
+					<PinBlock
+						img={user.favoritePhotos.photoThree?.photo || ''}
+						pin='photoThree'
+						created={user.favoritePhotos.photoThree?.created || ''}
+					/>
 				</View>
 			</View>
 		</View>

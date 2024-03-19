@@ -32,6 +32,7 @@ import {
 import { LayoutLight } from '@/navigation/ui/LayoutLight'
 import { LayoutLightOpacity } from '@/navigation/ui/LayoutLightOpacity'
 import { shareProfile } from '@/ui/share-profile/ShareProfile'
+import { Invite } from '../friends/ui/Invite'
 
 //type KeysOfCards = keyof typeof featureComponents.id
 
@@ -65,13 +66,13 @@ export const Settings: FC<ISettings> = ({ navigation }) => {
 					>
 						<View className='flex-1 bg-w'>
 							<View>
-								<FriendItem
+								{/* <FriendItem
 									styles={'mb-4 p-2'}
 									avatar={user.avatar}
 									name={user.firstName}
 									body={<FriendBody name={user.firstName} number='3' />}
-									avatarType='big'
-								/>
+								/> */}
+								<Invite />
 							</View>
 							<View>
 								<HeaderCardComponent text='Features' />

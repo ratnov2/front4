@@ -14,10 +14,13 @@ export const ProfileService = {
 			url: getUsersUrl('/profile'),
 			method: 'GET'
 		})
+
 		return response
 	},
 
 	async updateFavoritePhoto(data: TypeUpdateFavoritePhoto) {
+		console.log(data);
+		
 		const response = await instance.put(
 			getUsersUrl('/profile/favorite-photos'),
 			data
@@ -33,6 +36,7 @@ export const ProfileService = {
 			url: getUsersUrl('/latest-photo-friends'),
 			method: 'GET'
 		})
+
 		return response
 	},
 	async getLatestPhotosOther() {
@@ -89,6 +93,7 @@ export const ProfileService = {
 export type TypeUpdateFavoritePhoto = {
 	key: 'photoOne' | 'photoTwo' | 'photoThree'
 	photo: string
+	created: string
 }
 export type TypeEditProfile = {
 	firtsName: string

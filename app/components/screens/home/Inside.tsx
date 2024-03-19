@@ -70,11 +70,11 @@ export const Inside = () => {
 
 	const takeBackPhoto = async () => {
 		setIsMakingPhoto(true)
-		console.log('takeBackPhoto')
+		//console.log('takeBackPhoto')
 		if (cameraRef.current) {
-			console.log('cameraRef.current')
+			//console.log('cameraRef.current')
 			const { uri } = await (cameraRef.current as any).takePictureAsync()
-			console.log('uri')
+			//console.log('uri')
 			setBackImage(uri)
 			!frontImage && setIsFrontCamera(true)
 		}
@@ -102,9 +102,23 @@ export const Inside = () => {
 	const latestPhoto = useQuery(['get-latest-friends'], () =>
 		ProfileService.getLatestPhotosFriends()
 	)
-	const latestPhotoOther = useQuery(['get-latest-people'], () =>
-		ProfileService.getLatestPhotosOther()
+	const latestPhotoOther = useQuery(
+		['get-latest-people'],
+		() => ProfileService.getLatestPhotosOther(),
+		{
+			select: data => {
+				//console.log('data', data)
+
+				return data.map(el => ({
+					latestPhoto: { ...el.latestPhoto },
+					avatar: el._id.avatar,
+					_id:  el._id._id,
+					firstName:  el._id.firstName
+				}))
+			}
+		}
 	)
+	//[{"_id": {"_id": "65587d61dbdf73a8b2a442f3", "avatar": "/uploads/avatar/65587d61dbdf73a8b2a442f3/435795e1081764dfc011da2110729610105a.webp", "firstName": "anton"}, "latestPhoto": {"comment": "Qq", "comments": [Array], "created": "2024-03-18T15:15:10.427Z", "photos": [Object]}}
 	const { user } = useAuth()
 
 	const [startCamera, setStartCamera] = useState(false)
@@ -119,6 +133,8 @@ export const Inside = () => {
 	////
 	useEffect(() => {}, [startCamera])
 	const ff = () => {
+		console.log('WW!')
+
 		if (frontImage && backImage && !isLoading) {
 			const formData = new FormData()
 			console.log('frontImage', backImage)
@@ -156,13 +172,16 @@ export const Inside = () => {
 
 	const cron = useQuery(['get-cron-time'], ProfileService.getCronTime)
 	const queryClient = useQueryClient()
-	const userQuery = (queryClient.getQueryData(['get-user']) as ILatestInside)
-		.latestPhoto
+	const userQuery = queryClient.getQueryData(['get-user']) as any
+
 	const latestPhotoUse = {
-		latestPhoto: userQuery
+		latestPhoto: { ...userQuery.latestPhoto },
+		avatar: userQuery.avatar,
+		_id: userQuery._id,
+		firstName: userQuery.firstName
 	}
-	console.log(typeOfCalendarPhotos);
-	
+	console.log('userQuery', latestPhotoOther.data)
+	//console.log('userQuery2', latestPhoto.data)
 	return (
 		<View style={{ flex: 1 }}>
 			{/* {backImage && <Image className='w-40 h-40' source={{ uri: backImage }} />}
@@ -205,7 +224,7 @@ export const Inside = () => {
 						)}
 					</View>
 
-					<View className='h-[23%] bg-black flex justify-center items-center z-[99999]'>
+					<View className='h-[23%] bg-black flex justify-center items-center z-[9999999] '>
 						{!frontImage && !backImage && !isMakingPhoto ? (
 							<View className='flex-row items-center'>
 								<Pressable
@@ -254,7 +273,7 @@ export const Inside = () => {
 								</TouchableOpacity>
 								<TouchableOpacity
 									onPress={ff}
-									className='flex-row justify-center items-center p-2'
+									className='flex-row justify-center items-center p-2 z-[999999]'
 								>
 									<Text className='text-white font-bold text-2xl mr-4'>
 										SEND
@@ -330,16 +349,9 @@ export const Inside = () => {
 							) : latestPhotoOther.data && latestPhotoOther.data.length > 0 ? (
 								<View className='h-full'>
 									{latestPhotoOther.data?.map((photo, key) => {
-										console.log(photo);
-										
-										const photoChange:ILatestInside = {
-											_id:photo._id._id,
-											firstName:photo._id.firstName,
-											latestPhoto:photo.latestPhoto
-										}
 										return (
 											<ElementPhoto
-												photo={photoChange}
+												photo={photo}
 												key={key}
 												refetch={() => latestPhotoOther.refetch()}
 											/>
@@ -406,7 +418,7 @@ export const Inside = () => {
 					</View>
 				</View>
 			)}
-			<LinearGradient
+			{/* <LinearGradient
 				colors={['#00000000', '#111111']}
 				style={{
 					height: '10%',
@@ -414,7 +426,7 @@ export const Inside = () => {
 					position: 'absolute',
 					bottom: 0
 				}}
-			></LinearGradient>
+			></LinearGradient> */}
 		</View>
 	)
 }

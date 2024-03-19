@@ -7,8 +7,6 @@ import {
 	TouchableOpacity,
 	View
 } from 'react-native'
-import bg from '@/assets/bg-red.jpg'
-import bg2 from '@/assets/user.png'
 import { FC, useEffect, useRef, useState } from 'react'
 import { PanResponder } from 'react-native'
 
@@ -90,7 +88,7 @@ export const ElementTest: FC<IElementTest> = ({ img1, img2 }) => {
 	}, [imageRef])
 	const [state, setState] = useState(true)
 	return (
-		<View style={styles.container}>
+		<View style={styles.container} >
 			<Pressable style={{ flex: 1 }} ref={ref}>
 				<Image
 					source={state ? { uri: img1 } : { uri: img2 }}

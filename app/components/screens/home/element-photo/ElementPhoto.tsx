@@ -17,6 +17,8 @@ import { ProfileService } from '@/services/profile/profile.service'
 import { ILatestInside, ILatestPhoto } from '@/shared/types/profile.interface'
 import DismissKeyboard from '@/ui/form-elements/field/DismissKeyboard'
 import { useStorePhoto } from './useStorePhoto'
+import { ImgAvatar } from '../../profile/other-user/OtherUserProfile'
+import { normalDate } from '../../comments/CommentElement'
 
 interface IElementPhoto {
 	photo: ILatestInside
@@ -30,6 +32,8 @@ export type BaseExampleProps = {
 const ShareImageUrl = (photo?: string) => `${BaseImageUrl}${photo}`
 
 export const ElementPhoto: FC<IElementPhoto> = ({ photo, refetch }) => {
+	//console.log();
+
 	const navigate = useNavigation()
 	const { user } = useAuth()
 
@@ -81,20 +85,13 @@ export const ElementPhoto: FC<IElementPhoto> = ({ photo, refetch }) => {
 									user?._id !== photo._id ? `?id=${photo._id}` : ''
 								}`}
 							>
-								<Image
-									source={userPng}
-									style={{
-										width: 30,
-										height: 30,
-										backgroundColor: '#fff',
-										borderRadius: 100
-									}}
-								/>
+								<ImgAvatar avatar={photo.avatar} />
 							</Link>
 						</View>
-						<Text style={{ marginLeft: 10 }} className='text-white'>
-							{photo.firstName || 'Anonym'}
-						</Text>
+						<View className='ml-4'>
+							<Text className='text-white font-bold text-base'>{photo.firstName || 'Anonym'}</Text>
+							<Text className='text-white/50'>{normalDate(photo.latestPhoto.created)}</Text>
+						</View>
 					</View>
 					<View style={{ aspectRatio: 9 / 16 }} className='relative'>
 						<Image
