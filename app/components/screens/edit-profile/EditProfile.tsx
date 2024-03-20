@@ -31,7 +31,7 @@ export const EditProfile = () => {
 	const insets = useSafeAreaInsets()
 	const { navigate } = useNavigation<any>()
 	const [delayedIsLoading, setDelayedIsLoading] = useState(false)
-	const user = useQuery(['get-user'], () => ProfileService.getProfile())
+	const user = useQuery(['get-profile'], () => ProfileService.getProfile())
 	const { handleSubmit, reset, control, setValue } = useForm<TypeEditProfile>({
 		mode: 'onChange',
 		defaultValues: {}
@@ -54,7 +54,7 @@ export const EditProfile = () => {
 		{
 			onSuccess: () => {
 				setTimeout(() => setDelayedIsLoading(false), 500)
-				queryCLient.refetchQueries(['get-user'])
+				queryCLient.refetchQueries(['get-profile'])
 			},
 			onError: () => setTimeout(() => setDelayedIsLoading(false), 500)
 		}

@@ -10,6 +10,7 @@ interface ICommentElement {
 	email: string
 	firstName: string
 	id: string
+	isLoading: boolean
 }
 
 export const CommentElement: FC<ICommentElement> = ({
@@ -18,11 +19,12 @@ export const CommentElement: FC<ICommentElement> = ({
 	created,
 	email,
 	firstName,
-	id
+	id,
+	isLoading
 }) => {
 	const { navigate } = useNavigation<any>()
 	return (
-		<View className='my-6  relative mr-2 flex-row'>
+		<View className='my-6 relative mr-10 flex-row  '>
 			<Pressable onPress={() => navigate('Profile', { id })}>
 				<UserAvatar avatar={avatar} firstName={firstName} />
 			</Pressable>
@@ -30,7 +32,7 @@ export const CommentElement: FC<ICommentElement> = ({
 				<View className='flex-row text-center'>
 					<Text className='color-white font-bold mb-0.5 '>{email}</Text>
 					<Text className='text-neutral-700 text-xs text-bold ml-2 '>
-						{normalDate(created)}
+						{!isLoading ? normalDate(created) : 'Loading'}
 					</Text>
 				</View>
 				<Text className='color-white mb-1'>{message}</Text>
@@ -43,5 +45,7 @@ export const normalDate = (date: string) => {
 	const hours = commentDate.getHours()
 	const minutes = commentDate.getMinutes()
 	const seconds = commentDate.getSeconds()
-	return `${hours < 10 ? `0${hours}` : hours} : ${minutes < 10 ? `0${minutes}` : minutes} : ${seconds < 10 ? `0${seconds}` : seconds}`
+	return `${hours < 10 ? `0${hours}` : hours} : ${
+		minutes < 10 ? `0${minutes}` : minutes
+	} : ${seconds < 10 ? `0${seconds}` : seconds}`
 }

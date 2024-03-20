@@ -8,7 +8,7 @@ import { SharePinBlock } from '../share-pin-block/SharePinBlock'
 import { Joined } from '../ui/Joined'
 
 export const MainProfile: FC = () => {
-	const user = useQuery(['get-user'], () => ProfileService.getProfile())
+	const user = useQuery(['get-profile'], () => ProfileService.getProfile()) // @get-user
 	//console.log(user);
 
 	return (

@@ -112,8 +112,8 @@ export const Inside = () => {
 				return data.map(el => ({
 					latestPhoto: { ...el.latestPhoto },
 					avatar: el._id.avatar,
-					_id:  el._id._id,
-					firstName:  el._id.firstName
+					_id: el._id._id,
+					firstName: el._id.firstName
 				}))
 			}
 		}
@@ -172,7 +172,7 @@ export const Inside = () => {
 
 	const cron = useQuery(['get-cron-time'], ProfileService.getCronTime)
 	const queryClient = useQueryClient()
-	const userQuery = queryClient.getQueryData(['get-user']) as any
+	const userQuery = queryClient.getQueryData(['get-profile']) as any
 
 	const latestPhotoUse = {
 		latestPhoto: { ...userQuery.latestPhoto },
@@ -180,8 +180,7 @@ export const Inside = () => {
 		_id: userQuery._id,
 		firstName: userQuery.firstName
 	}
-	console.log('userQuery', latestPhotoOther.data)
-	//console.log('userQuery2', latestPhoto.data)
+	
 	return (
 		<View style={{ flex: 1 }}>
 			{/* {backImage && <Image className='w-40 h-40' source={{ uri: backImage }} />}

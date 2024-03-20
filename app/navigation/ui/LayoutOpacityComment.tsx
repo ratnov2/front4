@@ -1,3 +1,4 @@
+import { normalDate } from '@/components/screens/comments/CommentElement'
 import { shareProfile } from '@/ui/share-profile/ShareProfile'
 import { AntDesign, Entypo, Feather, Ionicons } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
@@ -10,19 +11,19 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 interface ILayoutOpacityComment {
 	children: ReactNode
 	ComponentRender?: JSX.Element
+	created:string
 }
 
 export const LayoutOpacityComment: FC<ILayoutOpacityComment> = ({
 	children,
-	ComponentRender
+	ComponentRender, 
+	created
 }) => {
 	const insets = useSafeAreaInsets()
 	const { navigate } = useNavigation<any>()
 	return (
 		<View className='flex-1 relative'>
-			<View className='flex-1'>
-				<ScrollView className='flex-1'>{children}</ScrollView>
-			</View>
+			<View className='flex-1'>{children}</View>
 			<View
 				style={{ top: insets.top, zIndex: 10000000000 }}
 				className='flex-row items-center absolute w-full'
@@ -33,7 +34,7 @@ export const LayoutOpacityComment: FC<ILayoutOpacityComment> = ({
 							<Text className='text-white text-center font-bold text-xl'>
 								My BePrime
 							</Text>
-							<Text className='text-white text-center'>12,12,12</Text>
+							<Text className='text-white text-center'>{normalDate(created)}</Text>
 						</View>
 					</View>
 					<TouchableOpacity onPress={() => navigate('Home')}>

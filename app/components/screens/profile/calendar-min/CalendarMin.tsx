@@ -22,6 +22,8 @@ export const CalendarMin: FC = () => {
 	const [modalVisible, setModalVisible] = useState(false)
 	const [modalImg, setModalImg] = useState(0)
 	const addDate = new Date()
+	console.log('modalImg', modalImg)
+
 	const user = useQuery(['get-user-234'], () => ProfileService.getProfile(), {
 		select: data => {
 			const calendarPhotos = data.calendarPhotos.slice(-14)
@@ -135,11 +137,6 @@ export const CalendarMin: FC = () => {
 						let photo: IPhotos[] = []
 						photo = user.data.calendarPhotos
 						let k = -1
-						// for (let i = 0; i < photo.length; i++) {
-						// 	console.log('photo~!!',photo[i].created);
-							
-							
-						// }
 						return Array.from(Array(14)).map((_, key) => {
 							const date = new Date(photo[k + 1]?.created)
 							const currentDate = new Date()
@@ -154,8 +151,7 @@ export const CalendarMin: FC = () => {
 								day === addDate.getDate() &&
 								year === addDate.getFullYear()
 							if (provPhoto) k++
-							console.log(k,photo[k]?.created);
-							
+
 							return (
 								<View
 									key={key}
@@ -167,7 +163,7 @@ export const CalendarMin: FC = () => {
 									{provPhoto ? (
 										<Pressable
 											onPress={() => {
-												setModalImg(photoImg)
+												setModalImg(photoImg + 1)
 												setModalVisible(true)
 											}}
 											className='w-full h-full roundex-2xl relative'
