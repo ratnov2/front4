@@ -40,3 +40,5 @@ yarn-error.*
 eas.json
 
 beprime-395418-firebase-adminsdk-mt3r0-2893fcc1a0.json
+
+.env
