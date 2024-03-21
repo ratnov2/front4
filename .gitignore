@@ -8,6 +8,7 @@ node_modules/
 dist/
 web-build/
 
+
 # Native
 *.orig.*
 *.jks
@@ -37,7 +38,7 @@ yarn-error.*
 
 */managed*
 
-.ios/
-.android/
+ios/
+android/
 
-.eas.json
+eas.json
