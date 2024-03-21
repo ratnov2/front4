@@ -11,9 +11,6 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "autolinking": {
-      "nativeModulesDir": "../../packages"
-    },
     "assetBundlePatterns": [
       "**/*"
     ],
@@ -34,7 +31,7 @@
         "android.permission.WRITE_CONTACTS"
       ],
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./app/assets/icon.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.anonymous.front4",
