@@ -8,7 +8,7 @@ import { useQueryClient } from '@tanstack/react-query'
 
 export const Invite = () => {
 	const queryClient = useQueryClient()
-	const userQuery = queryClient.getQueryData(['get-user']) as any
+	const userQuery = queryClient.getQueryData(['get-profile']) as any
 	return (
 		<View className='mt-4 bg-zinc-800 px-4 py-4 rounded-2xl flex-row'>
 			<View>

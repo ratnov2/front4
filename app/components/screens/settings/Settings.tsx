@@ -66,12 +66,6 @@ export const Settings: FC<ISettings> = ({ navigation }) => {
 					>
 						<View className='flex-1 bg-w'>
 							<View>
-								{/* <FriendItem
-									styles={'mb-4 p-2'}
-									avatar={user.avatar}
-									name={user.firstName}
-									body={<FriendBody name={user.firstName} number='3' />}
-								/> */}
 								<Invite />
 							</View>
 							<View>

@@ -1,6 +1,8 @@
 import {
 	Image,
 	ImageBackground,
+	NativeScrollEvent,
+	NativeSyntheticEvent,
 	Pressable,
 	ScrollView,
 	StyleSheet,
@@ -43,6 +45,7 @@ import { PanResponder } from 'react-native'
 import { ElementTest } from './ElementTest'
 import { ILatestInside, ILatestPhoto } from '@/shared/types/profile.interface'
 import { ElementHeaderForCamera } from './ui/ElementHeaderForCamera'
+import { CameraComponent } from './relax/Camera'
 
 const IsTiming = (cron?: string, date?: string) => {
 	if (!cron || !date) return false
@@ -133,7 +136,7 @@ export const Inside = () => {
 	////
 	useEffect(() => {}, [startCamera])
 	const ff = () => {
-		console.log('WW!')
+		//console.log('WW!')
 
 		if (frontImage && backImage && !isLoading) {
 			const formData = new FormData()
@@ -180,7 +183,13 @@ export const Inside = () => {
 		_id: userQuery._id,
 		firstName: userQuery.firstName
 	}
-	
+
+	const [shouldScroll, setShouldScroll] = useState(true)
+	const toggleScroll = (scroll: boolean) => {
+		setShouldScroll(scroll)
+	}
+	//console.log(latestPhotoOther.data);
+
 	return (
 		<View style={{ flex: 1 }}>
 			{/* {backImage && <Image className='w-40 h-40' source={{ uri: backImage }} />}
@@ -189,102 +198,116 @@ export const Inside = () => {
 			)} */}
 
 			{startCamera && (
-				<View className='flex-1 bg-black'>
-					{cron.data && <ElementHeaderForCamera cron={cron.data} />}
-					<View className='mx-2 flex-1 rounded-3xl bg-red-50 overflow-hidden relative'>
-						<Camera
-							style={{ flex: 1 }}
-							className=''
-							type={
-								isFrontCamera
-									? (Camera.Constants.Type as any).front
-									: (Camera.Constants.Type as any).back
-							}
-							ratio='4:3'
-							ref={cameraRef}
-						></Camera>
-						{!frontImage && !backImage && isMakingPhoto && (
-							<View
-								className={`flex-1 absolute w-full h-full bg-blue-900 z-50`}
-							/>
-						)}
-						{(frontImage || backImage) && (
-							<View className='absolute flex-1 h-full w-full bg-black'>
-								<Image
-									source={{ uri: frontImage as string }}
-									className='w-full h-full'
-								/>
-							</View>
-						)}
-						{frontImage && backImage && (
-							<View className='absolute flex-1 h-full w-full bg-black'>
-								<ElementTest img1={frontImage} img2={backImage} />
-							</View>
-						)}
-					</View>
+				// <View className='flex-1 bg-black'>
+				// 	{cron.data && <ElementHeaderForCamera cron={cron.data} />}
+				// 	<View className='mx-2 flex-1 rounded-3xl bg-red-50 overflow-hidden relative'>
+				// 		<Camera
+				// 			style={{ flex: 1 }}
+				// 			className=''
+				// 			type={
+				// 				isFrontCamera
+				// 					? (Camera.Constants.Type as any).front
+				// 					: (Camera.Constants.Type as any).back
+				// 			}
+				// 			ratio='4:3'
+				// 			ref={cameraRef}
+				// 		></Camera>
+				// 		{!frontImage && !backImage && isMakingPhoto && (
+				// 			<View
+				// 				className={`flex-1 absolute w-full h-full bg-blue-900 z-50`}
+				// 			/>
+				// 		)}
+				// 		{(frontImage || backImage) && (
+				// 			<View className='absolute flex-1 h-full w-full bg-black'>
+				// 				<Image
+				// 					source={{ uri: frontImage as string }}
+				// 					className='w-full h-full'
+				// 				/>
+				// 			</View>
+				// 		)}
+				// 		{frontImage && backImage && (
+				// 			<View className='absolute flex-1 h-full w-full bg-black'>
+				// 				<ElementTest img1={frontImage} img2={backImage} />
+				// 			</View>
+				// 		)}
+				// 	</View>
 
-					<View className='h-[23%] bg-black flex justify-center items-center z-[9999999] '>
-						{!frontImage && !backImage && !isMakingPhoto ? (
-							<View className='flex-row items-center'>
-								<Pressable
-									onPress={() => setIsFrontCamera(!isFrontCamera)}
-									className='p-2'
-								>
-									<Ionicons name='camera-reverse' size={34} color='white' />
-								</Pressable>
+				// 	<View className='h-[23%] bg-black flex justify-center items-center z-[9999999] '>
+				// 		{!frontImage && !backImage && !isMakingPhoto ? (
+				// 			<View className='flex-row items-center'>
+				// 				<Pressable
+				// 					onPress={() => setIsFrontCamera(!isFrontCamera)}
+				// 					className='p-2'
+				// 				>
+				// 					<Ionicons name='camera-reverse' size={34} color='white' />
+				// 				</Pressable>
 
-								<TouchableOpacity
-									onPress={() => {
-										isFrontCamera && takeFrontPhoto()
-										!isFrontCamera && takeBackPhoto()
-									}}
-									style={{
-										height: 80
-									}}
-									className='text-center flex items-center'
-								>
-									<Feather name='circle' size={80} color='white' />
-									<Text className='text-white text-center'>
-										Post a Late BeReal
-									</Text>
-								</TouchableOpacity>
+				// 				<TouchableOpacity
+				// 					onPress={() => {
+				// 						isFrontCamera && takeFrontPhoto()
+				// 						!isFrontCamera && takeBackPhoto()
+				// 					}}
+				// 					style={{
+				// 						height: 80
+				// 					}}
+				// 					className='text-center flex items-center'
+				// 				>
+				// 					<Feather name='circle' size={80} color='white' />
+				// 					<Text className='text-white text-center'>
+				// 						Post a Late BeReal
+				// 					</Text>
+				// 				</TouchableOpacity>
 
-								<Pressable
-									onPress={() => setIsFrontCamera(!isFrontCamera)}
-									className='p-2'
-								>
-									<Ionicons name='camera-reverse' size={34} color='white' />
-								</Pressable>
-							</View>
-						) : !!frontImage && !!backImage && !isMakingPhoto ? (
-							<>
-								<TouchableOpacity
-									onPress={() => {
-										setFrontImage('')
-										setBackImage('')
-									}}
-									className='flex-row justify-center items-center p-2'
-								>
-									<Text className='text-white font-bold text-2xl mr-4'>
-										RETAKE
-									</Text>
-									<FontAwesome name='undo' size={30} color='white' />
-								</TouchableOpacity>
-								<TouchableOpacity
-									onPress={ff}
-									className='flex-row justify-center items-center p-2 z-[999999]'
-								>
-									<Text className='text-white font-bold text-2xl mr-4'>
-										SEND
-									</Text>
-									<Ionicons name='send-sharp' size={34} color='white' />
-								</TouchableOpacity>
-							</>
-						) : (
-							<PhotoLoader />
-						)}
-					</View>
-				</View>
+				// 				<Pressable
+				// 					onPress={() => setIsFrontCamera(!isFrontCamera)}
+				// 					className='p-2'
+				// 				>
+				// 					<Ionicons name='camera-reverse' size={34} color='white' />
+				// 				</Pressable>
+				// 			</View>
+				// 		) : !!frontImage && !!backImage && !isMakingPhoto ? (
+				// 			<>
+				// 				<TouchableOpacity
+				// 					onPress={() => {
+				// 						setFrontImage('')
+				// 						setBackImage('')
+				// 					}}
+				// 					className='flex-row justify-center items-center p-2'
+				// 				>
+				// 					<Text className='text-white font-bold text-2xl mr-4'>
+				// 						RETAKE
+				// 					</Text>
+				// 					<FontAwesome name='undo' size={30} color='white' />
+				// 				</TouchableOpacity>
+				// 				<TouchableOpacity
+				// 					onPress={ff}
+				// 					className='flex-row justify-center items-center p-2 z-[999999]'
+				// 				>
+				// 					<Text className='text-white font-bold text-2xl mr-4'>
+				// 						SEND
+				// 					</Text>
+				// 					<Ionicons name='send-sharp' size={34} color='white' />
+				// 				</TouchableOpacity>
+				// 			</>
+				// 		) : (
+				// 			<PhotoLoader />
+				// 		)}
+				// 	</View>
+				// </View>
+				<CameraComponent
+					backImage={backImage}
+					cameraRef={cameraRef}
+					ff={ff}
+					frontImage={frontImage}
+					isFrontCamera={isFrontCamera}
+					isMakingPhoto={isMakingPhoto}
+					setBackImage={() => setBackImage('')}
+					setFrontImage={() => setFrontImage('')}
+					setIsFrontCamera={() => setIsFrontCamera(!isFrontCamera)}
+					takeBackPhoto={takeBackPhoto}
+					takeFrontPhoto={takeFrontPhoto}
+					cron={cron.data}
+				/>
 			)}
 
 			{!startCamera && (
@@ -296,6 +319,7 @@ export const Inside = () => {
 							typeOfCalendarPhotos={typeOfCalendarPhotos}
 						/>
 					}
+					scrollEnabled={shouldScroll}
 				>
 					<View className='h-10' />
 					{typeOfCalendarPhotos === 'my_friends' ? (
@@ -303,7 +327,8 @@ export const Inside = () => {
 							{user && !IsTiming(cron.data, userQuery.created) && (
 								<ElementPhoto
 									photo={latestPhotoUse as any}
-									refetch={() => ''}
+									toggleScroll={toggleScroll}
+									refetch={() => latestPhoto.refetch()}
 								/>
 							)}
 							{latestPhoto.isLoading ? (
@@ -311,11 +336,12 @@ export const Inside = () => {
 									<Text className='text-white'>Loading...</Text>
 								</View>
 							) : latestPhoto.data && latestPhoto.data.length > 0 ? (
-								<View className='h-full'>
+								<View >
 									{latestPhoto.data?.map((photo, key) => {
 										return (
 											<ElementPhoto
 												photo={photo}
+												toggleScroll={toggleScroll}
 												key={key}
 												refetch={() => latestPhoto.refetch()}
 											/>
@@ -352,6 +378,7 @@ export const Inside = () => {
 											<ElementPhoto
 												photo={photo}
 												key={key}
+												toggleScroll={toggleScroll}
 												refetch={() => latestPhotoOther.refetch()}
 											/>
 										)

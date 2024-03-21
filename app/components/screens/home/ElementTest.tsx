@@ -56,14 +56,18 @@ export const ElementTest: FC<IElementTest> = ({ img1, img2 }) => {
 				y: isMoveY(gesture.moveY) // Ограничение движения по вертикали
 			})
 		},
-        
-		onPanResponderRelease: (f, gesture) => {
-            if( position.x < 80 && position.x > -20 && position.y > -20 && position.y < 80){
-                setState(!state)
-            }
-            
-			setPosition({ x: 20, y: 20 })
 
+		onPanResponderRelease: (f, gesture) => {
+			if (
+				position.x < 80 &&
+				position.x > -20 &&
+				position.y > -20 &&
+				position.y < 80
+			) {
+				setState(!state)
+			}
+
+			setPosition({ x: 20, y: 20 })
 		}
 	})
 	useEffect(() => {
@@ -88,7 +92,7 @@ export const ElementTest: FC<IElementTest> = ({ img1, img2 }) => {
 	}, [imageRef])
 	const [state, setState] = useState(true)
 	return (
-		<View style={styles.container} >
+		<View style={styles.container}>
 			<Pressable style={{ flex: 1 }} ref={ref}>
 				<Image
 					source={state ? { uri: img1 } : { uri: img2 }}
@@ -106,15 +110,10 @@ export const ElementTest: FC<IElementTest> = ({ img1, img2 }) => {
 				ref={imageRef}
 				{...panResponder.panHandlers}
 			>
-				{/* <TouchableOpacity
-                 onMagicTap={() => setState(!state)} 
-                 className='flex-1 w-full'
-                 > */}
-					<ImageBackground
-						source={state ? { uri: img2 } : { uri: img1 }}
-						style={styles.overlayImage}
-					/>
-				{/* </TouchableOpacity> */}
+				<ImageBackground
+					source={state ? { uri: img2 } : { uri: img1 }}
+					style={styles.overlayImage}
+				/>
 			</View>
 		</View>
 	)

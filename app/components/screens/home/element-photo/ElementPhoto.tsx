@@ -2,6 +2,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { BaseImageUrl } from '@/services/api/interceptors.api'
 import { Link, useNavigation } from '@react-navigation/native'
 import { FC, useReducer, useRef, useState } from 'react'
+//import Draggable from 'react-native-draggable'
 import {
 	ActivityIndicator,
 	Image,
@@ -19,36 +20,26 @@ import DismissKeyboard from '@/ui/form-elements/field/DismissKeyboard'
 import { useStorePhoto } from './useStorePhoto'
 import { ImgAvatar } from '../../profile/other-user/OtherUserProfile'
 import { normalDate } from '../../comments/CommentElement'
+import { Draggable } from '../Draggable/Draggable'
+//import { Draggable } from '../Draggable/Draggable'
 
 interface IElementPhoto {
 	photo: ILatestInside
 	refetch: () => void
+	toggleScroll: (scroll: boolean) => any
 }
 
 export type BaseExampleProps = {
 	className?: string
 }
 
-const ShareImageUrl = (photo?: string) => `${BaseImageUrl}${photo}`
-
-export const ElementPhoto: FC<IElementPhoto> = ({ photo, refetch }) => {
-	//console.log();
-
+export const ElementPhoto: FC<IElementPhoto> = ({
+	photo,
+	refetch,
+	toggleScroll
+}) => {
 	const navigate = useNavigation()
 	const { user } = useAuth()
-
-	const { photos } = photo.latestPhoto
-	const { dispatch, store, UnCurrent } = useStorePhoto({ photos })
-	// const [photos, setPhotos] = useState(
-	// 	(() => {
-	// 		const current =
-	// 			photosUser.frontPhoto?.photo || photosUser.backPhoto?.photo
-	// 		const unCurrent =
-	// 			!photosUser.frontPhoto?.photo || !photosUser.backPhoto?.photo
-	// 		return current
-	// 	})()
-	// )
-	// console.log(photos)
 
 	const [value, setValue] = useState(photo.latestPhoto.comment)
 	const [isMessage, setIsMessage] = useState(false)
@@ -65,7 +56,6 @@ export const ElementPhoto: FC<IElementPhoto> = ({ photo, refetch }) => {
 			}
 		}
 	)
-	//console.log(photo)
 
 	return (
 		<View className='' style={{ marginBottom: 70 }}>
@@ -89,39 +79,25 @@ export const ElementPhoto: FC<IElementPhoto> = ({ photo, refetch }) => {
 							</Link>
 						</View>
 						<View className='ml-4'>
-							<Text className='text-white font-bold text-base'>{photo.firstName || 'Anonym'}</Text>
-							<Text className='text-white/50'>{normalDate(photo.latestPhoto.created)}</Text>
+							<Text className='text-white font-bold text-base'>
+								{photo.firstName || 'Anonym'}
+							</Text>
+							<Text className='text-white/50'>
+								{normalDate(photo.latestPhoto.created)}
+							</Text>
 						</View>
 					</View>
-					<View style={{ aspectRatio: 9 / 16 }} className='relative'>
-						<Image
-							className='rounded-2xl'
-							style={{
-								resizeMode: 'cover',
-								flex: 1,
-								aspectRatio: 9 / 16,
-								borderRadius: 20
-							}}
-							source={{
-								uri: ShareImageUrl(store[store.current || 'backPhoto']?.photo)
-							}}
+					<View
+						style={{ aspectRatio: 9 / 12 }}
+						className='rounded-xl overflow-hidden'
+					>
+						<Draggable
+							img1={
+								(photo.latestPhoto.photos.frontPhoto?.photo || '') as string
+							}
+							img2={(photo.latestPhoto.photos.backPhoto?.photo || '') as string}
+							toggleScroll={toggleScroll}
 						/>
-						{store.length === 2 && (
-							<TouchableOpacity
-								className='absolute left-4 top-4 border-2 border-solid border-stone-900 rounded-xl overflow-hidden'
-								onPress={() => dispatch({ type: store.current })}
-							>
-								<View className=''>
-									<Image
-										className='w-32 h-36'
-										style={{ aspectRatio: 13 / 17 }}
-										source={{
-											uri: ShareImageUrl(store[UnCurrent(store.current)]?.photo)
-										}}
-									/>
-								</View>
-							</TouchableOpacity>
-						)}
 					</View>
 				</View>
 			)}

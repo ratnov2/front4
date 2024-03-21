@@ -15,6 +15,7 @@ export const UserAvatar: FC<IUserAvatar> = ({ avatar, firstName }) => {
 					source={{ uri: BaseImageUrl2(avatar) }}
 					width={29}
 					height={29}
+					resizeMethod='resize'
 					className='rounded-full'
 				/>
 			) : (

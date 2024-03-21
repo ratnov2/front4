@@ -6488,6 +6488,13 @@ react-native-animated-bottom-drawer@^0.0.23:
   resolved "https://registry.yarnpkg.com/react-native-animated-bottom-drawer/-/react-native-animated-bottom-drawer-0.0.23.tgz#22ebe9f5964ebb267d4c366e2b46a5e3e205fc5d"
   integrity sha512-xOYOWxNViNno9wtYtvDpW90M5N4RDgdLq2jRjR9lxTAcpKsl93C7oex/NANQzd5aC9Vh7SEnyh0DlbSqprB6kg==
 
+react-native-draggable@^3.3.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/react-native-draggable/-/react-native-draggable-3.3.0.tgz#6f07c3ad4cff018bf0455fc48dbfe5f0af9b72cd"
+  integrity sha512-aU20CaKBmzXrwE9eTJZ+GDOr52mXLchg5Vydbx5rz8nYXlN+ppHIoTPgyXduyWNwpZ/DR6tyFtMwdgUHpuN6oA==
+  dependencies:
+    prop-types "^15.7.2"
+
 react-native-parallax-scroll-view@^0.21.3:
   version "0.21.3"
   resolved "https://registry.yarnpkg.com/react-native-parallax-scroll-view/-/react-native-parallax-scroll-view-0.21.3.tgz#d956ad224ce3b0a2725b80574bcbf688bbeda14e"

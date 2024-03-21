@@ -224,10 +224,7 @@ export const CalendarTask = () => {
 
 							i++
 						}
-						for (let i = 3; i <= dateMassive.length; i++) {
-							console.log(i, dateMassive[i])
-						}
-						//console.log(dateMassive);
+
 
 						return dateMassive.map((el, key) => {
 							return (
