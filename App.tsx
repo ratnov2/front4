@@ -5,8 +5,9 @@ import { ScrollView, StatusBar, Text, View } from 'react-native'
 import Toast from '@/ui/Toast'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ContactsDataProvider } from '@/providers/contacts/ContactsDataProvider'
-
-import { NotificationsContextProvider } from '@/components/screens/profile/PERMISSIONS/Notefications'
+import { useEffect, useRef, useState } from 'react'
+import { registerForPushNotificationsAsync } from '@/components/screens/profile/PERMISSIONS/Notefications'
+import * as Notifications from 'expo-notifications'
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -18,18 +19,55 @@ const queryClient = new QueryClient({
 
 export default function App() {
 	const postUrl = process.env.REACT_APP_SERVER_URL
+	const [expoPushToken, setExpoPushToken] = useState('')
+	const [notification, setNotification] = useState(false)
+	const notificationListener = useRef()
+	const responseListener = useRef()
 
+	useEffect(() => {
+		registerForPushNotificationsAsync().then(token => setExpoPushToken(token))
+		console.log('FEEF')
+
+		notificationListener.current =
+			Notifications.addNotificationReceivedListener(notification => {
+				setNotification(notification)
+			})
+
+		responseListener.current =
+			Notifications.addNotificationResponseReceivedListener(response => {
+				console.log(response)
+			})
+
+		return () => {
+			Notifications.removeNotificationSubscription(notificationListener.current)
+			Notifications.removeNotificationSubscription(responseListener.current)
+		}
+	}, [])
+	console.log(notification);
+	
 	return (
 		<>
 			<QueryClientProvider client={queryClient}>
 				<AuthProvider>
-					<NotificationsContextProvider>
-						<ContactsDataProvider>
-							<SafeAreaProvider>
-								<Navigation />
-							</SafeAreaProvider>
-						</ContactsDataProvider>
-					</NotificationsContextProvider>
+					<Text>Your expo push token: {expoPushToken}</Text>
+					<View style={{ alignItems: 'center', justifyContent: 'center' }}>
+						<Text>
+							Title: {notification && notification.request.content.title}{' '}
+						</Text>
+						<Text>
+							Body: {notification && notification.request.content.body}
+						</Text>
+						<Text>
+							Data:{' '}
+							{notification &&
+								JSON.stringify(notification.request.content.data)}
+						</Text>
+					</View>
+					<ContactsDataProvider>
+						<SafeAreaProvider>
+							<Navigation />
+						</SafeAreaProvider>
+					</ContactsDataProvider>
 				</AuthProvider>
 				<StatusBar barStyle='light-content' />
 				<Toast />

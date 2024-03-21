@@ -137,7 +137,7 @@ export const Comments = () => {
 			const data3 = dataFromCache3.filter(user => {
 				return user._id._id === typeParam._id
 			})[0]
-			
+
 			//@ts-ignore
 			if (Object.entries(data3).length !== 0)
 				return {
@@ -186,7 +186,6 @@ export const Comments = () => {
 			scrollViewRef.current.scrollToEnd({ animated: true })
 		}
 	}
-
 
 	const [shouldScroll, setShouldScroll] = useState(true)
 	const toggleScroll = (scroll: boolean) => {
@@ -360,6 +359,18 @@ export const Comments = () => {
 						<EmodziComment />
 						{comments.length > 0 && (
 							<View className='mb-20'>
+								{/* {comments.map(item => (
+									<CommentElement
+										message={item.comment}
+										avatar={item.avatar}
+										created={item.created}
+										email={item.firstName}
+										key={item.created}
+										firstName={item.firstName}
+										id={item._id}
+										isLoading={(item as any)?.isLoading}
+									/>
+								))} */}
 								<FlatList
 									data={comments}
 									inverted
