@@ -18,7 +18,7 @@ import {
 	useQueryClient
 } from '@tanstack/react-query'
 import { ProfileService } from '@/services/profile/profile.service'
-import { FC, useEffect, useRef, useState } from 'react'
+import { FC, memo, useEffect, useRef, useState } from 'react'
 import { Camera } from 'expo-camera'
 // import CameraExpo from './CamerExpo'
 import { useAuth } from '@/hooks/useAuth'
@@ -46,6 +46,7 @@ import { ElementTest } from './ElementTest'
 import { ILatestInside, ILatestPhoto } from '@/shared/types/profile.interface'
 import { ElementHeaderForCamera } from './ui/ElementHeaderForCamera'
 import { CameraComponent } from './relax/Camera'
+import { IUser } from '@/shared/types/user.interface'
 
 const IsTiming = (cron?: string, date?: string) => {
 	if (!cron || !date) return false
@@ -53,7 +54,7 @@ const IsTiming = (cron?: string, date?: string) => {
 	else return false
 }
 
-export const Inside = () => {
+export const Inside = memo(() => {
 	const [frontImage, setFrontImage] = useState<string | null>(null)
 	const [backImage, setBackImage] = useState<string | null>(null)
 	const [isInitialRender, setIsInitialRender] = useState(true)
@@ -136,7 +137,7 @@ export const Inside = () => {
 	////
 	useEffect(() => {}, [startCamera])
 	const ff = () => {
-		//console.log('WW!')
+		console.log('FEFEFEFFE')
 
 		if (frontImage && backImage && !isLoading) {
 			const formData = new FormData()
@@ -329,6 +330,7 @@ export const Inside = () => {
 									photo={latestPhotoUse as any}
 									toggleScroll={toggleScroll}
 									refetch={() => latestPhoto.refetch()}
+									reactions={userQuery.latestPhoto.photoReactions}
 								/>
 							)}
 							{latestPhoto.isLoading ? (
@@ -336,13 +338,14 @@ export const Inside = () => {
 									<Text className='text-white'>Loading...</Text>
 								</View>
 							) : latestPhoto.data && latestPhoto.data.length > 0 ? (
-								<View >
+								<View>
 									{latestPhoto.data?.map((photo, key) => {
 										return (
 											<ElementPhoto
 												photo={photo}
 												toggleScroll={toggleScroll}
 												key={key}
+												reactions={photo.latestPhoto.photoReactions}
 												refetch={() => latestPhoto.refetch()}
 											/>
 										)
@@ -376,9 +379,12 @@ export const Inside = () => {
 									{latestPhotoOther.data?.map((photo, key) => {
 										return (
 											<ElementPhoto
+												//@ts-ignore
 												photo={photo}
 												key={key}
 												toggleScroll={toggleScroll}
+												//@ts-ignore
+												reactions={photo.latestPhoto.photoReactions}
 												refetch={() => latestPhotoOther.refetch()}
 											/>
 										)
@@ -455,7 +461,7 @@ export const Inside = () => {
 			></LinearGradient> */}
 		</View>
 	)
-}
+})
 
 interface IHeaderHome {
 	setTypeFriends: () => void
@@ -469,7 +475,8 @@ export const HeaderHome: FC<IHeaderHome> = ({
 	typeOfCalendarPhotos
 }) => {
 	const { navigate } = useNavigation<any>()
-	const { user } = useAuth()
+	const queryClient = useQueryClient()
+	const user = queryClient.getQueryData(['get-profile']) as IUser | undefined
 	return (
 		<View className='flex-1'>
 			<View className='flex-row justify-between flex-1 items-center relative'>

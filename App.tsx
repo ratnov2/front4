@@ -24,45 +24,29 @@ export default function App() {
 	const notificationListener = useRef()
 	const responseListener = useRef()
 
-	useEffect(() => {
-		registerForPushNotificationsAsync().then(token => setExpoPushToken(token))
-		console.log('FEEF')
+	// useEffect(() => {
+	// 	registerForPushNotificationsAsync().then(token => setExpoPushToken(token))
+	// 	notificationListener.current =
+	// 		Notifications.addNotificationReceivedListener(notification => {
+	// 			setNotification(notification)
+	// 		})
+	// 	responseListener.current =
+	// 		Notifications.addNotificationResponseReceivedListener(response => {
+	// 			console.log(response)
+	// 		})
+	// 	return () => {
+	// 		Notifications.removeNotificationSubscription(notificationListener.current)
+	// 		Notifications.removeNotificationSubscription(responseListener.current)
+	// 	}
+	// }, [])
+	//console.log(notification)
 
-		notificationListener.current =
-			Notifications.addNotificationReceivedListener(notification => {
-				setNotification(notification)
-			})
-
-		responseListener.current =
-			Notifications.addNotificationResponseReceivedListener(response => {
-				console.log(response)
-			})
-
-		return () => {
-			Notifications.removeNotificationSubscription(notificationListener.current)
-			Notifications.removeNotificationSubscription(responseListener.current)
-		}
-	}, [])
-	console.log(notification);
-	
 	return (
 		<>
 			<QueryClientProvider client={queryClient}>
 				<AuthProvider>
-					<Text>Your expo push token: {expoPushToken}</Text>
-					<View style={{ alignItems: 'center', justifyContent: 'center' }}>
-						<Text>
-							Title: {notification && notification.request.content.title}{' '}
-						</Text>
-						<Text>
-							Body: {notification && notification.request.content.body}
-						</Text>
-						<Text>
-							Data:{' '}
-							{notification &&
-								JSON.stringify(notification.request.content.data)}
-						</Text>
-					</View>
+					{/* <Text>Your expo push token: {expoPushToken}</Text> */}
+
 					<ContactsDataProvider>
 						<SafeAreaProvider>
 							<Navigation />

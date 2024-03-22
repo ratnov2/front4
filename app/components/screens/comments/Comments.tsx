@@ -3,7 +3,7 @@ import { createConnection } from '@/services/api/socket'
 import { IPost, ProfileService } from '@/services/profile/profile.service'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useEffect, useRef, useState } from 'react'
+import { FC, memo, useEffect, useRef, useState } from 'react'
 import {
 	Animated,
 	FlatList,
@@ -31,6 +31,7 @@ import { ILatestInside, ILatestPhoto } from '@/shared/types/profile.interface'
 import { HeaderProfile } from '../profile/Profile'
 import { LayoutOpacityComment } from '@/navigation/ui/LayoutOpacityComment'
 import { DraggableImg } from './DraggableImg'
+import { VirtualizedList, YourComponent } from './FF'
 
 export const Comments = () => {
 	// useEffect(() => {
@@ -50,7 +51,11 @@ export const Comments = () => {
 			}),
 		{
 			onSuccess: data => {
-				setComments(data)
+				const newData = []
+				for (let i = 0; i < data.length; i++) {
+					newData.push({ ...data[i % 10], IDD: i })
+				}
+				setComments(newData)
 			}
 		}
 	)
@@ -70,10 +75,13 @@ export const Comments = () => {
 		userId: string
 	}) => {
 		const comment = {
+			//@ts-ignore
 			_id: dataFromCache?._id,
+			//@ts-ignore
 			avatar: dataFromCache.avatar,
 			comment: data.message,
 			created: data.created,
+			//@ts-ignore
 			firstName: dataFromCache.firstName,
 			isLoading: true
 		}
@@ -135,6 +143,7 @@ export const Comments = () => {
 			//console.log('wefwefwef',dataFromCache2);
 			//@ts-ignore
 			const data3 = dataFromCache3.filter(user => {
+				//@ts-ignore
 				return user._id._id === typeParam._id
 			})[0]
 
@@ -142,6 +151,7 @@ export const Comments = () => {
 			if (Object.entries(data3).length !== 0)
 				return {
 					...data3,
+					//@ts-ignore
 					avatar: data3._id.avatar
 					//@ts-ignore
 				}
@@ -149,32 +159,10 @@ export const Comments = () => {
 			//console.log(dataFromCache2)
 		})()
 	)
+
 	//console.log('userMainInfo', userMainInfo, typeParam)
 	const [value, setValue] = useState('')
 
-	const scrollY = useRef(new Animated.Value(0)).current
-
-	const headerHeight = scrollY.interpolate({
-		inputRange: [0, 300],
-		outputRange: [600 + insets.top + 100, 250],
-		extrapolate: 'clamp'
-	})
-	const translateY = scrollY.interpolate({
-		inputRange: [0, 300],
-		outputRange: [0, 300],
-		extrapolate: 'clamp'
-	})
-	// const imageScale = scrollY.interpolate({
-	// 	inputRange: [0, 400],
-	// 	outputRange: [1, 1], // Равномерное увеличение в 2 раза
-	// 	extrapolate: 'clamp'
-	// })
-
-	// const imageScale2 = scrollY.interpolate({
-	// 	inputRange: [0, 300],
-	// 	outputRange: [1, 0.5], // Равномерное увеличение в 2 раза
-	// 	extrapolate: 'clamp'
-	// })
 	const scrollViewRef = useRef<ScrollView>(null)
 
 	useEffect(() => {
@@ -191,208 +179,49 @@ export const Comments = () => {
 	const toggleScroll = (scroll: boolean) => {
 		setShouldScroll(scroll)
 	}
+	//console.log(JSON.stringify(comments, null,2));
+	//console.log('wefewf')
+
+	//return null
 	if (!userMainInfo || !userMainInfo.latestPhoto) return null
+	console.log('userMainInfo', comments.length)
+
 	return (
 		<View className='flex-1'>
-			{/* <TouchableOpacity onPress={() => navigate('Home')}>
-				<Feather name='arrow-left' size={30} color='white' />
-			</TouchableOpacity> */}
 			<LayoutOpacityComment created={(params as any).created}>
-				{/* // scrollEventThrottle={16} // Количество событий скролла, отправляемых на каждый кадр
-				// onScroll={Animated.event(
-				// 	[{ nativeEvent: { contentOffset: { y: scrollY } } }],
-				// 	{ useNativeDriver: false }
-				// )}
-				//{...panResponder.panHandlers} */}
-				<ScrollView
-					className='flex-1 '
-					ref={scrollViewRef}
-					onContentSizeChange={scrollToBottom}
-					scrollEnabled={shouldScroll}
-				>
-					{/* <Animated.View
-						style={{
-							height: headerHeight,
-							overflow: 'hidden',
-							transform: [{ translateY: scrollY }],
-							zIndex: 40,
-							backgroundColor: 'red'
-						}}
-					>
-						<View style={{ height: insets.top + 20 }} />
-						<ImageBackground
-							source={{
-								uri: `${BaseImageUrl}${userMainInfo.latestPhoto.photos.backPhoto?.photo}`
-							}}
-							style={{
-								position: 'absolute',
-								width: '100%',
-								height: '100%'
-							}}
+				{comments.length > 0 && (
+					<VirtualizedList shouldScroll={shouldScroll}>
+						<ShareHeader
+							toggleScroll={toggleScroll}
+							userMainInfo={userMainInfo}
 						/>
-
-						<BlurView
-							intensity={60}
-							style={{
-								...{
-									position: 'absolute',
-									width: '100%',
-									height: '100%'
-								}
-							}}
-						/>
-						<LinearGradient
-							colors={['#00000000', '#111111']}
-							style={{
-								height: '70%',
-								width: '100%',
-								position: 'absolute',
-								bottom: 0
-							}}
-						></LinearGradient>
-						<LinearGradient
-							colors={['#111111', '#00000000']}
-							style={{
-								height: '70%',
-								width: '100%',
-								position: 'absolute',
-								top: 0
-							}}
-						></LinearGradient>
-						<Animated.View
-							className='flex-1 relative mx-auto rounded-3xl'
-							style={{
-								transform: [{ scaleX: imageScale2 }, { scaleY: imageScale }],
-								flex: 1,
-								width: '100%',
-								maxWidth: '95%',
-								maxHeight: '95%',
-								aspectRatio: 16 / 9 // Пример соотношения сторон, замените на ваше
-							}}
-						>
-							<Animated.Image
-								style={{
-									// transform: [{ scaleX: imageScale }, { scaleY: imageScale }],
-									flex: 1,
-									width: '100%',
-									maxWidth: '95%',
-									maxHeight: '95%',
-									aspectRatio: 16 / 9, // Пример соотношения сторон, замените на ваше
-									resizeMode: 'cover'
-								}}
-								className='mx-auto rounded-3xl '
-								source={{
-									uri: `${BaseImageUrl}${store[store.current || 'backPhoto']
-										?.photo}`
-								}}
-							/>
-							{store.length === 2 && (
-								<TouchableOpacity
-									className='flex-1 absolute left-[4%] top-[4%] w-20'
-									onPress={() => dispatch({ type: store.current })}
-								>
-									<Animated.View
-										style={{
-											aspectRatio: 10 / 12,
-											transform: [
-												{ scaleX: imageScale2 },
-												{ scaleY: imageScale2 }
-											]
-										}}
-										className=' flex-1 border-2 border-solid border-stone-900 rounded-xl overflow-hidden'
-									>
-										<Animated.Image
-											className=''
-											style={{
-												aspectRatio: 9 / 16
-											}}
-											source={{
-												uri: `${BaseImageUrl}${store[UnCurrent(store.current)]
-													?.photo}`
-											}}
-										/>
-									</Animated.View>
-								</TouchableOpacity>
-							)}
-							<Text className='text-center my-5 mb-10 text-white text-bol'>
-								{userMainInfo.latestPhoto.comment}
-							</Text>
-						</Animated.View>
-
-						<Devider />
-					</Animated.View> */}
-					{/* </View> */}
-					<View className='flex-1 ' style={{ aspectRatio: 9 / 14 }}>
-						<View style={{ height: insets.top + 20 }} />
-
-						<ImageBackground
-							source={{
-								uri: `${BaseImageUrl}${userMainInfo.latestPhoto.photos.backPhoto?.photo}`
-							}}
-							style={{
-								position: 'absolute',
-								width: '100%',
-								height: '100%'
-							}}
-						/>
-
-						<BlurView
-							intensity={60}
-							style={{
-								...{
-									position: 'absolute',
-									width: '100%',
-									height: '100%'
-								}
-							}}
-						/>
-						<View className='mx-4 flex-1 rounded-xl overflow-hidden'>
-							<DraggableImg
-								img1={userMainInfo.latestPhoto.photos.frontPhoto?.photo || ''}
-								img2={userMainInfo.latestPhoto.photos.backPhoto?.photo || ''}
-								toggleScroll={toggleScroll}
-							/>
-						</View>
-						<View className='h-20' />
-					</View>
-					<Animated.View style={{ transform: [{ translateY }] }}>
-						<EmodziComment />
-						{comments.length > 0 && (
-							<View className='mb-20'>
-								{/* {comments.map(item => (
-									<CommentElement
-										message={item.comment}
-										avatar={item.avatar}
-										created={item.created}
-										email={item.firstName}
-										key={item.created}
-										firstName={item.firstName}
-										id={item._id}
-										isLoading={(item as any)?.isLoading}
-									/>
-								))} */}
-								<FlatList
-									data={comments}
-									inverted
-									disableVirtualization
-									contentContainerStyle={{ flexDirection: 'column-reverse' }}
-									renderItem={({ item }) => (
-										<CommentElement
-											message={item.comment}
-											avatar={item.avatar}
-											created={item.created}
-											email={item.firstName}
-											key={item.created}
-											firstName={item.firstName}
-											id={item._id}
-											isLoading={(item as any)?.isLoading}
-										/>
-									)}
+						<FlatList
+							//disableVirtualization
+							data={comments}
+							keyExtractor={(item, index) => item.created + index.toString()}
+							renderItem={({ item }) => (
+								<CommentElement
+									message={item.comment}
+									avatar={item.avatar}
+									created={item.created}
+									email={item.firstName}
+									key={item.comment}
+									firstName={item.firstName}
+									id={item._id}
+									isLoading={(item as any)?.isLoading}
 								/>
-							</View>
-						)}
-					</Animated.View>
-				</ScrollView>
+							)}
+						/>
+					</VirtualizedList>
+					// <YourComponent
+					// 	comments2={comments}
+					// 	component={
+
+					// 	}
+					// />
+				)}
+
+				{/* </View> */}
 			</LayoutOpacityComment>
 
 			<View className='absolute bottom-0 flex-1 w-full bg-[#111111]'>
@@ -437,3 +266,65 @@ export const normalDate = (date: string) => {
 	const dateStr = `${hour} : ${minutes} : ${seconds} - ${difference} hours late`
 	return dateStr
 }
+
+interface IHeaderComponent {
+	userMainInfo: ILatestInside
+	toggleScroll: (scroll: boolean) => void
+}
+
+const HeaderComponent: FC<IHeaderComponent> = memo(
+	({ userMainInfo, toggleScroll }) => {
+		const { top } = useSafeAreaInsets()
+		return (
+			<View className='flex-1' style={{ aspectRatio: 9 / 14 }}>
+				<View style={{ height: top + 20 }} />
+				<ImageBackground
+					source={{
+						uri: `${BaseImageUrl}${userMainInfo.latestPhoto.photos.backPhoto?.photo}`
+					}}
+					style={{
+						position: 'absolute',
+						width: '100%',
+						height: '100%'
+					}}
+				/>
+
+				<BlurView
+					intensity={60}
+					style={{
+						...{
+							position: 'absolute',
+							width: '100%',
+							height: '100%'
+						}
+					}}
+				/>
+				<View className='mx-4 flex-1 rounded-xl overflow-hidden'>
+					<DraggableImg
+						img1={userMainInfo.latestPhoto.photos.frontPhoto?.photo || ''}
+						img2={userMainInfo.latestPhoto.photos.backPhoto?.photo || ''}
+						toggleScroll={toggleScroll}
+					/>
+				</View>
+				<View className='h-20' />
+			</View>
+		)
+	}
+)
+
+const ShareHeader: FC<IHeaderComponent> = memo(
+	({ toggleScroll, userMainInfo }) => {
+		return (
+			<View className='flex-1'>
+				<HeaderComponent
+					userMainInfo={userMainInfo}
+					toggleScroll={toggleScroll}
+				/>
+				<EmodziComment
+					//@ts-ignore
+					reactionsData={userMainInfo.latestPhoto.photoReactions}
+				/>
+			</View>
+		)
+	}
+)

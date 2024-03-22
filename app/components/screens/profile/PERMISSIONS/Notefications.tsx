@@ -13,8 +13,6 @@ Notifications.setNotificationHandler({
 })
 
 export async function registerForPushNotificationsAsync() {
-	let token
-
 	if (Platform.OS === 'android') {
 		Notifications.setNotificationChannelAsync('default', {
 			name: 'default',
@@ -23,7 +21,6 @@ export async function registerForPushNotificationsAsync() {
 			lightColor: '#FF231F7C'
 		})
 	}
-
 	if (Device.isDevice) {
 		const { status: existingStatus } = await Notifications.getPermissionsAsync()
 		let finalStatus = existingStatus

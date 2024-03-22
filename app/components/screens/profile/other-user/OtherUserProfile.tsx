@@ -60,7 +60,7 @@ export const OtherUserProfile = () => {
 	const navigate = useNavigation()
 	const { handleModalVisible, modalVisible, userDataForModal } = useModalState()
 	const [error, setError] = useState(false)
-	console.log(getUser.data);
+	//console.log(getUser.data);
 	
 	return (
 		<View>

@@ -7,6 +7,7 @@ import {
 	IProfile
 } from '@/shared/types/profile.interface'
 import instance from '../api/interceptors.api'
+import { TReaction } from '@/components/screens/home/element-photo/ElementPhoto'
 
 export const ProfileService = {
 	async getProfile() {
@@ -19,8 +20,8 @@ export const ProfileService = {
 	},
 
 	async updateFavoritePhoto(data: TypeUpdateFavoritePhoto) {
-		console.log(data);
-		
+		console.log(data)
+
 		const response = await instance.put(
 			getUsersUrl('/profile/favorite-photos'),
 			data
@@ -85,6 +86,31 @@ export const ProfileService = {
 		const response = await request<string>({
 			url: getUsersUrl(`/cron`),
 			method: 'GET'
+		})
+		return response
+	},
+	async addReaction(data: {
+		userId: string
+		reaction: TReaction
+		created: string
+	}) {
+		const response = await request<string>({
+			url: getUsersUrl(`/reaction`),
+			method: 'POST',
+			data
+		})
+		return response
+	},
+	async getReactionByLastPhoto(data: { userId: string; created: string }) {
+		const response = await request<{
+			_id: string
+			avatar: string
+			reaction: string
+		}>({
+			url: getUsersUrl(
+				`/reaction?userId=${data.userId}&created=${data.created}`
+			),
+			method: 'GET2'
 		})
 		return response
 	}

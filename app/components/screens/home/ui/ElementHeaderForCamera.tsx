@@ -55,8 +55,6 @@ const TimerComponent = ({ receivedTime }: { receivedTime: Date }) => {
 				(currentTime.getTime() - receivedTime.getTime()) / 1000
 			// Если разница меньше 5 минут
 			if (differenceInSeconds < standartMinutes * 60) {
-				console.log('FF')
-
 				const remainingSeconds = standartMinutes * 60 - differenceInSeconds
 				const minutes = Math.floor(remainingSeconds / 60)
 				const seconds = Math.floor(remainingSeconds % 60)

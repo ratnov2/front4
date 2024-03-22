@@ -1,19 +1,20 @@
 import { useAuth } from '@/hooks/useAuth'
-import { BaseImageUrl } from '@/services/api/interceptors.api'
+import { BaseImageUrl, BaseImageUrl2 } from '@/services/api/interceptors.api'
 import { Link, useNavigation } from '@react-navigation/native'
 import { FC, useReducer, useRef, useState } from 'react'
 //import Draggable from 'react-native-draggable'
 import {
 	ActivityIndicator,
 	Image,
+	Pressable,
 	Text,
 	TextInput,
 	TouchableOpacity,
 	View
 } from 'react-native'
 import userPng from '@/assets/user.png'
-import { MaterialIcons } from '@expo/vector-icons'
-import { useMutation } from '@tanstack/react-query'
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ProfileService } from '@/services/profile/profile.service'
 import { ILatestInside, ILatestPhoto } from '@/shared/types/profile.interface'
 import DismissKeyboard from '@/ui/form-elements/field/DismissKeyboard'
@@ -27,17 +28,27 @@ interface IElementPhoto {
 	photo: ILatestInside
 	refetch: () => void
 	toggleScroll: (scroll: boolean) => any
+	reactions: { userId: string; reactionType: TReaction }[]
 }
 
 export type BaseExampleProps = {
 	className?: string
 }
-
+export type TReaction =
+	| 'happy_face'
+	| 'laughing'
+	| 'kiss'
+	| 'straight_face'
+	| 'distress'
+//😁 || 😂 || 😍 || 😐 || 🤮
 export const ElementPhoto: FC<IElementPhoto> = ({
 	photo,
 	refetch,
-	toggleScroll
+	toggleScroll,
+	reactions
 }) => {
+	//console.log(photo)
+
 	const navigate = useNavigation()
 	const { user } = useAuth()
 
@@ -98,6 +109,13 @@ export const ElementPhoto: FC<IElementPhoto> = ({
 							img2={(photo.latestPhoto.photos.backPhoto?.photo || '') as string}
 							toggleScroll={toggleScroll}
 						/>
+						<View className='absolute bottom-0 w-full'>
+							<Reactions
+								reactions={reactions}
+								userId={photo._id}
+								created={photo.latestPhoto.created}
+							/>
+						</View>
 					</View>
 				</View>
 			)}
@@ -191,4 +209,120 @@ export const ElementPhoto: FC<IElementPhoto> = ({
 			</View>
 		</View>
 	)
+}
+export interface IReactions {
+	reactions: { userId: string; reactionType: TReaction }[]
+	userId: string
+	created: string
+}
+
+const Reactions: FC<IReactions> = ({ reactions, userId, created }) => {
+	const queryClient = useQueryClient()
+	const [isVisibleSmile, setIsVisibleSmile] = useState(false)
+	const [size, setSize] = useState({ height: 0, width: 0, x: 0, y: 0 })
+	const [stateReaction, setStateReactions] = useState(reactions)
+	const addReaction = useMutation(
+		['add-reaction'],
+		(reaction: TReaction) =>
+			ProfileService.addReaction({ userId, reaction, created }),
+		{
+			onSuccess: newData => {
+				queryClient.setQueryData(['get-profile'], (data: any) => {
+					const latestPhotoCopy = { ...data.latestPhoto }
+					latestPhotoCopy.photoReactions = newData
+					setStateReactions([...newData])
+					setIsVisibleSmile(!isVisibleSmile)
+					return {
+						...data,
+						latestPhoto: latestPhotoCopy
+					}
+				})
+			}
+		}
+	)
+
+	return (
+		<View
+			className='flex-1 flex-row justify-between pb-4 relative'
+			onLayout={e => setSize(e.nativeEvent.layout)}
+		>
+			<View className='flex-1'>
+				{!isVisibleSmile && (
+					<View className='flex-1 mx-4 flex-row'>
+						{stateReaction.map((reaction, key) => (
+							<Pressable className='relative' key={key}>
+								<Image
+									width={55}
+									height={55}
+									source={{ uri: BaseImageUrl2(reaction?.avatar) }}
+									className='rounded-full'
+								/>
+								<Text className='absolute bottom-0 -right-1'>
+									{reactionsData2[reaction.reactionType]}
+								</Text>
+							</Pressable>
+						))}
+					</View>
+				)}
+			</View>
+
+			<Pressable
+				className={`pr-4 ${isVisibleSmile ? 'pb-14' : ''}`}
+				onPress={() => setIsVisibleSmile(!isVisibleSmile)}
+			>
+				<MaterialCommunityIcons name='dots-circle' size={49} color='white' />
+			</Pressable>
+			{isVisibleSmile && (
+				<View
+					className={`absolute items-center w-full bg-white/10 flex-row justify-between bottom-0`}
+				>
+					{['😁', '😂', '😍', '😐', '🤮'].map((smile, key) => {
+						return (
+							<Pressable onPress={() => addReaction.mutate(reactionsData[key])}>
+								<Text style={{ fontSize: size.width / 7 }} key={key}>
+									{smile}
+								</Text>
+							</Pressable>
+						)
+					})}
+				</View>
+			)}
+		</View>
+	)
+}
+export const reactionsData2 = {
+	happy_face: '😁',
+	laughing: '😂',
+	kiss: '😍',
+	straight_face: '😐',
+	distress: '🤮'
+}
+const reactionsData = [
+	'happy_face',
+	'laughing',
+	'kiss',
+	'straight_face',
+	'distress'
+] as TReaction[]
+
+export function deepCopy(obj: any): any {
+	if (obj === null || typeof obj !== 'object') {
+		return obj
+	}
+
+	let copy
+	if (obj instanceof Array) {
+		copy = []
+		for (let i = 0; i < obj.length; i++) {
+			copy[i] = deepCopy(obj[i])
+		}
+	} else {
+		copy = { ...obj } // Создание поверхностной копии объекта
+		for (let key in copy) {
+			if (copy.hasOwnProperty(key)) {
+				copy[key] = deepCopy(copy[key])
+			}
+		}
+	}
+	return copy
 }
