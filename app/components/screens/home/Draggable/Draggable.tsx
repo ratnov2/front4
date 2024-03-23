@@ -55,6 +55,7 @@ export const Draggable: FC<IDraggable> = memo(
 					maxY={mainImgMeasure.height}
 					onPressIn={async() => toggleScroll(false)}
 					onPressOut={async() => toggleScroll(true)}
+					onShortPressRelease={() => setState(!state)}
 					shouldReverse
 				>
 					<View style={styles.overlayImageContainer} ref={ref}>

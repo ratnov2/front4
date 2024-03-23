@@ -8,7 +8,11 @@ import {
 	Animated,
 	FlatList,
 	ImageBackground,
+	NativeScrollEvent,
+	NativeSyntheticEvent,
 	PanResponder,
+	PlatformColor,
+	Pressable,
 	ScrollView,
 	Text,
 	TextInput,
@@ -23,7 +27,7 @@ import { PhotoUser } from './PhotoUser'
 import { BaseImageUrl } from '@/services/api/interceptors.api'
 import { Image } from 'react-native'
 import { BlurView } from 'expo-blur'
-import { Feather, Ionicons } from '@expo/vector-icons'
+import { AntDesign, Feather, Ionicons } from '@expo/vector-icons'
 import { Devider, EmodziComment } from './CommentEmodzi'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useStorePhoto } from '../home/element-photo/useStorePhoto'
@@ -31,7 +35,7 @@ import { ILatestInside, ILatestPhoto } from '@/shared/types/profile.interface'
 import { HeaderProfile } from '../profile/Profile'
 import { LayoutOpacityComment } from '@/navigation/ui/LayoutOpacityComment'
 import { DraggableImg } from './DraggableImg'
-import { VirtualizedList, YourComponent } from './FF'
+import { VirtualizedList } from './FF'
 
 export const Comments = () => {
 	// useEffect(() => {
@@ -163,17 +167,19 @@ export const Comments = () => {
 	//console.log('userMainInfo', userMainInfo, typeParam)
 	const [value, setValue] = useState('')
 
-	const scrollViewRef = useRef<ScrollView>(null)
+	const scrollFlatRef = useRef<FlatList>(null)
 
 	useEffect(() => {
 		scrollToBottom()
 	}, [userPosts.data]) // Пересчитывать прокрутку, когда изменяется массив сообщений
 
+	const [offsetScroll, setOffsetScroll] = useState(0)
 	const scrollToBottom = () => {
-		if (scrollViewRef.current) {
-			scrollViewRef.current.scrollToEnd({ animated: true })
+		if (scrollFlatRef.current) {
+			scrollFlatRef.current.scrollToOffset({ offset: 555555 })
 		}
 	}
+	console.log(offsetScroll)
 
 	const [shouldScroll, setShouldScroll] = useState(true)
 	const toggleScroll = (scroll: boolean) => {
@@ -184,19 +190,33 @@ export const Comments = () => {
 
 	//return null
 	if (!userMainInfo || !userMainInfo.latestPhoto) return null
-	console.log('userMainInfo', comments.length)
 
+	const [isButtonVisible, setButtonVisible] = useState(true)
+	const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+		const { contentOffset, layoutMeasurement, contentSize } = event.nativeEvent
+		const distanceToEnd =
+			contentSize.height - contentOffset.y - layoutMeasurement.height
+		if (distanceToEnd <= 300) {
+			setButtonVisible(false)
+		} else {
+			setButtonVisible(true)
+		}
+	}
 	return (
 		<View className='flex-1'>
 			<LayoutOpacityComment created={(params as any).created}>
 				{comments.length > 0 && (
-					<VirtualizedList shouldScroll={shouldScroll}>
+					<VirtualizedList shouldScroll={shouldScroll} ref={scrollFlatRef}>
 						<ShareHeader
 							toggleScroll={toggleScroll}
 							userMainInfo={userMainInfo}
 						/>
+
 						<FlatList
-							//disableVirtualization
+							onScroll={handleScroll}
+							onLayout={event =>
+								setOffsetScroll(event.nativeEvent.layout.height)
+							}
 							data={comments}
 							keyExtractor={(item, index) => item.created + index.toString()}
 							renderItem={({ item }) => (
@@ -212,16 +232,17 @@ export const Comments = () => {
 								/>
 							)}
 						/>
+						<View className='h-[100px]'></View>
 					</VirtualizedList>
-					// <YourComponent
-					// 	comments2={comments}
-					// 	component={
-
-					// 	}
-					// />
 				)}
-
-				{/* </View> */}
+				{/* {!isButtonVisible && ( */}
+				<Pressable
+					onPress={() => scrollToBottom()}
+					style={{ position: 'absolute', right: 10, bottom: 100 }}
+					className=''
+				>
+					<AntDesign name='downcircle' size={44} color='gray' />
+				</Pressable>
 			</LayoutOpacityComment>
 
 			<View className='absolute bottom-0 flex-1 w-full bg-[#111111]'>

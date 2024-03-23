@@ -1,5 +1,12 @@
-import React, { useState, useEffect, memo, FC } from 'react'
-import { FlatList, View } from 'react-native'
+import React, {
+	useState,
+	useEffect,
+	memo,
+	FC,
+	forwardRef,
+	ForwardedRef
+} from 'react'
+import { FlatList, LayoutChangeEvent, View } from 'react-native'
 import { CommentElement } from './CommentElement'
 import { IPost } from '@/services/profile/profile.service'
 
@@ -8,37 +15,28 @@ interface IYour {
 	component: JSX.Element
 }
 
-export const YourComponent: FC<IYour> = memo(({ comments2, component }) => {
-	const renderItem = ({ item }: { item: IPost }) => (
-		<CommentElement
-			message={item.comment}
-			avatar={item.avatar}
-			created={item.created}
-			email={item.firstName}
-			key={item.comment}
-			firstName={item.firstName}
-			id={item._id}
-			isLoading={(item as any)?.isLoading}
-		/>
-	)
-
-	return (
-		<FlatList
-			ListHeaderComponent={component}
-			data={comments2}
-			renderItem={renderItem}
-			keyExtractor={item => item.IDD} // В качестве ключей используем item.created
-		/>
-	)
-})
-export const VirtualizedList = ({ children, shouldScroll }: any) => {
-	return (
-		<FlatList
-			data={[]}
-			scrollEnabled={shouldScroll}
-			keyExtractor={() => 'key'}
-			renderItem={null}
-			ListHeaderComponent={<>{children}</>}
-		/>
-	)
+interface IVirtualizedList {
+	children: React.ReactNode
+	shouldScroll: boolean
+	setHeight: (height: number) => void
 }
+
+export const VirtualizedList: FC<IVirtualizedList> = forwardRef(
+	({ children, shouldScroll, setHeight }, ref: ForwardedRef<FlatList>) => {
+		const handleLayout = (event: LayoutChangeEvent) => {
+			const { height } = event.nativeEvent.layout
+			//setHeight(height)
+		}
+		return (
+			<FlatList
+				onLayout={handleLayout}
+				ref={ref}
+				data={[]}
+				scrollEnabled={shouldScroll}
+				keyExtractor={() => 'key'}
+				renderItem={null}
+				ListHeaderComponent={<>{children}</>}
+			/>
+		)
+	}
+)
