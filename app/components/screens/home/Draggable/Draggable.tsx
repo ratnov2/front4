@@ -14,6 +14,7 @@ interface IDraggable {
 	img1: string
 	img2: string
 	toggleScroll: (scroll: boolean) => any
+	
 }
 
 export const Draggable: FC<IDraggable> = memo(
@@ -35,7 +36,7 @@ export const Draggable: FC<IDraggable> = memo(
 				<View
 					ref={imageRef}
 					className='flex-1'
-					onLayout={e => setMainImgMeasure(e.nativeEvent.layout)}
+					// onLayout={e => setMainImgMeasure(e.nativeEvent.layout)}
 				>
 					<Image
 						source={
@@ -51,10 +52,10 @@ export const Draggable: FC<IDraggable> = memo(
 					y={10}
 					minY={0}
 					minX={0}
-					maxX={mainImgMeasure.width}
-					maxY={mainImgMeasure.height}
-					onPressIn={async() => toggleScroll(false)}
-					onPressOut={async() => toggleScroll(true)}
+					// maxX={mainImgMeasure.width}
+					// maxY={mainImgMeasure.height}
+					onPressIn={() => toggleScroll(false)}
+					onPressOut={() => toggleScroll(true)}
 					shouldReverse
 				>
 					<View style={styles.overlayImageContainer} ref={ref}>

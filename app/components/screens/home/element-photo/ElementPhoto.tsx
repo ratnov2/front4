@@ -1,7 +1,7 @@
 import { useAuth } from '@/hooks/useAuth'
 import { BaseImageUrl, BaseImageUrl2 } from '@/services/api/interceptors.api'
 import { Link, useNavigation } from '@react-navigation/native'
-import { FC, useReducer, useRef, useState } from 'react'
+import { FC, memo, useReducer, useRef, useState } from 'react'
 //import Draggable from 'react-native-draggable'
 import {
 	ActivityIndicator,
@@ -41,7 +41,7 @@ export type TReaction =
 	| 'straight_face'
 	| 'distress'
 //😁 || 😂 || 😍 || 😐 || 🤮
-export const ElementPhoto: FC<IElementPhoto> = ({
+export const ElementPhoto: FC<IElementPhoto> = memo(({
 	photo,
 	refetch,
 	toggleScroll,
@@ -209,7 +209,7 @@ export const ElementPhoto: FC<IElementPhoto> = ({
 			</View>
 		</View>
 	)
-}
+})
 export interface IReactions {
 	reactions: { userId: string; reactionType: TReaction }[]
 	userId: string
