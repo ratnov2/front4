@@ -40,7 +40,7 @@ export const text = (created: string) => {
 
 export const CalendarTask = () => {
 	const queryClient = useQueryClient()
-	const user = useQuery(['get-user-profile'], () => ProfileService.getProfile()) //@TASK
+	const user = useQuery(['get-profile'], () => ProfileService.getProfile()) //@TASK
 	const navigate = useNavigation<any>()
 	let { params } = useRoute()
 	const updateFavoritePhoto = useMutation(
@@ -49,7 +49,7 @@ export const CalendarTask = () => {
 		{
 			onSuccess: () => {
 				setModalVisible(false)
-				queryClient.refetchQueries(['get-user'])
+				queryClient.refetchQueries(['get-profile'])
 				//@ts-ignore
 				navigate.navigate(`Profile`, { pr: '' })
 			}
