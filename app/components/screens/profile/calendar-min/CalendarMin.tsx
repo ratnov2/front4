@@ -22,14 +22,14 @@ export const CalendarMin: FC = () => {
 	const [modalVisible, setModalVisible] = useState(false)
 	const [modalImg, setModalImg] = useState(0)
 	const addDate = new Date()
-	console.log('modalImg', modalImg)
 
-	const user = useQuery(['get-user-234'], () => ProfileService.getProfile(), {
+	const user = useQuery(['get-profile'], () => ProfileService.getProfile(), {
 		select: data => {
 			const calendarPhotos = data.calendarPhotos.slice(-14)
 			return { ...data, calendarPhotos }
 		}
 	})
+	
 	Date.prototype.daysInMonth = function () {
 		return 33 - new Date(this.getFullYear(), this.getMonth(), 33).getDate()
 	}
@@ -66,11 +66,11 @@ export const CalendarMin: FC = () => {
 							<View className='h-[15%] items-center' style={{ marginTop: top }}>
 								<Text className='text-white font-bold text-xl'>
 									{user.data &&
-										text(user.data?.calendarPhotos[modalImg].created || '')}
+										text(user.data?.calendarPhotos[modalImg]?.created || '')}
 								</Text>
 								<Text className='text-white/70 text-base -mt-1'>
 									{normalDate(
-										user.data?.calendarPhotos[modalImg].created || ''
+										user.data?.calendarPhotos[modalImg]?.created || ''
 									)}
 								</Text>
 							</View>
@@ -79,9 +79,9 @@ export const CalendarMin: FC = () => {
 									className='h-full w-full rounded-2xl'
 									source={{
 										uri: BaseImageUrl2(
-											user.data?.calendarPhotos[modalImg].photos.frontPhoto
+											user.data?.calendarPhotos[modalImg]?.photos?.frontPhoto
 												?.photo ||
-												user.data?.calendarPhotos[modalImg].photos.backPhoto
+												user.data?.calendarPhotos[modalImg]?.photos?.backPhoto
 													?.photo ||
 												''
 										)

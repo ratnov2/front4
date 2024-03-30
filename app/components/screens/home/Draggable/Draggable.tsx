@@ -1,4 +1,5 @@
 import { BaseImageUrl2 } from '@/services/api/interceptors.api'
+import { LinearGradient } from 'expo-linear-gradient'
 import { FC, memo, useEffect, useRef, useState } from 'react'
 import {
 	ImageBackground,
@@ -53,8 +54,8 @@ export const Draggable: FC<IDraggable> = memo(
 					minX={0}
 					maxX={mainImgMeasure.width}
 					maxY={mainImgMeasure.height}
-					onPressIn={async() => toggleScroll(false)}
-					onPressOut={async() => toggleScroll(true)}
+					onPressIn={async () => toggleScroll(false)}
+					onPressOut={async () => toggleScroll(true)}
 					onShortPressRelease={() => setState(!state)}
 					shouldReverse
 				>
@@ -70,6 +71,7 @@ export const Draggable: FC<IDraggable> = memo(
 						/>
 					</View>
 				</Drag>
+				
 			</View>
 		)
 	}

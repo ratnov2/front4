@@ -179,7 +179,6 @@ export const Comments = () => {
 			scrollFlatRef.current.scrollToOffset({ offset: 555555 })
 		}
 	}
-	console.log(offsetScroll)
 
 	const [shouldScroll, setShouldScroll] = useState(true)
 	const toggleScroll = (scroll: boolean) => {
@@ -205,13 +204,12 @@ export const Comments = () => {
 	return (
 		<View className='flex-1'>
 			<LayoutOpacityComment created={(params as any).created}>
-				{comments.length > 0 && (
+				{userPosts.data && (
 					<VirtualizedList shouldScroll={shouldScroll} ref={scrollFlatRef}>
 						<ShareHeader
 							toggleScroll={toggleScroll}
 							userMainInfo={userMainInfo}
 						/>
-
 						<FlatList
 							onScroll={handleScroll}
 							onLayout={event =>
@@ -232,17 +230,24 @@ export const Comments = () => {
 								/>
 							)}
 						/>
+						{userPosts.data.length === 0 && (
+							<View className='mt-7'>
+								<Text className='text-center text-2xl font-medium text-neutral-500'>
+									No comments yet
+								</Text>
+							</View>
+						)}
 						<View className='h-[100px]'></View>
 					</VirtualizedList>
 				)}
 				{/* {!isButtonVisible && ( */}
-				<Pressable
+				{/* <Pressable
 					onPress={() => scrollToBottom()}
 					style={{ position: 'absolute', right: 10, bottom: 100 }}
 					className=''
 				>
 					<AntDesign name='downcircle' size={44} color='gray' />
-				</Pressable>
+				</Pressable> */}
 			</LayoutOpacityComment>
 
 			<View className='absolute bottom-0 flex-1 w-full bg-[#111111]'>

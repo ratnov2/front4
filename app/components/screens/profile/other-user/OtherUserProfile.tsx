@@ -61,7 +61,7 @@ export const OtherUserProfile = () => {
 	const { handleModalVisible, modalVisible, userDataForModal } = useModalState()
 	const [error, setError] = useState(false)
 	//console.log(getUser.data);
-	
+
 	return (
 		<View>
 			<WithCustomFriendModal
@@ -79,7 +79,7 @@ export const OtherUserProfile = () => {
 							!error
 								? {
 										uri: BaseImageUrl2(getUser.data.avatar)
-								  }
+									}
 								: bgImage
 						}
 						onError={() => {
@@ -118,7 +118,7 @@ export const OtherUserProfile = () => {
 	)
 }
 
-type TSizeAvatar = 'small-photo' | 'profile' | 'friends-pal' | 'friends-item'
+type TSizeAvatar = 'small-photo' | 'profile' | 'friends-pal' | 'friends-item' | 'reaction-main'
 
 const sizeAvatar = {
 	'small-photo': {
@@ -148,6 +148,13 @@ const sizeAvatar = {
 		fontSize: 15,
 		left: 12,
 		top: 8.5
+	},
+	'reaction-main': {
+		w: 50,
+		h: 50,
+		fontSize: 15,
+		left: 21,
+		top: 17
 	}
 }
 
@@ -174,7 +181,7 @@ export const ImgAvatar: FC<IImgAvatar> = ({ avatar, size, name }) => {
 					!error
 						? {
 								uri: BaseImageUrl2(avatar)
-						  }
+							}
 						: bgImage
 				}
 				onError={() => {

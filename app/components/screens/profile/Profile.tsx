@@ -23,7 +23,7 @@ import { TypeRootStackParamList } from '@/navigation/navigation.types'
 import { LayoutOpacityItems } from '@/navigation/ui/LayoutOpacityItems'
 import { AntDesign, Entypo, FontAwesome } from '@expo/vector-icons'
 import { LayoutLightOpacityOtherProfile } from '@/navigation/ui/LayoutLightOpacityOtherProfile'
-import { useNotifications } from './PERMISSIONS/Notefications'
+//import { useNotifications } from './PERMISSIONS/Notefications'
 
 
 type IProfile = NativeStackScreenProps<TypeRootStackParamList, 'Profile'>

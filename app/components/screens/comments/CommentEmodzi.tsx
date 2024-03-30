@@ -1,8 +1,9 @@
 import { BaseImageUrl2 } from '@/services/api/interceptors.api'
 import { FC } from 'react'
-import { Image, Pressable, Text } from 'react-native'
+import { FlatList, Image, Pressable, Text } from 'react-native'
 import { View } from 'react-native'
 import { TReaction, reactionsData2 } from '../home/element-photo/ElementPhoto'
+import { ImgAvatar } from '../profile/other-user/OtherUserProfile'
 
 interface IEmodziComment {
 	style?: string
@@ -18,21 +19,38 @@ export const EmodziComment: FC<IEmodziComment> = ({
 	reactionsData
 }) => {
 	return (
-		<View className={`mt-4 ${style} `}>
+		<View className={`mt-4 ${style} mx-2`}>
 			<View className='flex-row'>
-				{reactionsData.map((reaction, key) => (
+				<FlatList
+					data={[
+						...reactionsData,
+						...reactionsData,
+						...reactionsData,
+						...reactionsData,
+						...reactionsData,
+						...reactionsData,
+						...reactionsData
+					]}
+					className='flex-row'
+					horizontal
+					showsHorizontalScrollIndicator={false}
+					renderItem={({item}) => (
+						<Pressable className='relative mr-4'>
+							<ImgAvatar avatar={item?.avatar} size='reaction-main' />
+							<Text className='absolute bottom-0 -right-1'>
+								{reactionsData2[item.reactionType]}
+							</Text>
+						</Pressable>
+					)}
+				></FlatList>
+				{/* {reactionsData.map((reaction, key) => (
 					<Pressable className='relative' key={key}>
-						<Image
-							width={55}
-							height={55}
-							source={{ uri: BaseImageUrl2(reaction?.avatar) }}
-							className='rounded-full'
-						/>
+						<ImgAvatar avatar={reaction?.avatar} size='reaction-main' />
 						<Text className='absolute bottom-0 -right-1'>
 							{reactionsData2[reaction.reactionType]}
 						</Text>
 					</Pressable>
-				))}
+				))} */}
 			</View>
 			<Devider style='mt-4' />
 		</View>

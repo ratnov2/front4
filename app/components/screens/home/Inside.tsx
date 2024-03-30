@@ -1,58 +1,21 @@
-import {
-	Image,
-	ImageBackground,
-	NativeScrollEvent,
-	NativeSyntheticEvent,
-	Pressable,
-	ScrollView,
-	StyleSheet,
-	Text,
-	TouchableOpacity,
-	View
-} from 'react-native'
+import { Pressable, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import {
-	QueryClient,
-	useMutation,
-	useQuery,
-	useQueryClient
-} from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ProfileService } from '@/services/profile/profile.service'
 import { FC, memo, useEffect, useRef, useState } from 'react'
 import { Camera } from 'expo-camera'
 // import CameraExpo from './CamerExpo'
 import { useAuth } from '@/hooks/useAuth'
 import { FilesService } from '@/services/files/files.service'
-import mime from 'mime'
 import { ElementPhoto } from './element-photo/ElementPhoto'
 import DismissKeyboard from '@/ui/form-elements/field/DismissKeyboard'
-import {
-	AntDesign,
-	Entypo,
-	Feather,
-	FontAwesome,
-	FontAwesome5,
-	Ionicons,
-	MaterialIcons
-} from '@expo/vector-icons'
-import { LinearGradient } from 'expo-linear-gradient'
+import { Entypo, Feather, FontAwesome5, Ionicons } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
 import { LayoutOpacityItems } from '@/navigation/ui/LayoutOpacityItems'
-import { BaseImageUrl2 } from '@/services/api/interceptors.api'
 import { UserAvatar } from '@/ui/user-avatar/UserAvatar'
-import { PhotoLoader } from '@/ui/photo-loader/PhotoLoader'
-import { PanResponder } from 'react-native'
-import { ElementTest } from './ElementTest'
-import { ILatestInside, ILatestPhoto } from '@/shared/types/profile.interface'
-import { ElementHeaderForCamera } from './ui/ElementHeaderForCamera'
 import { CameraComponent } from './relax/Camera'
 import { IUser } from '@/shared/types/user.interface'
-
-const IsTiming = (cron?: string, date?: string) => {
-	if (!cron || !date) return false
-	if (new Date(cron).getTime() > new Date(date).getTime()) return true
-	else return false
-}
+import { IsTiming } from './IsTiming'
 
 export const Inside = memo(() => {
 	const [frontImage, setFrontImage] = useState<string | null>(null)
@@ -106,13 +69,12 @@ export const Inside = memo(() => {
 	const latestPhoto = useQuery(['get-latest-friends'], () =>
 		ProfileService.getLatestPhotosFriends()
 	)
+
 	const latestPhotoOther = useQuery(
 		['get-latest-people'],
 		() => ProfileService.getLatestPhotosOther(),
 		{
 			select: data => {
-				//console.log('data', data)
-
 				return data.map(el => ({
 					latestPhoto: { ...el.latestPhoto },
 					avatar: el._id.avatar,
@@ -135,10 +97,7 @@ export const Inside = memo(() => {
 		}
 	}
 	////
-	useEffect(() => {}, [startCamera])
 	const ff = () => {
-		console.log('FEFEFEFFE')
-
 		if (frontImage && backImage && !isLoading) {
 			const formData = new FormData()
 			console.log('frontImage', backImage)
@@ -155,6 +114,7 @@ export const Inside = memo(() => {
 				type: 'image/jpeg',
 				name: 'photo2.jpg'
 			})
+			setStartCamera(false)
 			mutate(formData)
 			//setStartCamera(false)
 		}
@@ -164,10 +124,17 @@ export const Inside = memo(() => {
 		['push-photo'],
 		(form: FormData) => FilesService.pushTwoPhoto(form),
 		{
-			onSuccess: () => setStartCamera(false)
+			onSuccess: () => {
+				setStartCamera(false)
+				queryClient.refetchQueries({
+					queryKey: ['get-profile'],
+					type: 'active'
+				})
+			}
 		}
 	)
 	///
+	//console.log(data);
 
 	///
 	const [typeOfCalendarPhotos, setTypeOfCalendarPhotos] = useState<
@@ -184,117 +151,17 @@ export const Inside = memo(() => {
 		_id: userQuery._id,
 		firstName: userQuery.firstName
 	}
+	//console.log('userQuery', userQuery)
 
 	const [shouldScroll, setShouldScroll] = useState(true)
 	const toggleScroll = (scroll: boolean) => {
 		setShouldScroll(scroll)
 	}
-	//console.log(latestPhotoOther.data);
 
 	return (
 		<View style={{ flex: 1 }}>
-			{/* {backImage && <Image className='w-40 h-40' source={{ uri: backImage }} />}
-			{frontImage && (
-				<Image className='w-40 h-40' source={{ uri: frontImage }} />
-			)} */}
-
+			<Text className='text-white text-4xl'>{isLoading && 'ISLOADING'}</Text>
 			{startCamera && (
-				// <View className='flex-1 bg-black'>
-				// 	{cron.data && <ElementHeaderForCamera cron={cron.data} />}
-				// 	<View className='mx-2 flex-1 rounded-3xl bg-red-50 overflow-hidden relative'>
-				// 		<Camera
-				// 			style={{ flex: 1 }}
-				// 			className=''
-				// 			type={
-				// 				isFrontCamera
-				// 					? (Camera.Constants.Type as any).front
-				// 					: (Camera.Constants.Type as any).back
-				// 			}
-				// 			ratio='4:3'
-				// 			ref={cameraRef}
-				// 		></Camera>
-				// 		{!frontImage && !backImage && isMakingPhoto && (
-				// 			<View
-				// 				className={`flex-1 absolute w-full h-full bg-blue-900 z-50`}
-				// 			/>
-				// 		)}
-				// 		{(frontImage || backImage) && (
-				// 			<View className='absolute flex-1 h-full w-full bg-black'>
-				// 				<Image
-				// 					source={{ uri: frontImage as string }}
-				// 					className='w-full h-full'
-				// 				/>
-				// 			</View>
-				// 		)}
-				// 		{frontImage && backImage && (
-				// 			<View className='absolute flex-1 h-full w-full bg-black'>
-				// 				<ElementTest img1={frontImage} img2={backImage} />
-				// 			</View>
-				// 		)}
-				// 	</View>
-
-				// 	<View className='h-[23%] bg-black flex justify-center items-center z-[9999999] '>
-				// 		{!frontImage && !backImage && !isMakingPhoto ? (
-				// 			<View className='flex-row items-center'>
-				// 				<Pressable
-				// 					onPress={() => setIsFrontCamera(!isFrontCamera)}
-				// 					className='p-2'
-				// 				>
-				// 					<Ionicons name='camera-reverse' size={34} color='white' />
-				// 				</Pressable>
-
-				// 				<TouchableOpacity
-				// 					onPress={() => {
-				// 						isFrontCamera && takeFrontPhoto()
-				// 						!isFrontCamera && takeBackPhoto()
-				// 					}}
-				// 					style={{
-				// 						height: 80
-				// 					}}
-				// 					className='text-center flex items-center'
-				// 				>
-				// 					<Feather name='circle' size={80} color='white' />
-				// 					<Text className='text-white text-center'>
-				// 						Post a Late BeReal
-				// 					</Text>
-				// 				</TouchableOpacity>
-
-				// 				<Pressable
-				// 					onPress={() => setIsFrontCamera(!isFrontCamera)}
-				// 					className='p-2'
-				// 				>
-				// 					<Ionicons name='camera-reverse' size={34} color='white' />
-				// 				</Pressable>
-				// 			</View>
-				// 		) : !!frontImage && !!backImage && !isMakingPhoto ? (
-				// 			<>
-				// 				<TouchableOpacity
-				// 					onPress={() => {
-				// 						setFrontImage('')
-				// 						setBackImage('')
-				// 					}}
-				// 					className='flex-row justify-center items-center p-2'
-				// 				>
-				// 					<Text className='text-white font-bold text-2xl mr-4'>
-				// 						RETAKE
-				// 					</Text>
-				// 					<FontAwesome name='undo' size={30} color='white' />
-				// 				</TouchableOpacity>
-				// 				<TouchableOpacity
-				// 					onPress={ff}
-				// 					className='flex-row justify-center items-center p-2 z-[999999]'
-				// 				>
-				// 					<Text className='text-white font-bold text-2xl mr-4'>
-				// 						SEND
-				// 					</Text>
-				// 					<Ionicons name='send-sharp' size={34} color='white' />
-				// 				</TouchableOpacity>
-				// 			</>
-				// 		) : (
-				// 			<PhotoLoader />
-				// 		)}
-				// 	</View>
-				// </View>
 				<CameraComponent
 					backImage={backImage}
 					cameraRef={cameraRef}
@@ -325,15 +192,17 @@ export const Inside = memo(() => {
 					<View className='h-10' />
 					{typeOfCalendarPhotos === 'my_friends' ? (
 						<DismissKeyboard>
-							{user && !IsTiming(cron.data, userQuery.created) && (
-								<ElementPhoto
-									photo={latestPhotoUse as any}
-									toggleScroll={toggleScroll}
-									refetch={() => latestPhoto.refetch()}
-									reactions={userQuery.latestPhoto.photoReactions}
-								/>
-							)}
-							{latestPhoto.isLoading ? (
+							{!!userQuery?.latestPhoto &&
+								IsTiming(cron.data, userQuery.latestPhoto.created || null) && (
+									<ElementPhoto
+										photo={latestPhotoUse as any}
+										toggleScroll={toggleScroll}
+										refetch={() => latestPhoto.refetch()}
+										reactions={userQuery.latestPhoto?.photoReactions}
+										startCamera={() => __startCamera()}
+									/>
+								)}
+							{latestPhoto?.isLoading ? (
 								<View>
 									<Text className='text-white'>Loading...</Text>
 								</View>
@@ -347,6 +216,7 @@ export const Inside = memo(() => {
 												key={key}
 												reactions={photo.latestPhoto.photoReactions}
 												refetch={() => latestPhoto.refetch()}
+												startCamera={() => __startCamera()}
 											/>
 										)
 									})}
@@ -361,7 +231,7 @@ export const Inside = memo(() => {
 								>
 									<View>
 										<Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>
-											Здесь пока ничего нет
+											Здесь пока ничего нет фото пользователей
 										</Text>
 									</View>
 								</View>
@@ -386,6 +256,7 @@ export const Inside = memo(() => {
 												//@ts-ignore
 												reactions={photo.latestPhoto.photoReactions}
 												refetch={() => latestPhotoOther.refetch()}
+												startCamera={() => __startCamera()}
 											/>
 										)
 									})}
@@ -400,7 +271,7 @@ export const Inside = memo(() => {
 								>
 									<View>
 										<Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>
-											Здесь пока ничего нет
+											Здесь пока нет фото пользователей
 										</Text>
 									</View>
 								</View>
@@ -410,46 +281,48 @@ export const Inside = memo(() => {
 					)}
 				</LayoutOpacityItems>
 			)}
-			{!startCamera && user && IsTiming(cron.data, userQuery.created) && (
-				<View>
-					<View
-						style={{ height: 50, flex: 1 }}
-						className='absolute bottom-20 left-0 right-0  justify-center items-center '
-					>
-						<View className='flex-row justify-around'>
-							{startCamera && (
-								<Pressable
-									onPress={() => setIsFrontCamera(!isFrontCamera)}
-									className='justify-around'
+			{!startCamera &&
+				user &&
+				!IsTiming(cron.data, userQuery.latestPhoto?.created || null) && (
+					<View>
+						<View
+							style={{ height: 50, flex: 1 }}
+							className='absolute bottom-20 left-0 right-0  justify-center items-center '
+						>
+							<View className='flex-row justify-around'>
+								{startCamera && (
+									<Pressable
+										onPress={() => setIsFrontCamera(!isFrontCamera)}
+										className='justify-around'
+									>
+										<Ionicons name='camera-reverse' size={34} color='white' />
+									</Pressable>
+								)}
+								<TouchableOpacity
+									onPress={() => {
+										!startCamera && __startCamera()
+										startCamera && isFrontCamera && takeFrontPhoto()
+										startCamera && !isFrontCamera && takeBackPhoto()
+									}}
+									style={{
+										height: 80
+									}}
+									className='text-center flex items-center'
 								>
-									<Ionicons name='camera-reverse' size={34} color='white' />
-								</Pressable>
-							)}
-							<TouchableOpacity
-								onPress={() => {
-									!startCamera && __startCamera()
-									startCamera && isFrontCamera && takeFrontPhoto()
-									startCamera && !isFrontCamera && takeBackPhoto()
-								}}
-								style={{
-									height: 80
-								}}
-								className='text-center flex items-center'
-							>
-								<Feather name='circle' size={80} color='white' />
-								<Text className='text-white text-center'>
-									Post a Late BeReal
-								</Text>
-							</TouchableOpacity>
-							{startCamera && (
-								<View className='justify-around'>
-									<Ionicons name='camera-reverse' size={34} color='white' />
-								</View>
-							)}
+									<Feather name='circle' size={80} color='white' />
+									<Text className='text-white text-center'>
+										Post a Late BeReal
+									</Text>
+								</TouchableOpacity>
+								{startCamera && (
+									<View className='justify-around'>
+										<Ionicons name='camera-reverse' size={34} color='white' />
+									</View>
+								)}
+							</View>
 						</View>
 					</View>
-				</View>
-			)}
+				)}
 			{/* <LinearGradient
 				colors={['#00000000', '#111111']}
 				style={{

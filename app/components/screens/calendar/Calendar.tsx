@@ -22,12 +22,14 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { normalDate } from '../comments/CommentElement'
 
 export const Calendar = () => {
-	const user = useQuery(['get-user-profile'], () => ProfileService.getProfile()) //@TASK
+	const user = useQuery(['get-profile'], () => ProfileService.getProfile()) //@TASK
 	const queryClient = useQueryClient()
 	const { navigate } = useNavigation<any>()
 	let daysInMonth = function (date: Date) {
 		return 33 - new Date(date.getFullYear(), date.getMonth(), 33).getDate()
 	}
+	console.log(user.data);
+	
 	const { top } = useSafeAreaInsets()
 	const updateFavoritePhoto = useMutation(
 		['update-favorite-photo-calendar'],
@@ -67,11 +69,11 @@ export const Calendar = () => {
 							<View className='h-[15%] items-center' style={{ marginTop: top }}>
 								<Text className='text-white font-bold text-xl'>
 									{user.data &&
-										text(user.data?.calendarPhotos[modalImg].created || '')}
+										text(user.data?.calendarPhotos[modalImg]?.created || '')}
 								</Text>
 								<Text className='text-white/70 text-base -mt-1'>
 									{normalDate(
-										user.data?.calendarPhotos[modalImg].created || ''
+										user.data?.calendarPhotos[modalImg]?.created || ''
 									)}
 								</Text>
 							</View>
@@ -80,9 +82,9 @@ export const Calendar = () => {
 									className='h-full w-full rounded-2xl'
 									source={{
 										uri: BaseImageUrl2(
-											user.data?.calendarPhotos[modalImg].photos.frontPhoto
+											user.data?.calendarPhotos[modalImg]?.photos?.frontPhoto
 												?.photo ||
-												user.data?.calendarPhotos[modalImg].photos.backPhoto
+												user.data?.calendarPhotos[modalImg]?.photos?.backPhoto
 													?.photo ||
 												''
 										)

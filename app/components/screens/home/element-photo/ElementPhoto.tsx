@@ -14,14 +14,20 @@ import {
 } from 'react-native'
 import userPng from '@/assets/user.png'
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ProfileService } from '@/services/profile/profile.service'
-import { ILatestInside, ILatestPhoto } from '@/shared/types/profile.interface'
+import {
+	ILatestInside,
+	ILatestPhoto,
+	IProfile
+} from '@/shared/types/profile.interface'
 import DismissKeyboard from '@/ui/form-elements/field/DismissKeyboard'
 import { useStorePhoto } from './useStorePhoto'
 import { ImgAvatar } from '../../profile/other-user/OtherUserProfile'
 import { normalDate } from '../../comments/CommentElement'
 import { Draggable } from '../Draggable/Draggable'
+import { IsTiming } from '../IsTiming'
+
 //import { Draggable } from '../Draggable/Draggable'
 
 interface IElementPhoto {
@@ -29,6 +35,7 @@ interface IElementPhoto {
 	refetch: () => void
 	toggleScroll: (scroll: boolean) => any
 	reactions: { userId: string; reactionType: TReaction }[]
+	startCamera: () => void
 }
 
 export type BaseExampleProps = {
@@ -45,9 +52,12 @@ export const ElementPhoto: FC<IElementPhoto> = ({
 	photo,
 	refetch,
 	toggleScroll,
-	reactions
+	reactions,
+	startCamera
 }) => {
-	//console.log(photo)
+	const queryClient = useQueryClient()
+	const cron = queryClient.getQueryData(['get-cron-time'])
+	const user2 = queryClient.getQueryData(['get-profile'])
 
 	const navigate = useNavigation()
 	const { user } = useAuth()
@@ -61,17 +71,41 @@ export const ElementPhoto: FC<IElementPhoto> = ({
 		(data: { message: string; created: Date }) =>
 			ProfileService.addMainComment(data),
 		{
-			onSuccess: () => {
+			onSuccess: dataRes => {
+				queryClient.setQueryData(['get-profile'], (data?: IProfile) => {
+					if (!data) return data
+					const latestPhoto = { ...data.latestPhoto }
+					latestPhoto.comment = dataRes.data
+					return {
+						...data,
+						latestPhoto
+					}
+				})
+				queryClient.setQueryData(
+					['get-latest-people'],
+					(data?: ILatestInside[]) => {
+						if (!data) return data
+						const newData = [...data]
+						for (let i = 0; i < data.length; i++) {
+							if (data[i]._id._id === user2._id) {
+								newData[i].latestPhoto.comment = dataRes.data
+								break
+							}
+						}
+						return [...data]
+					}
+				)
+				setCommentAuth(dataRes.data)
 				setIsMessage(false)
-				refetch()
 			}
 		}
 	)
+	const [commentAuth, setCommentAuth] = useState(photo.latestPhoto.comment)
 
 	return (
 		<View className='' style={{ marginBottom: 70 }}>
 			{photo && (
-				<View style={{ flex: 1 }}>
+				<View style={{ flex: 1 }} className='relative'>
 					<View
 						style={{
 							display: 'flex',
@@ -116,22 +150,34 @@ export const ElementPhoto: FC<IElementPhoto> = ({
 								created={photo.latestPhoto.created}
 							/>
 						</View>
+						{!IsTiming(cron, user2?.latestPhoto?.created || null) && (
+							<View className='bg-neutral-700 w-full h-full top-0 left-0 flex justify-center items-center'>
+								<Pressable
+									className='bg-white rounded-2xl p-2 border-[2px] border-black'
+									onPress={startCamera}
+								>
+									<Text className='text-neutral-800 text-2xl font-bold'>
+										Post BePrime
+									</Text>
+								</Pressable>
+							</View>
+						)}
 					</View>
 				</View>
 			)}
+			{/* {!IsTiming(cron.data, user2?.data?.latestPhoto?.created) && */}
 			<View className='ml-4'>
-				{user?._id === photo._id ? (
-					!isMessage ? (
-						<TouchableOpacity
-							onPress={() => {
-								setIsMessage(true)
-							}}
-						>
-							<Text className='text-white mt-4'>
-								{photo.latestPhoto.comment || '...'}
-							</Text>
-						</TouchableOpacity>
-					) : (
+				{user?._id === photo._id && !isMessage ? (
+					<TouchableOpacity
+						onPress={() => {
+							setIsMessage(true)
+						}}
+					>
+						<Text className='text-white mt-4'>{commentAuth || '...'}</Text>
+					</TouchableOpacity>
+				) : (
+					user?._id === photo._id &&
+					isMessage && (
 						<View>
 							<View
 								className={`flex-row items-center mt-4 border-[1px] border-solid border-stone-700 rounded-lg ${
@@ -177,35 +223,35 @@ export const ElementPhoto: FC<IElementPhoto> = ({
 							</TouchableOpacity>
 						</View>
 					)
-				) : (
-					<View>
-						<Text className='text-white mt-4'>
-							{photo.latestPhoto.comment || '...'}
-						</Text>
-					</View>
 				)}
-				<TouchableOpacity
-					className=' rounded-xl mt-1 '
-					onPress={() => {
-						setIsMessage(false)
-						navigate.navigate({
-							name: 'Comments' as any,
-							params: {
-								_id: photo._id,
-								created: photo.latestPhoto.created
-							}
-						} as never)
-					}}
-				>
-					{/* <Link
-					to={`/Comments?_id=${photo._id}?created='2022-10-10'`}
-					className='items-center flex-row block '
-				> */}
-					<View className='rounded-xl '>
-						<Text className='text-zinc-400'>Add a comments...</Text>
-					</View>
-					{/* </Link> */}
-				</TouchableOpacity>
+				{IsTiming(cron, user2?.latestPhoto?.created || null) &&
+					user?._id !== photo._id && (
+						<View>
+							<Text className='text-white mt-4'>
+								{photo.latestPhoto.comment}
+							</Text>
+						</View>
+					)}
+
+				{IsTiming(cron, user2?.latestPhoto?.created || null) && (
+					<TouchableOpacity
+						className=' rounded-xl mt-1 '
+						onPress={() => {
+							setIsMessage(false)
+							navigate.navigate({
+								name: 'Comments' as any,
+								params: {
+									_id: photo._id,
+									created: photo.latestPhoto.created
+								}
+							} as never)
+						}}
+					>
+						<View className='rounded-xl '>
+							<Text className='text-zinc-400'>Add a comments...</Text>
+						</View>
+					</TouchableOpacity>
+				)}
 			</View>
 		</View>
 	)
@@ -237,6 +283,23 @@ const Reactions: FC<IReactions> = ({ reactions, userId, created }) => {
 						latestPhoto: latestPhotoCopy
 					}
 				})
+				queryClient.setQueryData(['get-latest-people'], (data: any) => {
+					console.log(JSON.stringify(data,null,2));
+					for (let i = 0; i < data.length; i++) {
+						// if(data._id._id === ){
+						// 	break 
+						// }
+						
+					}
+					// const latestPhotoCopy = { ...data.latestPhoto }
+					// latestPhotoCopy.photoReactions = newData
+					// setStateReactions([...newData])
+					// setIsVisibleSmile(!isVisibleSmile)
+					// return {
+					// 	...data,
+					// 	latestPhoto: latestPhotoCopy
+					// }
+				})
 			}
 		}
 	)
@@ -249,15 +312,13 @@ const Reactions: FC<IReactions> = ({ reactions, userId, created }) => {
 			<View className='flex-1'>
 				{!isVisibleSmile && (
 					<View className='flex-1 mx-4 flex-row'>
-						{stateReaction.map((reaction, key) => (
-							<Pressable className='relative' key={key}>
-								<Image
-									width={55}
-									height={55}
-									source={{ uri: BaseImageUrl2(reaction?.avatar) }}
-									className='rounded-full'
-								/>
-								<Text className='absolute bottom-0 -right-1'>
+						{stateReaction.slice(0, 7).map((reaction, key) => (
+							<Pressable
+								className={`relative ${stateReaction.length > 4 && key !== 0 && '-ml-4'} border-stone-200 border-[1px] rounded-full`}
+								key={key}
+							>
+								<ImgAvatar avatar={reaction?.avatar} size='reaction-main' />
+								<Text className='absolute bottom-0 -left-1'>
 									{reactionsData2[reaction.reactionType]}
 								</Text>
 							</Pressable>
@@ -304,25 +365,3 @@ const reactionsData = [
 	'straight_face',
 	'distress'
 ] as TReaction[]
-
-export function deepCopy(obj: any): any {
-	if (obj === null || typeof obj !== 'object') {
-		return obj
-	}
-
-	let copy
-	if (obj instanceof Array) {
-		copy = []
-		for (let i = 0; i < obj.length; i++) {
-			copy[i] = deepCopy(obj[i])
-		}
-	} else {
-		copy = { ...obj } // Создание поверхностной копии объекта
-		for (let key in copy) {
-			if (copy.hasOwnProperty(key)) {
-				copy[key] = deepCopy(copy[key])
-			}
-		}
-	}
-	return copy
-}
