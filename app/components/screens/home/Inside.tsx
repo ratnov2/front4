@@ -126,10 +126,7 @@ export const Inside = memo(() => {
 		{
 			onSuccess: () => {
 				setStartCamera(false)
-				queryClient.refetchQueries({
-					queryKey: ['get-profile'],
-					type: 'active'
-				})
+				queryClient.refetchQueries(['get-profile'])
 			}
 		}
 	)
@@ -160,7 +157,9 @@ export const Inside = memo(() => {
 
 	return (
 		<View style={{ flex: 1 }}>
-			<Text className='text-white text-4xl'>{isLoading && 'ISLOADING'}</Text>
+			{isLoading && (
+				<Text className='text-white text-4xl text-center'>'ISLOADING'</Text>
+			)}
 			{startCamera && (
 				<CameraComponent
 					backImage={backImage}

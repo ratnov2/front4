@@ -125,8 +125,8 @@ const sizeAvatar = {
 		w: 30,
 		h: 30,
 		fontSize: 15,
-		left: 9.5,
-		top: 6
+		left: 10,
+		top: 4
 	},
 	profile: {
 		w: 100,
