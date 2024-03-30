@@ -231,7 +231,7 @@ export const Inside = memo(() => {
 								>
 									<View>
 										<Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>
-											Здесь пока ничего нет фото пользователей
+											Здесь пока нет фото пользователей
 										</Text>
 									</View>
 								</View>

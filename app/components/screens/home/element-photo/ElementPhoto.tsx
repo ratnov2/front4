@@ -214,10 +214,10 @@ export const ElementPhoto: FC<IElementPhoto> = ({
 								)}
 							</View>
 							<TouchableOpacity
-								className='bg-cyan-400 text-center rounded-xl'
+								className='bg-yellow-400 text-center rounded-xl mt-1'
 								onPress={() => setIsMessage(false)}
 							>
-								<Text className='text-stone-950 text-center p-2 font-bold'>
+								<Text className='text-white text-center p-2 font-bold'>
 									Close
 								</Text>
 							</TouchableOpacity>
@@ -284,12 +284,11 @@ const Reactions: FC<IReactions> = ({ reactions, userId, created }) => {
 					}
 				})
 				queryClient.setQueryData(['get-latest-people'], (data: any) => {
-					console.log(JSON.stringify(data,null,2));
+					console.log(JSON.stringify(data, null, 2))
 					for (let i = 0; i < data.length; i++) {
 						// if(data._id._id === ){
-						// 	break 
+						// 	break
 						// }
-						
 					}
 					// const latestPhotoCopy = { ...data.latestPhoto }
 					// latestPhotoCopy.photoReactions = newData
