@@ -57,6 +57,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
+    "@react-native-community/cli": "^13.6.4",
     "@trivago/prettier-plugin-sort-imports": "trivago/prettier-plugin-sort-imports",
     "@tsconfig/react-native": "^3.0.2",
     "@types/expo": "^33.0.1",
@@ -68,5 +69,6 @@
     "tailwindcss": "3.3.2",
     "typescript": "^5.1.6"
   },
-  "private": true
+  "private": true,
+  "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
 }
