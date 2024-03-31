@@ -33,20 +33,23 @@ import { LayoutLight } from '@/navigation/ui/LayoutLight'
 import { LayoutLightOpacity } from '@/navigation/ui/LayoutLightOpacity'
 import { shareProfile } from '@/ui/share-profile/ShareProfile'
 import { Invite } from '../friends/ui/Invite'
+import { useQueryClient } from '@tanstack/react-query'
 
 //type KeysOfCards = keyof typeof featureComponents.id
 
 type ISettings = NativeStackScreenProps<TypeRootStackParamList, 'Settings'>
 //shareProfile
 export const Settings: FC<ISettings> = ({ navigation }) => {
-	const { user } = useAuth()
+	//const { user } = useAuth()
+	const queryClient = useQueryClient()
+	const userProfile = queryClient.getQueryData(['get-profile'])
 	const handleCardPress = (id: KeysOfCard) => {
 		if (id === 'memories') navigation.navigate('Memories_settings')
 		if (id === 'notifications') navigation.navigate('Notifications')
 		if (id === 'privacy') navigation.navigate('Privacy')
 		if (id === 'time_zone') navigation.navigate('TimeZone')
 		if (id === 'other') navigation.navigate('Other')
-		if (id === 'share') shareProfile(String(user?._id))
+		if (id === 'share') shareProfile(String(userProfile?._id))
 		if (id === 'rate') return
 		if (id === 'help') navigation.navigate('Help')
 		if (id === 'about') navigation.navigate('About')
@@ -59,70 +62,67 @@ export const Settings: FC<ISettings> = ({ navigation }) => {
 					modalVisible={modalVisible}
 					setModalVisible={() => handleModalVisible('', '', '' as any)}
 				/>
-				{user && (
-					<LayoutLightOpacity
-						onGoBack={() => navigation.navigate('Profile')}
-						title='Settings'
-					>
-						<View className='flex-1 bg-w'>
-							<View>
-								<Invite />
-							</View>
-							<View>
-								<HeaderCardComponent text='Features' />
-								{featureComponents.map((item, index) => (
-									<CardComponent
-										icon={item.icon}
-										onPress={() => handleCardPress(item.id)}
-										text={item.text}
-										key={item.id}
-										StyleRounded={getStyleToByCardSettings(
-											index,
-											featureComponents.length - 1
-										)}
-									/>
-								))}
-								<HeaderCardComponent text='Settings' />
 
-								{settingsComponents.map((item, index) => (
-									<CardComponent
-										icon={item.icon}
-										key={item.id}
-										onPress={() => handleCardPress(item.id)}
-										text={item.text}
-										StyleRounded={getStyleToByCardSettings(
-											index,
-											settingsComponents.length - 1
-										)}
-									/>
-								))}
-								<HeaderCardComponent text='About' />
-								{aboutComponents.map((item, index) => (
-									<CardComponent
-										icon={item.icon}
-										key={item.id}
-										onPress={() => handleCardPress(item.id)}
-										text={item.text}
-										StyleRounded={getStyleToByCardSettings(
-											index,
-											aboutComponents.length - 1
-										)}
-									/>
-								))}
-							</View>
-							<ModalButton
-								setModalVisible={() =>
-									handleModalVisible('', '', 'logout' as any)
-								}
-								style='bg-zinc-800 p-4 rounded-xl mt-8'
-							>
-								<Text className='text-center text-red-500 font-bold text-lg'>
-									Log out
-								</Text>
-							</ModalButton>
+				<LayoutLightOpacity
+					onGoBack={() => navigation.navigate('Profile')}
+					title='Settings'
+				>
+					<View className='flex-1 bg-w'>
+						{!!userProfile && <Invite />}
+						<View>
+							<HeaderCardComponent text='Features' />
+							{featureComponents.map((item, index) => (
+								<CardComponent
+									icon={item.icon}
+									onPress={() => handleCardPress(item.id)}
+									text={item.text}
+									key={item.id}
+									StyleRounded={getStyleToByCardSettings(
+										index,
+										featureComponents.length - 1
+									)}
+								/>
+							))}
+							<HeaderCardComponent text='Settings' />
+
+							{settingsComponents.map((item, index) => (
+								<CardComponent
+									icon={item.icon}
+									key={item.id}
+									onPress={() => handleCardPress(item.id)}
+									text={item.text}
+									StyleRounded={getStyleToByCardSettings(
+										index,
+										settingsComponents.length - 1
+									)}
+								/>
+							))}
+							<HeaderCardComponent text='About' />
+							{aboutComponents.map((item, index) => (
+								<CardComponent
+									icon={item.icon}
+									key={item.id}
+									onPress={() => handleCardPress(item.id)}
+									text={item.text}
+									StyleRounded={getStyleToByCardSettings(
+										index,
+										aboutComponents.length - 1
+									)}
+								/>
+							))}
 						</View>
-					</LayoutLightOpacity>
-				)}
+						<ModalButton
+							setModalVisible={() =>
+								handleModalVisible('', '', 'logout' as any)
+							}
+							style='bg-zinc-800 p-4 rounded-xl mt-8'
+						>
+							<Text className='text-center text-red-500 font-bold text-lg'>
+								Log out
+							</Text>
+						</ModalButton>
+					</View>
+				</LayoutLightOpacity>
 			</View>
 		</View>
 	)
