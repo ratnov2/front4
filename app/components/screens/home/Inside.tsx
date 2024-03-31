@@ -1,4 +1,4 @@
-import { Pressable, Text, TouchableOpacity, View } from 'react-native'
+import { Image, Pressable, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ProfileService } from '@/services/profile/profile.service'
@@ -16,6 +16,8 @@ import { UserAvatar } from '@/ui/user-avatar/UserAvatar'
 import { CameraComponent } from './relax/Camera'
 import { IUser } from '@/shared/types/user.interface'
 import { IsTiming } from './IsTiming'
+import { manipulateAsync } from "expo-image-manipulator";
+import * as ScreenOrientation from 'expo-screen-orientation'
 
 export const Inside = memo(() => {
 	const [frontImage, setFrontImage] = useState<string | null>(null)
@@ -49,9 +51,10 @@ export const Inside = memo(() => {
 
 	useEffect(() => {
 		if (!isInitialRender && (frontImage || backImage)) {
-			//console.log('isFrontCamera', isFrontCamera)
-			!backImage && takeBackPhoto()
-			!frontImage && takeFrontPhoto()
+			console.log('isFrontCamera', isFrontCamera)
+			// takeBackPhoto()
+			!backImage && setTimeout(() => takeBackPhoto(), 400)
+			!frontImage && setTimeout(() => takeFrontPhoto(), 400)
 		} else {
 			setIsInitialRender(false)
 		}
@@ -97,26 +100,25 @@ export const Inside = memo(() => {
 		}
 	}
 	////
-	const ff = () => {
+	const ff = async() => {
 		if (frontImage && backImage && !isLoading) {
 			const formData = new FormData()
-			console.log('frontImage', backImage)
-			console.log('backImage', frontImage)
+			const res1 = await fixRotation(frontImage)
+			const res2 = await fixRotation(backImage)
 			//@ts-ignore
 			formData.append('files', {
-				uri: frontImage,
+				uri: res1,
 				type: 'image/jpeg',
 				name: 'photo.jpg'
 			})
 			//@ts-ignore
 			formData.append('files', {
-				uri: backImage,
+				uri: res2,
 				type: 'image/jpeg',
 				name: 'photo2.jpg'
 			})
 			setStartCamera(false)
 			mutate(formData)
-			//setStartCamera(false)
 		}
 	}
 
@@ -130,10 +132,7 @@ export const Inside = memo(() => {
 			}
 		}
 	)
-	///
-	//console.log(data);
 
-	///
 	const [typeOfCalendarPhotos, setTypeOfCalendarPhotos] = useState<
 		'my_friends' | 'other'
 	>('my_friends')
@@ -154,9 +153,18 @@ export const Inside = memo(() => {
 	const toggleScroll = (scroll: boolean) => {
 		setShouldScroll(scroll)
 	}
-
+	useEffect(() => {
+		console.log('wefewf')
+		const ff = ScreenOrientation.unlockAsync()
+		console.log(ff)
+	}, [])
+	const fixRotation = async (uri: string) => {
+		const result = await manipulateAsync(uri, [{ rotate: 0 }])
+		return result.uri
+	}
 	return (
 		<View style={{ flex: 1 }}>
+			{/* <Image source={{ uri: backImage }} width={200} height={200}/> */}
 			{isLoading && (
 				<Text className='text-white text-4xl text-center'>'ISLOADING'</Text>
 			)}
