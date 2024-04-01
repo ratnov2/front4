@@ -14,8 +14,6 @@ interface IPhotoUser {
 }
 
 export const PhotoUser: FC<IPhotoUser> = ({ photo }) => {
-
-
 	return (
 		<View>
 			<Image

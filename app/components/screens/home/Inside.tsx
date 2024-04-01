@@ -79,12 +79,14 @@ export const Inside = memo(() => {
 		() => ProfileService.getLatestPhotosOther(),
 		{
 			select: data => {
-				return data.map(el => ({
-					latestPhoto: { ...el.latestPhoto },
-					avatar: el._id.avatar,
-					_id: el._id._id,
-					firstName: el._id.firstName
-				}))
+				return data
+					.map(el => ({
+						latestPhoto: { ...el.latestPhoto },
+						avatar: el._id.avatar,
+						_id: el._id._id,
+						firstName: el._id.firstName
+					}))
+					.slice(-20)
 			}
 		}
 	)
@@ -203,7 +205,7 @@ export const Inside = memo(() => {
 					}
 					scrollEnabled={shouldScroll}
 				>
-					<View className='h-10' />
+					<View className='h-14' />
 					{typeOfCalendarPhotos === 'my_friends' ? (
 						<DismissKeyboard>
 							{!!userQuery?.latestPhoto &&
@@ -375,7 +377,7 @@ export const HeaderHome: FC<IHeaderHome> = ({
 				<TouchableOpacity onPress={() => navigate('Friends')}>
 					<FontAwesome5 name='user-friends' size={24} color='white' />
 				</TouchableOpacity>
-				
+
 				{user && (
 					<View className='flex-row'>
 						<TouchableOpacity
@@ -389,21 +391,20 @@ export const HeaderHome: FC<IHeaderHome> = ({
 						</TouchableOpacity>
 					</View>
 				)}
-				
 			</View>
-			<View className='flex-row justify-center mt-3 '>
-				<Pressable className='p-2' onPress={setTypeFriends}>
+			<View className='flex-row justify-center'>
+				<Pressable className='p-3 ' onPress={setTypeFriends}>
 					<Text
-						className={`text-white font-bold ${
+						className={`text-white font-bold text-lg ${
 							typeOfCalendarPhotos === 'other' && 'text-white/70'
 						}`}
 					>
 						My friends
 					</Text>
 				</Pressable>
-				<Pressable onPress={setTypeOther} className='ml-1 p-2'>
+				<Pressable onPress={setTypeOther} className='ml-1 p-3'>
 					<Text
-						className={`text-white font-bold ${
+						className={`text-white font-bold text-lg ${
 							typeOfCalendarPhotos === 'my_friends' && 'text-white/70'
 						}`}
 					>

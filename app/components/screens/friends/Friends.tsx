@@ -7,6 +7,8 @@ import { IProfile } from '@/shared/types/profile.interface'
 import Swiper from 'react-native-swiper'
 import { SwiperFriendList } from './swiper-friendList/SwiperFriendList'
 import { ListButtonSwiperFriend } from './list-button-swiper-friend/ListButtonSwiperFriend'
+import { useNavigation } from '@react-navigation/native'
+import { AntDesign } from '@expo/vector-icons'
 
 export const MyFriendContext = createContext<{
 	myFriendByStatus: IFriendsStatus
@@ -28,8 +30,7 @@ export const Friends = () => {
 			onSuccess: data => {
 				if (!data) return false
 				//@ts-ignore
-				data.friendship = []  //CHECK
-				
+				data.friendship = [] //CHECK
 			},
 			select: data => {
 				const myFriendByStatus: IFriendsStatus = {
@@ -46,9 +47,9 @@ export const Friends = () => {
 						myFriendByStatus.friendStatus3.push(friends)
 					}
 				})
-			
+
 				return myFriendByStatus
-			}, 
+			}
 		}
 	)
 
@@ -102,32 +103,39 @@ export const Friends = () => {
 	}
 
 	const swiperRef = useRef<Swiper>(null)
-	
+	const { navigate } = useNavigation<any>()
 	return (
 		// <MyFriendContext.Provider value={{ myFriendByStatus, setMyFriendByStatus }}>
-			<View className='flex-1'>
-				<View className='flex-1 '>
-					<Text
-						className='text-white text-2xl font-bold text-center left-0 right-0 z-40'
-						style={{ top: insets.top, position: 'absolute' }}
-					>
-						BePrime
-					</Text>
-					{myFriends.data && (
-						<SwiperFriendList
-							activeIndex={activeIndex}
-							myFriendByStatus={myFriends.data}
-							setActiveIndex={setActiveIndex}
-							swiperRef={swiperRef}
-						/>
-					)}
-					<ListButtonSwiperFriend
-						animatedValue={animatedValue}
-						refButtonGroup={refButtonGroup}
-						scrollToPage={scrollToPage}
+		<View className='flex-1'>
+			<View className='flex-1 '>
+				<Text
+					className='text-white text-2xl font-bold text-center left-0 right-0 z-40'
+					style={{ top: insets.top, position: 'absolute' }}
+				>
+					BePrime
+				</Text>
+				<TouchableOpacity
+					style={{ top: insets.top }}
+					className='ml-4 z-40'
+					onPress={() => navigate('Home')}
+				>
+					<AntDesign name='arrowleft' size={30} color='white' />
+				</TouchableOpacity>
+				{myFriends.data && (
+					<SwiperFriendList
+						activeIndex={activeIndex}
+						myFriendByStatus={myFriends.data}
+						setActiveIndex={setActiveIndex}
+						swiperRef={swiperRef}
 					/>
-				</View>
+				)}
+				<ListButtonSwiperFriend
+					animatedValue={animatedValue}
+					refButtonGroup={refButtonGroup}
+					scrollToPage={scrollToPage}
+				/>
 			</View>
+		</View>
 		// </MyFriendContext.Provider>
 	)
 }

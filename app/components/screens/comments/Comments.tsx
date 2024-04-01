@@ -298,7 +298,7 @@ interface IHeaderComponent {
 	toggleScroll: (scroll: boolean) => void
 }
 
-const HeaderComponent: FC<IHeaderComponent> = memo(
+ const HeaderComponent: FC<IHeaderComponent> = memo(
 	({ userMainInfo, toggleScroll }) => {
 		const { top } = useSafeAreaInsets()
 		return (

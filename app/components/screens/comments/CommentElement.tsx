@@ -24,7 +24,7 @@ export const CommentElement: FC<ICommentElement> = memo(
 				</Pressable>
 				<View className='pl-2 rounded-lg mr-2'>
 					<View className='flex-row text-center'>
-						<Text className='color-white font-bold mb-0.5'>{email}</Text>
+						<Text className='color-white font-bold mb-0.5'>{email || 'Anonym'}</Text>
 						<Text className='text-neutral-700 text-xs text-bold ml-2 '>
 							{!isLoading ? normalDate(created) : 'Loading'}
 						</Text>

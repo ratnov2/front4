@@ -45,7 +45,7 @@ export const CalendarMin: FC = () => {
 		}
 	)
 
-	addDate.setDate(addDate.getDate() - 14)
+	addDate.setDate(addDate.getDate() - 13)
 
 	//console.log(user.data?.calendarPhotos);
 	const { top } = useSafeAreaInsets()
@@ -134,7 +134,7 @@ export const CalendarMin: FC = () => {
 			</Modal>
 			<Text className='text-white mb-3 text-xl font-bold'>Last 14 days</Text>
 			{user.data && (
-				<View className='text-white flex-row w-full mx-[2px] flex-wrap '>
+				<View className='text-white flex-row w-full mx-[1px] flex-wrap justify-center'>
 					{(() => {
 						let photo: IPhotos[] = []
 						photo = user.data.calendarPhotos
@@ -146,23 +146,23 @@ export const CalendarMin: FC = () => {
 							const month = date.getMonth()
 							const year = date.getFullYear()
 							if (
-								year <= addDate.getFullYear() &&
-								month <= addDate.getDate() &&
-								day < addDate.getDate()
+								addDate.getFullYear() >= year &&
+								addDate.getMonth() >= month &&
+								addDate.getDate() > day
 							) {
+								k++
 							} else {
 								break
 							}
-							k++
 						}
-						k--
 
+						photo.map(photo => console.log(JSON.stringify(photo.created)))
 						return Array.from(Array(14)).map((_, key) => {
-							const date = new Date(photo[k + 1]?.created)
+							const date = new Date(photo[k]?.created)
 							const day = date.getDate()
 							const month = date.getMonth()
 							const year = date.getFullYear()
-							addDate.setDate(addDate.getDate() + 1)
+
 							let photoImg: number = k
 							const provPhoto =
 								month === addDate.getMonth() &&
@@ -171,9 +171,8 @@ export const CalendarMin: FC = () => {
 							if (provPhoto) k++
 							const currentDate = new Date()
 							currentDate.setDate(currentDate.getDate() + key - 13)
+							addDate.setDate(addDate.getDate() + 1)
 
-							// console.log(addDate.getMonth())
-							//console.log(provPhoto)
 							return (
 								<View
 									key={key}
@@ -185,7 +184,7 @@ export const CalendarMin: FC = () => {
 									{provPhoto ? (
 										<Pressable
 											onPress={() => {
-												setModalImg(photoImg + 1)
+												setModalImg(photoImg)
 												setModalVisible(true)
 											}}
 											className='w-full h-full roundex-2xl relative flex justify-center'
@@ -194,9 +193,7 @@ export const CalendarMin: FC = () => {
 												className='w-full h-full rounded-lg absolute'
 												source={{
 													uri: `${BaseImageUrl2(
-														photo[k]?.photos.frontPhoto?.photo ||
-															photo[k]?.photos.frontPhoto?.photo ||
-															''
+														photo[photoImg]?.photos.frontPhoto?.photo || ''
 													)}`
 												}}
 											/>

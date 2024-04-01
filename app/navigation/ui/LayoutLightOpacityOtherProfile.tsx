@@ -22,7 +22,7 @@ export const LayoutLightOpacityOtherProfile: FC<LayoutLightOpacity> = ({
 	const insets = useSafeAreaInsets()
 	return (
 		<View className={`flex-1 relative ${padding}`}>
-			<ScrollView style={{ paddingTop: insets.top + 40 }} className='flex-1'>
+			<ScrollView showsVerticalScrollIndicator={false} style={{ paddingTop: insets.top + 40 }} className='flex-1'>
 				{children}
 				<View style={{ height: insets.bottom + 150 }} />
 			</ScrollView>

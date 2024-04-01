@@ -14,6 +14,7 @@ import {
 	Pressable,
 	ScrollView,
 	Text,
+	TouchableOpacity,
 	View
 } from 'react-native'
 import { text } from '../calendarTask/CalendarTask'
@@ -207,25 +208,27 @@ export const Calendar = () => {
 											{el.month}
 										</Text>
 									</View>
-									<View className='flex-row flex-wrap justify-around '>
+									<View className='flex-row flex-wrap justify-around'>
 										{el.array.map((el, key) => {
 											return (
 												<View
 													key={key}
-													className='w-[40px] h-[50px] flex items-center justify-center rounded-lg mx-1 my-1'
+													className='w-[40px] h-[50px] flex items-center justify-center mx-1 my-1'
 												>
 													{el.photo !== -1 ? (
-														<View className='border-[1px] rounded-lg border-white'>
-															<Pressable
-																onPress={() => {
-																	setModalImg(el.photo)
-																	setModalVisible(true)
-																}}
-															>
+														// <View className='border-[1px] rounded-lg border-white bg-orange-700'>
+														<TouchableOpacity
+															onPress={() => {
+																setModalImg(el.photo)
+																setModalVisible(true)
+															}}
+															className='relative flex-1 w-[40px] h-[50px] justify-center '
+														>
+															<View className='absolute left-0 top-0 rounded-lg border-[1px] border-white overflow-hidden'>
 																<Image
 																	width={40}
 																	height={50}
-																	className='rounded-lg'
+																	className=''
 																	source={{
 																		uri: BaseImageUrl2(
 																			calendarPhotos[el.photo].photos.frontPhoto
@@ -236,12 +239,12 @@ export const Calendar = () => {
 																		)
 																	}}
 																/>
-																<Text className='absolute left-3 top-4 text-white'>
-																	{el.day}
-																</Text>
-															</Pressable>
-														</View>
+															</View>
+															<Text className='text-white text-center'>{el.day}</Text>
+														</TouchableOpacity>
 													) : (
+														// </View>
+														// </View>
 														<Text className='text-white text-lg'>{el.day}</Text>
 													)}
 												</View>

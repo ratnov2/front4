@@ -21,6 +21,7 @@ export const LayoutOpacityItems: FC<ILayoutOpacityItems> = memo(
 						scrollEnabled={scrollEnabled}
 						style={{ paddingTop: insets.top + 40 }}
 						className='flex-1'
+						showsVerticalScrollIndicator={false}
 					>
 						{children}
 						<View style={{ height: insets.bottom + 150 }} />

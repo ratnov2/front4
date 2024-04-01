@@ -1,30 +1,17 @@
 import { useAuth } from '@/hooks/useAuth'
-import { AuthService } from '@/services/auth/auth.service'
 import { FC } from 'react'
-import {
-	View,
-	Text,
-	Pressable,
-	ScrollView,
-	TouchableOpacity
-} from 'react-native'
+import { View, Text, TouchableOpacity } from 'react-native'
 // import { ProfileHeader } from './header/Header'
 import { MainProfile } from './main/MainProfile'
 import { CalendarMin } from './calendar-min/CalendarMin'
-import { Joined } from './ui/Joined'
-import { useMutation, useQuery } from '@tanstack/react-query'
-import { ProfileService } from '@/services/profile/profile.service'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { OtherUserProfile } from './other-user/OtherUserProfile'
-import { FriendsService } from '@/services/friends/friends.service'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { TypeRootStackParamList } from '@/navigation/navigation.types'
 import { LayoutOpacityItems } from '@/navigation/ui/LayoutOpacityItems'
-import { AntDesign, Entypo, FontAwesome } from '@expo/vector-icons'
+import { AntDesign, Entypo } from '@expo/vector-icons'
 import { LayoutLightOpacityOtherProfile } from '@/navigation/ui/LayoutLightOpacityOtherProfile'
 //import { useNotifications } from './PERMISSIONS/Notefications'
-
 
 type IProfile = NativeStackScreenProps<TypeRootStackParamList, 'Profile'>
 
@@ -55,7 +42,7 @@ const Profile: FC<IProfile> = ({ navigation }) => {
 					(params as { id: string })?.id ? (
 						<LayoutLightOpacityOtherProfile
 							onGoBack={() => navigation.navigate('Home')}
-							title={"be-prime"}
+							title={'be-prime'}
 						>
 							<OtherUserProfile />
 						</LayoutLightOpacityOtherProfile>

@@ -21,7 +21,11 @@ export const LayoutLightOpacity: FC<LayoutLightOpacity> = ({
 	const insets = useSafeAreaInsets()
 	return (
 		<View className={`flex-1 relative ${padding}`}>
-			<ScrollView style={{ paddingTop: insets.top + 40 }} className='flex-1'>
+			<ScrollView
+				style={{ paddingTop: insets.top + 40 }}
+				className='flex-1'
+				showsVerticalScrollIndicator={false}
+			>
 				{children}
 				<View style={{ height: insets.bottom + 150 }} />
 			</ScrollView>
@@ -46,7 +50,6 @@ export const LayoutLightOpacity: FC<LayoutLightOpacity> = ({
 			<View
 				style={{ top: insets.top }}
 				className={`flex-row items-center absolute ${padding}`}
-				
 			>
 				<TouchableOpacity onPress={onGoBack}>
 					<AntDesign name='arrowleft' size={30} color='white' />

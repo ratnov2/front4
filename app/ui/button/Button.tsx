@@ -14,7 +14,7 @@ const Button: FC<PropsWithChildren<IButton>> = ({
 			className={cn('self-center mt-3.5 bg-red-800', className)}
 			{...rest}
 		>
-			<Text className='text-white'>{children}</Text>
+			<Text className='text-white text-lg font-medium'>{children}</Text>
 		</Pressable>
 	)
 }

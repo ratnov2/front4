@@ -13,10 +13,10 @@ const Auth = () => {
 	const { handleSubmit, reset, control } = useForm<IAuthFormData>({
 		mode: 'onChange'
 	})
-	
+
 	const { isLoading, loginSync, registerSync } = useAuthMutations(reset)
 
-	const onSubmit: SubmitHandler<IAuthFormData> = data => {	
+	const onSubmit: SubmitHandler<IAuthFormData> = data => {
 		if (isReg) registerSync(data)
 		else loginSync(data)
 	}
@@ -34,10 +34,13 @@ const Auth = () => {
 							<AuthFields control={control} isPassRequired />
 						</>
 					)}
-					<Button onPress={handleSubmit(onSubmit)} className='p-5 text-white'>
-						Go to watch
+					<Button
+						onPress={handleSubmit(onSubmit)}
+						className='p-5 text-white rounded-2xl'
+					>
+						Go to Be Prime
 					</Button>
-					<Pressable onPress={() => setIsReg(!isReg)} >
+					<Pressable onPress={() => setIsReg(!isReg)}>
 						<Text className='text-white opacity-30 text-right text-base mt-3'>
 							{isReg ? 'Login' : 'Register'}
 						</Text>

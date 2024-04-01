@@ -88,10 +88,10 @@ export const CalendarTask = () => {
 						>
 							<View className='h-[15%] items-center' style={{ marginTop: top }}>
 								<Text className='text-white font-bold text-xl'>
-									{user && text(user?.calendarPhotos[modalImg].created || '')}
+									{user && text(user?.calendarPhotos[modalImg]?.created || '')}
 								</Text>
 								<Text className='text-white/70 text-base -mt-1'>
-									{normalDate(user?.calendarPhotos[modalImg].created || '')}
+									{normalDate(user?.calendarPhotos[modalImg]?.created || '')}
 								</Text>
 							</View>
 							<View className='flex-1 bg-white rounded-2xl overflow-hidden border-2 border-white'>
@@ -99,8 +99,8 @@ export const CalendarTask = () => {
 									className='h-full w-full rounded-2xl'
 									source={{
 										uri: BaseImageUrl2(
-											user?.calendarPhotos[modalImg].photos.frontPhoto?.photo ||
-												user?.calendarPhotos[modalImg].photos.backPhoto
+											user?.calendarPhotos[modalImg]?.photos?.frontPhoto?.photo ||
+												user?.calendarPhotos[modalImg]?.photos?.backPhoto
 													?.photo ||
 												''
 										)
