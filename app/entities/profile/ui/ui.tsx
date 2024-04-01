@@ -46,7 +46,6 @@ export const PinBlock: FC<IPinBlock> = ({ img, pin, created }) => {
 						<Image
 							className='rounded-2xl flex-1'
 							resizeMode='cover'
-							// style={{aspectRatio:4/3}}
 							source={{ uri: `${BaseImageUrl}${img}` }}
 						/>
 						<View className='absolute bottom-1 left-0.5'>

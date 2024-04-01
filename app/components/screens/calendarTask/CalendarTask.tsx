@@ -20,6 +20,7 @@ import { Camera, CameraType } from 'expo-camera'
 import { LayoutLightOpacity } from '@/navigation/ui/LayoutLightOpacity'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { normalDate } from '../comments/CommentElement'
+import { IProfile } from '@/shared/types/profile.interface'
 var days = [
 	'Воскресенье',
 	'Понедельник',
@@ -40,7 +41,7 @@ export const text = (created: string) => {
 
 export const CalendarTask = () => {
 	const queryClient = useQueryClient()
-	const user = useQuery(['get-profile'], () => ProfileService.getProfile()) //@TASK
+	const user = queryClient.getQueryData(['get-profile']) as IProfile | undefined //@TASK
 	const navigate = useNavigation<any>()
 	let { params } = useRoute()
 	const updateFavoritePhoto = useMutation(
@@ -48,8 +49,10 @@ export const CalendarTask = () => {
 		(data: TypeUpdateFavoritePhoto) => ProfileService.updateFavoritePhoto(data),
 		{
 			onSuccess: () => {
-				setModalVisible(false)
+				console.log('wefewfwefneqwkfbeqwkewffewewf')
+
 				queryClient.refetchQueries(['get-profile'])
+				setModalVisible(false)
 				//@ts-ignore
 				navigate.navigate(`Profile`, { pr: '' })
 			}
@@ -85,13 +88,10 @@ export const CalendarTask = () => {
 						>
 							<View className='h-[15%] items-center' style={{ marginTop: top }}>
 								<Text className='text-white font-bold text-xl'>
-									{user.data &&
-										text(user.data?.calendarPhotos[modalImg].created || '')}
+									{user && text(user?.calendarPhotos[modalImg].created || '')}
 								</Text>
 								<Text className='text-white/70 text-base -mt-1'>
-									{normalDate(
-										user.data?.calendarPhotos[modalImg].created || ''
-									)}
+									{normalDate(user?.calendarPhotos[modalImg].created || '')}
 								</Text>
 							</View>
 							<View className='flex-1 bg-white rounded-2xl overflow-hidden border-2 border-white'>
@@ -99,9 +99,8 @@ export const CalendarTask = () => {
 									className='h-full w-full rounded-2xl'
 									source={{
 										uri: BaseImageUrl2(
-											user.data?.calendarPhotos[modalImg].photos.frontPhoto
-												?.photo ||
-												user.data?.calendarPhotos[modalImg].photos.backPhoto
+											user?.calendarPhotos[modalImg].photos.frontPhoto?.photo ||
+												user?.calendarPhotos[modalImg].photos.backPhoto
 													?.photo ||
 												''
 										)
@@ -120,15 +119,15 @@ export const CalendarTask = () => {
 												| 'photoTwo'
 												| 'photoThree',
 											photo:
-												user.data?.calendarPhotos[modalImg].photos.frontPhoto
+												user?.calendarPhotos[modalImg].photos.frontPhoto
 													?.photo ||
-												user.data?.calendarPhotos[modalImg].photos.backPhoto
+												user?.calendarPhotos[modalImg].photos.backPhoto
 													?.photo ||
 												'',
 											created:
-												user.data?.calendarPhotos[modalImg].photos.frontPhoto
+												user?.calendarPhotos[modalImg].photos.frontPhoto
 													?.created ||
-												user.data?.calendarPhotos[modalImg].photos.backPhoto
+												user?.calendarPhotos[modalImg].photos.backPhoto
 													?.created ||
 												''
 										})
@@ -153,15 +152,14 @@ export const CalendarTask = () => {
 					</View>
 				</View>
 			</Modal>
-			{user.data && (
+			{user && (
 				<View>
 					{(() => {
-						const calendarPhotos = user.data.calendarPhotos
-						let beginDate = new Date(user.data.createdAt)
+						const calendarPhotos = user.calendarPhotos
+						let beginDate = new Date(user.createdAt)
 
 						let getUserDate = new Date(
-							user.data.calendarPhotos[user.data.calendarPhotos.length - 1]
-								?.created
+							user.calendarPhotos[user.calendarPhotos.length - 1]?.created
 						)
 						const lateYear = getUserDate?.getFullYear()
 						const lateMonth = getUserDate?.getMonth()
@@ -225,7 +223,6 @@ export const CalendarTask = () => {
 							i++
 						}
 
-
 						return dateMassive.map((el, key) => {
 							return (
 								<View key={key}>
@@ -239,7 +236,7 @@ export const CalendarTask = () => {
 											return (
 												<View
 													key={key}
-													className='w-[40px] h-[50px] flex items-center justify-center rounded-lg '
+													className='w-[40px] h-[50px] flex items-center justify-center rounded-lg mx-1 my-1'
 												>
 													{el.photo !== -1 ? (
 														<View className='border-[1px] rounded-lg  border-white'>

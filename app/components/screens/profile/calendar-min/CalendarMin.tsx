@@ -29,7 +29,7 @@ export const CalendarMin: FC = () => {
 			return { ...data, calendarPhotos }
 		}
 	})
-	
+
 	Date.prototype.daysInMonth = function () {
 		return 33 - new Date(this.getFullYear(), this.getMonth(), 33).getDate()
 	}
@@ -40,11 +40,13 @@ export const CalendarMin: FC = () => {
 		{
 			onSuccess: () => {
 				setModalVisible(false)
-				queryClient.refetchQueries(['get-user'])
+				queryClient.refetchQueries(['get-profile'])
 			}
 		}
 	)
+
 	addDate.setDate(addDate.getDate() - 14)
+
 	//console.log(user.data?.calendarPhotos);
 	const { top } = useSafeAreaInsets()
 	return (
@@ -136,22 +138,42 @@ export const CalendarMin: FC = () => {
 					{(() => {
 						let photo: IPhotos[] = []
 						photo = user.data.calendarPhotos
-						let k = -1
+						let k = 0
+						const realDate = new Date()
+						while (k < 13) {
+							let date = new Date(photo[k]?.created)
+							const day = date.getDate()
+							const month = date.getMonth()
+							const year = date.getFullYear()
+							if (
+								year <= addDate.getFullYear() &&
+								month <= addDate.getDate() &&
+								day < addDate.getDate()
+							) {
+							} else {
+								break
+							}
+							k++
+						}
+						k--
+
 						return Array.from(Array(14)).map((_, key) => {
 							const date = new Date(photo[k + 1]?.created)
-							const currentDate = new Date()
 							const day = date.getDate()
 							const month = date.getMonth()
 							const year = date.getFullYear()
 							addDate.setDate(addDate.getDate() + 1)
 							let photoImg: number = k
-
 							const provPhoto =
 								month === addDate.getMonth() &&
 								day === addDate.getDate() &&
 								year === addDate.getFullYear()
 							if (provPhoto) k++
+							const currentDate = new Date()
+							currentDate.setDate(currentDate.getDate() + key - 13)
 
+							// console.log(addDate.getMonth())
+							//console.log(provPhoto)
 							return (
 								<View
 									key={key}
@@ -166,10 +188,10 @@ export const CalendarMin: FC = () => {
 												setModalImg(photoImg + 1)
 												setModalVisible(true)
 											}}
-											className='w-full h-full roundex-2xl relative'
+											className='w-full h-full roundex-2xl relative flex justify-center'
 										>
 											<Image
-												className='w-full h-full rounded-lg'
+												className='w-full h-full rounded-lg absolute'
 												source={{
 													uri: `${BaseImageUrl2(
 														photo[k]?.photos.frontPhoto?.photo ||
@@ -178,32 +200,25 @@ export const CalendarMin: FC = () => {
 													)}`
 												}}
 											/>
-											<Text
-												className='text-white absolute text-xl'
-												style={{
-													top: '50%',
-													left: '50%',
-													transform: [{ translateX: -11 }, { translateY: -13 }]
-												}}
-											>
-												{addDate.getDate()}
+											<Text className='text-white text-xl text-center'>
+												{currentDate.getDate()}
 											</Text>
 										</Pressable>
 									) : (
 										<View
 											className={clsx(
-												currentDate.getDate() === addDate.getDate() &&
+												currentDate.getDate() === realDate.getDate() &&
 													'bg-white rounded-full w-8 h-8 flex items-center justify-center'
 											)}
 										>
 											<Text
 												className={clsx(
 													'text-white text-xl',
-													currentDate.getDate() === addDate.getDate() &&
+													currentDate.getDate() === realDate.getDate() &&
 														'text-black '
 												)}
 											>
-												{addDate.getDate()}
+												{currentDate.getDate()}
 											</Text>
 										</View>
 									)}

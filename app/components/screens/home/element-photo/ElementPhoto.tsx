@@ -283,7 +283,7 @@ const Reactions: FC<IReactions> = ({ reactions, userId, created }) => {
 					}
 				})
 				queryClient.setQueryData(['get-latest-people'], (data: any) => {
-					console.log(JSON.stringify(data, null, 2))
+					
 					for (let i = 0; i < data.length; i++) {
 						// if(data._id._id === ){
 						// 	break
@@ -337,8 +337,8 @@ const Reactions: FC<IReactions> = ({ reactions, userId, created }) => {
 				>
 					{['😁', '😂', '😍', '😐', '🤮'].map((smile, key) => {
 						return (
-							<Pressable onPress={() => addReaction.mutate(reactionsData[key])}>
-								<Text style={{ fontSize: size.width / 7 }} key={key}>
+							<Pressable onPress={() => addReaction.mutate(reactionsData[key])} key={key}>
+								<Text style={{ fontSize: size.width / 7 }} >
 									{smile}
 								</Text>
 							</Pressable>

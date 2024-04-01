@@ -26,27 +26,29 @@ import * as ImagePicker from 'expo-image-picker'
 import { FilesService } from '@/services/files/files.service'
 import mime from 'mime'
 import { BaseImageUrl2 } from '@/services/api/interceptors.api'
+import { IProfile } from '@/shared/types/profile.interface'
 
 export const EditProfile = () => {
 	const insets = useSafeAreaInsets()
 	const { navigate } = useNavigation<any>()
 	const [delayedIsLoading, setDelayedIsLoading] = useState(false)
-	const user = useQuery(['get-profile'], () => ProfileService.getProfile())
+	const queryClient = useQueryClient()
+	const user = queryClient.getQueryData(['get-profile']) as IProfile | undefined //@TASK
 	const { handleSubmit, reset, control, setValue } = useForm<TypeEditProfile>({
 		mode: 'onChange',
 		defaultValues: {}
 	})
 
 	useEffect(() => {
-		if (user.data) {
+		if (user) {
 			reset({
 				//@ts-ignore
-				firstName: user.data.firstName,
-				lastName: user.data.lastName,
-				avatar: user.data.avatar
+				firstName: user.firstName,
+				lastName: user.lastName,
+				avatar: user.avatar
 			})
 		}
-	}, [user.data])
+	}, [user])
 	const queryCLient = useQueryClient()
 	const updateProfileInfo = useMutation(
 		['update-profile-info'],
@@ -55,6 +57,7 @@ export const EditProfile = () => {
 			onSuccess: () => {
 				setTimeout(() => setDelayedIsLoading(false), 500)
 				queryCLient.refetchQueries(['get-profile'])
+				navigate('Profile')
 			},
 			onError: () => setTimeout(() => setDelayedIsLoading(false), 500)
 		}
@@ -64,7 +67,7 @@ export const EditProfile = () => {
 		return updateProfileInfo.mutate(data)
 	}
 	const [chooseAvatar, setChooseAvatar] = useState(
-		user.data && user.data.avatar ? BaseImageUrl2(user.data.avatar) : ''
+		user && user.avatar ? BaseImageUrl2(user.avatar) : ''
 	)
 	//console.log(chooseAvatar);
 
@@ -85,7 +88,7 @@ export const EditProfile = () => {
 			//@ts-ignore
 			formData.append('image', {
 				uri: result.assets[0].uri,
-				type: 'image/jpeg', 
+				type: 'image/jpeg',
 				name: 'photo.jpg'
 			})
 			mutate({ form: formData, path: 'folder=avatar' })
@@ -94,19 +97,25 @@ export const EditProfile = () => {
 	const { mutate, data } = useMutation(
 		['push-photo'],
 		({ form, path }: { form: FormData; path: string }) =>
-			FilesService.pushPhoto(form, path)
+			FilesService.pushPhoto(form, path),
+		{
+			onSuccess: () => {
+				queryClient.refetchQueries(['get-profile'])
+				navigate('Profile')
+			}
+		}
 	)
 
 	return (
 		<View className='flex-1'>
-			{user.data && (
+			{user && (
 				<LayoutLightOpacity
 					onGoBack={() => navigate('Profile')}
 					title='Edit Profile'
 				>
 					<View className='flex-1 relative'>
 						<UserAvatar2
-							user={user.data}
+							user={user}
 							isSetImg={pickImage}
 							chooseAvatar={chooseAvatar}
 						/>

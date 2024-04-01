@@ -20,26 +20,26 @@ import { text } from '../calendarTask/CalendarTask'
 import { ImageBackground } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { normalDate } from '../comments/CommentElement'
+import { IProfile } from '@/shared/types/profile.interface'
 
 export const Calendar = () => {
-	const user = useQuery(['get-profile'], () => ProfileService.getProfile()) //@TASK
 	const queryClient = useQueryClient()
+	const user = queryClient.getQueryData(['get-profile']) as IProfile | undefined //@TASK
 	const { navigate } = useNavigation<any>()
 	let daysInMonth = function (date: Date) {
 		return 33 - new Date(date.getFullYear(), date.getMonth(), 33).getDate()
 	}
-	console.log(user.data);
-	
+
 	const { top } = useSafeAreaInsets()
 	const updateFavoritePhoto = useMutation(
 		['update-favorite-photo-calendar'],
 		(data: TypeUpdateFavoritePhoto) => ProfileService.updateFavoritePhoto(data),
 		{
-			onSuccess: () => {
+			onSuccess: dataRes => {
+				queryClient.refetchQueries(['get-profile'])
 				setModalVisible(false)
-				queryClient.refetchQueries(['get-user'])
 				//@ts-ignore
-				navigate.navigate(`Profile`, { pr: '' })
+				navigate(`Profile`)
 			}
 		}
 	)
@@ -68,13 +68,10 @@ export const Calendar = () => {
 						>
 							<View className='h-[15%] items-center' style={{ marginTop: top }}>
 								<Text className='text-white font-bold text-xl'>
-									{user.data &&
-										text(user.data?.calendarPhotos[modalImg]?.created || '')}
+									{user && text(user?.calendarPhotos[modalImg]?.created || '')}
 								</Text>
 								<Text className='text-white/70 text-base -mt-1'>
-									{normalDate(
-										user.data?.calendarPhotos[modalImg]?.created || ''
-									)}
+									{normalDate(user?.calendarPhotos[modalImg]?.created || '')}
 								</Text>
 							</View>
 							<View className='flex-1 bg-white rounded-2xl overflow-hidden border-2 border-white'>
@@ -82,9 +79,9 @@ export const Calendar = () => {
 									className='h-full w-full rounded-2xl'
 									source={{
 										uri: BaseImageUrl2(
-											user.data?.calendarPhotos[modalImg]?.photos?.frontPhoto
+											user?.calendarPhotos[modalImg]?.photos?.frontPhoto
 												?.photo ||
-												user.data?.calendarPhotos[modalImg]?.photos?.backPhoto
+												user?.calendarPhotos[modalImg]?.photos?.backPhoto
 													?.photo ||
 												''
 										)
@@ -100,15 +97,15 @@ export const Calendar = () => {
 										updateFavoritePhoto.mutate({
 											key: 'photoOne',
 											photo:
-												user.data?.calendarPhotos[modalImg].photos.frontPhoto
+												user?.calendarPhotos[modalImg].photos.frontPhoto
 													?.photo ||
-												user.data?.calendarPhotos[modalImg].photos.backPhoto
+												user?.calendarPhotos[modalImg].photos.backPhoto
 													?.photo ||
 												'',
 											created:
-												user.data?.calendarPhotos[modalImg].photos.frontPhoto
+												user?.calendarPhotos[modalImg].photos.frontPhoto
 													?.created ||
-												user.data?.calendarPhotos[modalImg].photos.backPhoto
+												user?.calendarPhotos[modalImg].photos.backPhoto
 													?.created ||
 												''
 										})
@@ -133,16 +130,15 @@ export const Calendar = () => {
 					</View>
 				</View>
 			</Modal>
-			{user.data && (
+			{user && (
 				<View>
 					{(() => {
-						const calendarPhotos = user.data.calendarPhotos
+						const calendarPhotos = user.calendarPhotos
 						let date = new Date()
-						let beginDate = new Date(user.data.createdAt)
+						let beginDate = new Date(user.createdAt)
 
 						let getUserDate = new Date(
-							user.data.calendarPhotos[user.data.calendarPhotos.length - 1]
-								?.created
+							user.calendarPhotos[user.calendarPhotos.length - 1]?.created
 						)
 						const lateYear = getUserDate?.getFullYear()
 						const lateMonth = getUserDate?.getMonth()
@@ -216,7 +212,7 @@ export const Calendar = () => {
 											return (
 												<View
 													key={key}
-													className='w-[40px] h-[50px] flex items-center justify-center rounded-lg '
+													className='w-[40px] h-[50px] flex items-center justify-center rounded-lg mx-1 my-1'
 												>
 													{el.photo !== -1 ? (
 														<View className='border-[1px] rounded-lg border-white'>

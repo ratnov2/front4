@@ -18,6 +18,7 @@ import { IUser } from '@/shared/types/user.interface'
 import { IsTiming } from './IsTiming'
 import { manipulateAsync } from 'expo-image-manipulator'
 import * as ScreenOrientation from 'expo-screen-orientation'
+import { ImgAvatar } from '../profile/other-user/OtherUserProfile'
 
 export const Inside = memo(() => {
 	const [frontImage, setFrontImage] = useState<string | null>(null)
@@ -374,6 +375,7 @@ export const HeaderHome: FC<IHeaderHome> = ({
 				<TouchableOpacity onPress={() => navigate('Friends')}>
 					<FontAwesome5 name='user-friends' size={24} color='white' />
 				</TouchableOpacity>
+				
 				{user && (
 					<View className='flex-row'>
 						<TouchableOpacity
@@ -383,10 +385,11 @@ export const HeaderHome: FC<IHeaderHome> = ({
 							<Entypo name='calendar' size={26} color='white' />
 						</TouchableOpacity>
 						<TouchableOpacity onPress={() => navigate('Profile')}>
-							<UserAvatar avatar={user.avatar} firstName={user.firstName} />
+							<ImgAvatar avatar={user.avatar} size='small-photo' />
 						</TouchableOpacity>
 					</View>
 				)}
+				
 			</View>
 			<View className='flex-row justify-center mt-3 '>
 				<Pressable className='p-2' onPress={setTypeFriends}>

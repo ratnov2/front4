@@ -118,7 +118,12 @@ export const OtherUserProfile = () => {
 	)
 }
 
-type TSizeAvatar = 'small-photo' | 'profile' | 'friends-pal' | 'friends-item' | 'reaction-main'
+type TSizeAvatar =
+	| 'small-photo'
+	| 'profile'
+	| 'friends-pal'
+	| 'friends-item'
+	| 'reaction-main'
 
 const sizeAvatar = {
 	'small-photo': {
@@ -171,12 +176,12 @@ export const ImgAvatar: FC<IImgAvatar> = ({ avatar, size, name }) => {
 
 	return (
 		<View
-			className='rounded-full overflow-hidden relative '
+			className='rounded-full overflow-hidden relative  justify-center'
 			style={{ width: sizeAvatar[size].w, height: sizeAvatar[size].h }}
 		>
 			<ImageBackground
-				style={{ position: 'relative' }}
-				className='flex-1'
+				style={{ position: 'absolute' }}
+				className='flex-1 w-full h-full'
 				source={
 					!error
 						? {
@@ -190,10 +195,8 @@ export const ImgAvatar: FC<IImgAvatar> = ({ avatar, size, name }) => {
 			/>
 			{(error || !avatar) && (
 				<Text
-					className='absolute flex-1 justify-center items-center text-white font-bold uppercase'
+					className='justify-center items-center text-white font-bold uppercase text-center '
 					style={{
-						left: sizeAvatar[size].left,
-						top: sizeAvatar[size].top,
 						fontSize: sizeAvatar[size].fontSize
 					}}
 				>
