@@ -32,7 +32,7 @@ export const LayoutOpacityItems: FC<ILayoutOpacityItems> = memo(
 						{ComponentRender}
 					</View>
 				</View>
-				<View style={{ zIndex: 20 }}>
+				{/* <View style={{ zIndex: 20 }}>
 					<LinearGradient
 						colors={['#00000000', '#111111']}
 						style={{
@@ -51,7 +51,7 @@ export const LayoutOpacityItems: FC<ILayoutOpacityItems> = memo(
 							top: 0
 						}}
 					></LinearGradient>
-				</View>
+				</View> */}
 			</View>
 		)
 	}

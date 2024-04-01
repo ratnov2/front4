@@ -26,7 +26,7 @@ export const LayoutLightOpacityOtherProfile: FC<LayoutLightOpacity> = ({
 				{children}
 				<View style={{ height: insets.bottom + 150 }} />
 			</ScrollView>
-			<LinearGradient
+			{/* <LinearGradient
 				colors={['#00000000', '#111111']}
 				style={{
 					height: 50,
@@ -43,7 +43,7 @@ export const LayoutLightOpacityOtherProfile: FC<LayoutLightOpacity> = ({
 					position: 'absolute',
 					top: 0
 				}}
-			></LinearGradient>
+			></LinearGradient> */}
 			<View
 				style={{ top: insets.top }}
 				className={`flex-row items-center absolute ${padding}`}

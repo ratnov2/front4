@@ -36,6 +36,7 @@ interface IElementPhoto {
 	toggleScroll: (scroll: boolean) => any
 	reactions: { userId: string; reactionType: TReaction }[]
 	startCamera: () => void
+	setUserDataQuery: (data: any) => void
 }
 
 export type BaseExampleProps = {
@@ -53,7 +54,8 @@ export const ElementPhoto: FC<IElementPhoto> = ({
 	refetch,
 	toggleScroll,
 	reactions,
-	startCamera
+	startCamera,
+	setUserDataQuery
 }) => {
 	const queryClient = useQueryClient()
 	const cron = queryClient.getQueryData(['get-cron-time'])
@@ -74,33 +76,30 @@ export const ElementPhoto: FC<IElementPhoto> = ({
 			onSuccess: dataRes => {
 				queryClient.setQueryData(['get-profile'], (data?: IProfile) => {
 					if (!data) return data
-					const latestPhoto = { ...data.latestPhoto }
-					latestPhoto.comment = dataRes.data
-					return {
-						...data,
-						latestPhoto
-					}
+					const newDate = JSON.parse(JSON.stringify(data))
+					newDate.latestPhoto.comment = dataRes.data
+					setUserDataQuery && setUserDataQuery(newDate)
+					return data
 				})
-				queryClient.setQueryData(
-					['get-latest-people'],
-					(data?: ILatestInside[]) => {
-						if (!data) return data
-						const newData = [...data]
-						for (let i = 0; i < data.length; i++) {
-							if (data[i]._id._id === user2._id) {
-								newData[i].latestPhoto.comment = dataRes.data
-								break
-							}
-						}
-						return [...data]
-					}
-				)
-				setCommentAuth(dataRes.data)
+				// queryClient.setQueryData(
+				// 	['get-latest-people'],
+				// 	(data?: ILatestInside[]) => {
+				// 		if (!data) return data
+				// 		const newData = [...data]
+				// 		for (let i = 0; i < data.length; i++) {
+				// 			if (data[i]._id._id === user2._id) {
+				// 				newData[i].latestPhoto.comment = dataRes.data
+				// 				break
+				// 			}
+				// 		}
+				// 		return [...data]
+				// 	}
+				// )
+				//setCommentAuth(dataRes.data)
 				setIsMessage(false)
 			}
 		}
 	)
-	const [commentAuth, setCommentAuth] = useState(photo.latestPhoto.comment)
 
 	return (
 		<View className='' style={{ marginBottom: 70 }}>
@@ -173,7 +172,7 @@ export const ElementPhoto: FC<IElementPhoto> = ({
 							setIsMessage(true)
 						}}
 					>
-						<Text className='text-white mt-4'>{commentAuth || '...'}</Text>
+						<Text className='text-white mt-4'>{photo.latestPhoto.comment || '...'}</Text>
 					</TouchableOpacity>
 				) : (
 					user?._id === photo._id &&

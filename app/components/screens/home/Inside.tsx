@@ -16,7 +16,7 @@ import { UserAvatar } from '@/ui/user-avatar/UserAvatar'
 import { CameraComponent } from './relax/Camera'
 import { IUser } from '@/shared/types/user.interface'
 import { IsTiming } from './IsTiming'
-import { manipulateAsync } from "expo-image-manipulator";
+import { manipulateAsync } from 'expo-image-manipulator'
 import * as ScreenOrientation from 'expo-screen-orientation'
 
 export const Inside = memo(() => {
@@ -100,7 +100,7 @@ export const Inside = memo(() => {
 		}
 	}
 	////
-	const ff = async() => {
+	const ff = async () => {
 		if (frontImage && backImage && !isLoading) {
 			const formData = new FormData()
 			const res1 = await fixRotation(frontImage)
@@ -128,7 +128,15 @@ export const Inside = memo(() => {
 		{
 			onSuccess: () => {
 				setStartCamera(false)
-				queryClient.refetchQueries(['get-profile'])
+				queryClient.refetchQueries(['get-profile']).then(data => {
+					const profile = queryClient.getQueryData(['get-profile']) as any
+					setUserDataQuery({
+						latestPhoto: { ...profile.latestPhoto },
+						avatar: profile.avatar,
+						_id: profile._id,
+						firstName: profile.firstName
+					})
+				})
 			}
 		}
 	)
@@ -140,13 +148,13 @@ export const Inside = memo(() => {
 	const cron = useQuery(['get-cron-time'], ProfileService.getCronTime)
 	const queryClient = useQueryClient()
 	const userQuery = queryClient.getQueryData(['get-profile']) as any
-
-	const latestPhotoUse = {
+	const [userDataFromQuery, setUserDataQuery] = useState({
 		latestPhoto: { ...userQuery.latestPhoto },
 		avatar: userQuery.avatar,
 		_id: userQuery._id,
 		firstName: userQuery.firstName
-	}
+	})
+
 	//console.log('userQuery', userQuery)
 
 	const [shouldScroll, setShouldScroll] = useState(true)
@@ -154,9 +162,7 @@ export const Inside = memo(() => {
 		setShouldScroll(scroll)
 	}
 	useEffect(() => {
-		console.log('wefewf')
 		const ff = ScreenOrientation.unlockAsync()
-		console.log(ff)
 	}, [])
 	const fixRotation = async (uri: string) => {
 		const result = await manipulateAsync(uri, [{ rotate: 0 }])
@@ -202,11 +208,12 @@ export const Inside = memo(() => {
 							{!!userQuery?.latestPhoto &&
 								IsTiming(cron.data, userQuery.latestPhoto.created || null) && (
 									<ElementPhoto
-										photo={latestPhotoUse as any}
+										photo={userDataFromQuery}
 										toggleScroll={toggleScroll}
 										refetch={() => latestPhoto.refetch()}
 										reactions={userQuery.latestPhoto?.photoReactions}
 										startCamera={() => __startCamera()}
+										setUserDataQuery={(data: any) => setUserDataQuery(data)}
 									/>
 								)}
 							{latestPhoto?.isLoading ? (
@@ -254,6 +261,7 @@ export const Inside = memo(() => {
 							) : latestPhotoOther.data && latestPhotoOther.data.length > 0 ? (
 								<View className='h-full'>
 									{latestPhotoOther.data?.map((photo, key) => {
+										if (photo._id === user?._id) return null
 										return (
 											<ElementPhoto
 												//@ts-ignore

@@ -113,6 +113,16 @@ export const ProfileService = {
 			method: 'GET2'
 		})
 		return response
+	},
+	//notifications
+	async sendDeviceToken(data: { deviceToken: string; _id: string }) {
+		const response = await request<IProfile>({
+			url: '/notifications/add-device-token',
+			method: 'POST',
+			data
+		})
+
+		return response
 	}
 }
 
