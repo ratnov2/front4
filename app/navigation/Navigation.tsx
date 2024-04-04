@@ -7,6 +7,7 @@ import PrivateNavigator from './PrivateNavigator'
 import { useCheckAuth } from '@/providers/auth/useCheckAuth'
 import { BottomMenu } from '@/ui'
 import { useAuth } from '@/hooks/useAuth'
+import { useGetData } from './useGetData'
 
 const Navigation: FC = () => {
 	const { user } = useAuth()
@@ -30,7 +31,6 @@ const Navigation: FC = () => {
 	}, [])
 
 	useCheckAuth(currentRoute)
-
 	return (
 		<>
 			<NavigationContainer ref={navRef}>

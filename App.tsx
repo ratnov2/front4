@@ -24,6 +24,13 @@ import { Helper } from '@/components/screens/Helper'
 // 	}
 // })
 
+Notifications.setNotificationHandler({
+	handleNotification: async () => ({
+		shouldShowAlert: true,
+		shouldPlaySound: true,
+		shouldSetBadge: true
+	})
+})
 export default function App() {
 	const postUrl = process.env.REACT_APP_SERVER_URL
 	const [expoPushToken, setExpoPushToken] = useState('')
@@ -48,13 +55,17 @@ export default function App() {
 		//@ts-ignore
 		notificationListener.current =
 			Notifications.addNotificationReceivedListener(notification => {
+				console.log('response', notification)
 				//@ts-ignore
 				setNotification(notification)
 			})
+
+		// 	})
+		// })
 		//@ts-ignore
 		responseListener.current =
 			Notifications.addNotificationResponseReceivedListener(response => {
-				//console.log(response)
+				console.log(response)
 			})
 		return () => {
 			//@ts-ignore

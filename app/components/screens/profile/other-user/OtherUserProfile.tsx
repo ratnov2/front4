@@ -44,7 +44,7 @@ export const OtherUserProfile = () => {
 			!getMe.isLoading &&
 			getMe.data
 		) {
-			console.log('W@MY FRIEBNDS');
+			//console.log('W@MY FRIEBNDS');
 			
 			for (let i = 0; i < myFriends.data.friendship.length; i++) {
 				if (myFriends.data.friendship[i]?.friends._id === params.id) {

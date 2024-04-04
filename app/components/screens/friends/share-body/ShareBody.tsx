@@ -31,6 +31,7 @@ export const ShareBody: FC<IShareBody> = ({
 					{children}
 				</View>
 			)}
+			<View className='h-24' />
 		</ScrollView>
 	)
 }

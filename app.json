@@ -19,6 +19,7 @@
 			"infoPlist": {
 				"NSContactsUsageDescription": "Allow $(PRODUCT_NAME) to access your contacts."
 			},
+			"icon": "./app/assets/test.png",
 			"runtimeVersion": "1.1.0"
 		},
 		"android": {
@@ -63,6 +64,12 @@
 				"expo-screen-orientation",
 				{
 					"initialOrientation": "DEFAULT"
+				}
+			],
+			[
+				"expo-notifications",
+				{
+					"icon": "./app/assets/test.png"
 				}
 			]
 		],

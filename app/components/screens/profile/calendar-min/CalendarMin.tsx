@@ -156,7 +156,7 @@ export const CalendarMin: FC = () => {
 							}
 						}
 
-						photo.map(photo => console.log(JSON.stringify(photo.created)))
+						//photo.map(photo => console.log(JSON.stringify(photo.created)))
 						return Array.from(Array(14)).map((_, key) => {
 							const date = new Date(photo[k]?.created)
 							const day = date.getDate()

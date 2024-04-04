@@ -23,36 +23,6 @@ export const Friends = () => {
 	const queryClient = useQueryClient()
 	// const suggestions = useQuery(['get-suggestion']()=>'') TASK ADD suggestion
 
-	const myFriends = useQuery<IFriendsip, Error, IFriendsStatus>(
-		['get-my-friends'],
-		() => FriendsService.getAllFriends(),
-		{
-			onSuccess: data => {
-				if (!data) return false
-				//@ts-ignore
-				data.friendship = [] //CHECK
-			},
-			select: data => {
-				const myFriendByStatus: IFriendsStatus = {
-					friendStatus1: [],
-					friendStatus2: [],
-					friendStatus3: []
-				}
-				data.friendship.map(({ friends, status }) => {
-					if (status === '1') {
-						myFriendByStatus.friendStatus1.push(friends)
-					} else if (status === '2') {
-						myFriendByStatus.friendStatus2.push(friends)
-					} else if (status === '3') {
-						myFriendByStatus.friendStatus3.push(friends)
-					}
-				})
-
-				return myFriendByStatus
-			}
-		}
-	)
-
 	//////
 	////////isFreind === 0  Add Friend
 	////////isFriend === 1  (nothing or mutual friends)
@@ -88,6 +58,29 @@ export const Friends = () => {
 		//console.log(current)
 		return 100
 	}
+	const myFriends = useQuery<IFriendsip, Error, IFriendsStatus>(
+		['get-my-friends'],
+		{
+			select: data => {
+				const myFriendByStatus: IFriendsStatus = {
+					friendStatus1: [],
+					friendStatus2: [],
+					friendStatus3: []
+				}
+				data.friendship.map(({ friends, status }) => {
+					if (status === '1') {
+						myFriendByStatus.friendStatus1.push(friends)
+					} else if (status === '2') {
+						myFriendByStatus.friendStatus2.push(friends)
+					} else if (status === '3') {
+						myFriendByStatus.friendStatus3.push(friends)
+					}
+				})
+
+				return myFriendByStatus
+			}
+		}
+	)
 
 	const [activeIndex, setActiveIndex] = useState(1)
 	const animatedValue = new Animated.Value(activeIndex)
@@ -104,6 +97,7 @@ export const Friends = () => {
 
 	const swiperRef = useRef<Swiper>(null)
 	const { navigate } = useNavigation<any>()
+
 	return (
 		// <MyFriendContext.Provider value={{ myFriendByStatus, setMyFriendByStatus }}>
 		<View className='flex-1'>
@@ -133,6 +127,8 @@ export const Friends = () => {
 					animatedValue={animatedValue}
 					refButtonGroup={refButtonGroup}
 					scrollToPage={scrollToPage}
+					requestsToFriends={myFriends.data?.friendStatus2}
+					activeIndex={activeIndex}
 				/>
 			</View>
 		</View>

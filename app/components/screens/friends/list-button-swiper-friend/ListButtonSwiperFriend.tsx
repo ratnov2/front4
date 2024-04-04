@@ -1,3 +1,4 @@
+import { IProfile } from '@/shared/types/profile.interface'
 import { FC, RefObject } from 'react'
 import { Animated, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -6,17 +7,21 @@ interface IListButtonSwiperFriend {
 	refButtonGroup: RefObject<View>
 	scrollToPage: (index: number) => void
 	animatedValue: Animated.Value
+	requestsToFriends?: IProfile[]
+	activeIndex: number
 }
 
 export const ListButtonSwiperFriend: FC<IListButtonSwiperFriend> = ({
 	refButtonGroup,
 	scrollToPage,
-	animatedValue
+	animatedValue,
+	requestsToFriends,
+	activeIndex
 }) => {
 	const insets = useSafeAreaInsets()
 	return (
 		<View
-			className='bg-slate-800 rounded-full p-2 flex-row justify-between items-center z-40 w-[300]'
+			className='bg-slate-800 rounded-full p-2 flex-row justify-between items-center z-40 w-[300] mb-10'
 			style={{
 				alignSelf: 'center',
 				position: 'absolute',
@@ -59,10 +64,19 @@ export const ListButtonSwiperFriend: FC<IListButtonSwiperFriend> = ({
 				<Text className='text-white'>Friends</Text>
 			</TouchableOpacity>
 			<TouchableOpacity
-				className={`${''} p-2 rounded-full ml-1`}
+				className={`${''} p-2 rounded-full ml-1 relative`}
 				onPress={() => scrollToPage(2)}
 			>
 				<Text className='text-white'>Requests</Text>
+				{requestsToFriends &&
+					requestsToFriends.length > 0 &&
+					activeIndex !== 2 && (
+						<View className='absolute right-0 top-0 bg-red-600 w-4 h-4 justify-center rounded-full'>
+							<Text className='text-center text-white/70'>
+								{requestsToFriends?.length}
+							</Text>
+						</View>
+					)}
 			</TouchableOpacity>
 		</View>
 	)

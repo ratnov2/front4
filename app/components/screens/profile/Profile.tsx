@@ -11,6 +11,7 @@ import { TypeRootStackParamList } from '@/navigation/navigation.types'
 import { LayoutOpacityItems } from '@/navigation/ui/LayoutOpacityItems'
 import { AntDesign, Entypo } from '@expo/vector-icons'
 import { LayoutLightOpacityOtherProfile } from '@/navigation/ui/LayoutLightOpacityOtherProfile'
+import { useGetData } from '@/navigation/useGetData'
 //import { useNotifications } from './PERMISSIONS/Notefications'
 
 type IProfile = NativeStackScreenProps<TypeRootStackParamList, 'Profile'>
@@ -33,7 +34,7 @@ export const HeaderProfile = () => {
 const Profile: FC<IProfile> = ({ navigation }) => {
 	const { user } = useAuth()
 	let { params } = useRoute<any>()
-
+	useGetData()
 	return (
 		<View className='flex-1'>
 			{user && (

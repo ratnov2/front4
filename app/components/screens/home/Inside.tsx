@@ -1,6 +1,11 @@
 import { Image, Pressable, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+	useMutation,
+	useQueries,
+	useQuery,
+	useQueryClient
+} from '@tanstack/react-query'
 import { ProfileService } from '@/services/profile/profile.service'
 import { FC, memo, useEffect, useRef, useState } from 'react'
 import { Camera } from 'expo-camera'
@@ -19,6 +24,8 @@ import { IsTiming } from './IsTiming'
 import { manipulateAsync } from 'expo-image-manipulator'
 import * as ScreenOrientation from 'expo-screen-orientation'
 import { ImgAvatar } from '../profile/other-user/OtherUserProfile'
+import { IFriendsip } from '@/services/friends/friends.service'
+import { IFriendsStatus } from '../friends/Friends'
 
 export const Inside = memo(() => {
 	const [frontImage, setFrontImage] = useState<string | null>(null)
@@ -52,7 +59,7 @@ export const Inside = memo(() => {
 
 	useEffect(() => {
 		if (!isInitialRender && (frontImage || backImage)) {
-			console.log('isFrontCamera', isFrontCamera)
+			//('isFrontCamera', isFrontCamera)
 			// takeBackPhoto()
 			!backImage && setTimeout(() => takeBackPhoto(), 400)
 			!frontImage && setTimeout(() => takeFrontPhoto(), 400)
@@ -124,6 +131,9 @@ export const Inside = memo(() => {
 			mutate(formData)
 		}
 	}
+	const myFriends = useQuery<IFriendsip>(['get-my-friends'])
+	console.log(myFriends.data)
+
 	const user2 = useQuery(['get-profile'], () => ProfileService.getProfile())
 	const { mutate, isLoading, data } = useMutation(
 		['push-photo'],
@@ -158,7 +168,7 @@ export const Inside = memo(() => {
 		firstName: userQuery.firstName
 	})
 
-	console.log('userQuery', userQuery.latestPhoto.comment)
+	//('userQuery', userQuery.latestPhoto.comment)
 
 	const [shouldScroll, setShouldScroll] = useState(true)
 	const toggleScroll = (scroll: boolean) => {
@@ -368,14 +378,29 @@ export const HeaderHome: FC<IHeaderHome> = ({
 	const { navigate } = useNavigation<any>()
 	const queryClient = useQueryClient()
 	const user = queryClient.getQueryData(['get-profile']) as IUser | undefined
+	const myFriends = useQuery<IFriendsip, Error, boolean>(['get-my-friends'], {
+		select: data => {
+			for (let i = 0; i < data.friendship.length; i++) {
+				if (data.friendship[i].status === '2') return true
+			}
+			return false
+		}
+	})
+
 	return (
-		<View className='flex-1'>
+		<View className='flex-1 mx-4 '>
 			<View className='flex-row justify-between flex-1 items-center relative'>
 				<Text className='text-white text-2xl font-bold absolute text-center w-full'>
 					BePrime
 				</Text>
-				<TouchableOpacity onPress={() => navigate('Friends')}>
+				<TouchableOpacity
+					onPress={() => navigate('Friends')}
+					className='relative'
+				>
 					<FontAwesome5 name='user-friends' size={24} color='white' />
+					{myFriends.data && (
+						<View className='absolute bg-red-600 w-2 h-2 -top-0.5 -right-0.5 rounded-full' />
+					)}
 				</TouchableOpacity>
 
 				{user && (
