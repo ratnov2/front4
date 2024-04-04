@@ -2,7 +2,14 @@ import { AntDesign, Ionicons } from '@expo/vector-icons'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useNavigation } from 'expo-router'
 import { FC, ReactNode, memo } from 'react'
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import {
+	KeyboardAvoidingView,
+	ScrollView,
+	Text,
+	TouchableOpacity,
+	View
+} from 'react-native'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 interface ILayoutOpacityItems {
@@ -16,22 +23,21 @@ export const LayoutOpacityItems: FC<ILayoutOpacityItems> = memo(
 		const insets = useSafeAreaInsets()
 		return (
 			<View className='flex-1 relative'>
-				<View className='flex-1 mx-4'>
-					<ScrollView
-						scrollEnabled={scrollEnabled}
-						style={{ paddingTop: insets.top + 40 }}
-						className='flex-1'
-						showsVerticalScrollIndicator={false}
-					>
-						{children}
-						<View style={{ height: insets.bottom + 150 }} />
-					</ScrollView>
-					<View
-						style={{ top: insets.top, zIndex: 10 }}
-						className='flex-row items-center absolute'
-					>
-						{ComponentRender}
-					</View>
+				<KeyboardAwareScrollView
+					scrollEnabled={scrollEnabled}
+					keyboardShouldPersistTaps='handled'
+					style={{ flex: 1, paddingTop: insets.top + 40 }}
+					showsVerticalScrollIndicator={false}
+					className='flex-1 mx-4'
+				>
+					{children}
+					<View style={{ height: insets.bottom + 150 }} />
+				</KeyboardAwareScrollView>
+				<View
+					style={{ top: insets.top, zIndex: 10 }}
+					className='flex-row items-center absolute'
+				>
+					{ComponentRender}
 				</View>
 				{/* <View style={{ zIndex: 20 }}>
 					<LinearGradient

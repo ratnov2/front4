@@ -11,7 +11,6 @@ import {
 	ImageBackground,
 	Image
 } from 'react-native'
-// import * as Settings from 'expo-settings'
 import { Camera } from 'expo-camera'
 import { useMutation } from '@tanstack/react-query'
 import { FilesService } from '@/services/files/files.service'

@@ -1,6 +1,6 @@
 import { Image, Pressable, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ProfileService } from '@/services/profile/profile.service'
 import { FC, memo, useEffect, useRef, useState } from 'react'
 import { Camera } from 'expo-camera'
@@ -124,7 +124,7 @@ export const Inside = memo(() => {
 			mutate(formData)
 		}
 	}
-
+	const user2 = useQuery(['get-profile'], () => ProfileService.getProfile())
 	const { mutate, isLoading, data } = useMutation(
 		['push-photo'],
 		(form: FormData) => FilesService.pushTwoPhoto(form),
@@ -158,7 +158,7 @@ export const Inside = memo(() => {
 		firstName: userQuery.firstName
 	})
 
-	//console.log('userQuery', userQuery)
+	console.log('userQuery', userQuery.latestPhoto.comment)
 
 	const [shouldScroll, setShouldScroll] = useState(true)
 	const toggleScroll = (scroll: boolean) => {

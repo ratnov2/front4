@@ -1,11 +1,12 @@
 import { useAuth } from '@/hooks/useAuth'
 import { BaseImageUrl, BaseImageUrl2 } from '@/services/api/interceptors.api'
 import { Link, useNavigation } from '@react-navigation/native'
-import { FC, useReducer, useRef, useState } from 'react'
+import { FC, useEffect, useReducer, useRef, useState } from 'react'
 //import Draggable from 'react-native-draggable'
 import {
 	ActivityIndicator,
 	Image,
+	KeyboardAvoidingView,
 	Pressable,
 	Text,
 	TextInput,
@@ -27,6 +28,7 @@ import { ImgAvatar } from '../../profile/other-user/OtherUserProfile'
 import { normalDate } from '../../comments/CommentElement'
 import { Draggable } from '../Draggable/Draggable'
 import { IsTiming } from '../IsTiming'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 //import { Draggable } from '../Draggable/Draggable'
 
@@ -67,42 +69,49 @@ export const ElementPhoto: FC<IElementPhoto> = ({
 	const [value, setValue] = useState(photo.latestPhoto.comment)
 	const [isMessage, setIsMessage] = useState(false)
 	//console.log(photo.calendarPhotos)
-
+	const user3 = useQuery(['get-profile'], () => ProfileService.getProfile())
 	const addMainComment = useMutation(
 		['add-main-comment'],
 		(data: { message: string; created: Date }) =>
 			ProfileService.addMainComment(data),
+
 		{
+			onMutate: async newF => {
+				queryClient.cancelQueries({ queryKey: ['get-profile'] })
+				const previous = queryClient.getQueryData(['get-profile'])
+				queryClient.setQueryData(['get-profile'], (data2?: IProfile) => {
+					if (!data2) return data2
+					const newDate = JSON.parse(JSON.stringify(data2))
+					newDate.latestPhoto.comment = newF.message
+					return newDate
+				})
+			},
 			onSuccess: dataRes => {
 				queryClient.setQueryData(['get-profile'], (data?: IProfile) => {
 					if (!data) return data
 					const newDate = JSON.parse(JSON.stringify(data))
+					queryClient.cancelQueries(['get-profile'])
 					newDate.latestPhoto.comment = dataRes.data
-					setUserDataQuery && setUserDataQuery(newDate)
-					return data
+					queryClient.invalidateQueries(['get-profile'])
+					return newDate
 				})
-				// queryClient.setQueryData(
-				// 	['get-latest-people'],
-				// 	(data?: ILatestInside[]) => {
-				// 		if (!data) return data
-				// 		const newData = [...data]
-				// 		for (let i = 0; i < data.length; i++) {
-				// 			if (data[i]._id._id === user2._id) {
-				// 				newData[i].latestPhoto.comment = dataRes.data
-				// 				break
-				// 			}
-				// 		}
-				// 		return [...data]
-				// 	}
-				// )
-				//setCommentAuth(dataRes.data)
+
 				setIsMessage(false)
 			}
 		}
 	)
+	const textInputRef = useRef<TextInput>(null)
+	const handleButtonPress = () => {
+		setIsMessage(true)
+	}
+	useEffect(() => {
+		if (isMessage && textInputRef.current) {
+			textInputRef.current.focus()
+		}
+	}, [isMessage])
 
 	return (
-		<View className='' style={{ marginBottom: 70 }}>
+		<View style={{ marginBottom: 70 }}>
 			{photo && (
 				<View style={{ flex: 1 }} className='relative'>
 					<View
@@ -167,12 +176,10 @@ export const ElementPhoto: FC<IElementPhoto> = ({
 			{/* {!IsTiming(cron.data, user2?.data?.latestPhoto?.created) && */}
 			<View className='ml-4'>
 				{user?._id === photo._id && !isMessage ? (
-					<TouchableOpacity
-						onPress={() => {
-							setIsMessage(true)
-						}}
-					>
-						<Text className='text-white mt-4'>{photo.latestPhoto.comment || '...'}</Text>
+					<TouchableOpacity onPress={handleButtonPress}>
+						<Text className='text-white mt-4'>
+							{user3.data.latestPhoto.comment || '...'}
+						</Text>
 					</TouchableOpacity>
 				) : (
 					user?._id === photo._id &&
@@ -185,16 +192,26 @@ export const ElementPhoto: FC<IElementPhoto> = ({
 								//onPointerDown={() => console.log('@@@')}
 							>
 								<TextInput
+									ref={textInputRef}
 									value={value}
 									onChangeText={e => setValue(e)}
-									className={`p-2 rounded-lg flex-1 color-white ${
+									className={`p-2 rounded-lg flex-1 color-white  ${
 										addMainComment.isLoading && ' text-stone-600'
 									}`}
 									pointerEvents={addMainComment.isLoading ? 'none' : 'auto'}
 									placeholder='input text'
-									keyboardType='default'
-									onBlur={() => setIsMessage(false)}
-								/>
+									onBlur={() => {
+										!addMainComment.isLoading && setIsMessage(false)
+									}}
+									onSubmitEditing={() =>
+										addMainComment.mutate({
+											message: value,
+											created: photo.latestPhoto.created
+										})
+									}
+								>
+									{/* <View className='bg-yellow-300 w-20 h-20 absolute right-0 bottom-0'></View> */}
+								</TextInput>
 
 								{!addMainComment.isLoading ? (
 									<TouchableOpacity
@@ -212,14 +229,6 @@ export const ElementPhoto: FC<IElementPhoto> = ({
 									<ActivityIndicator className='mx-2' size={24} color='white' />
 								)}
 							</View>
-							<TouchableOpacity
-								className='bg-yellow-400 text-center rounded-xl mt-1'
-								onPress={() => setIsMessage(false)}
-							>
-								<Text className='text-white text-center p-2 font-bold'>
-									Close
-								</Text>
-							</TouchableOpacity>
 						</View>
 					)
 				)}
@@ -283,7 +292,6 @@ const Reactions: FC<IReactions> = ({ reactions, userId, created }) => {
 					}
 				})
 				queryClient.setQueryData(['get-latest-people'], (data: any) => {
-					
 					for (let i = 0; i < data.length; i++) {
 						// if(data._id._id === ){
 						// 	break
@@ -337,10 +345,11 @@ const Reactions: FC<IReactions> = ({ reactions, userId, created }) => {
 				>
 					{['😁', '😂', '😍', '😐', '🤮'].map((smile, key) => {
 						return (
-							<Pressable onPress={() => addReaction.mutate(reactionsData[key])} key={key}>
-								<Text style={{ fontSize: size.width / 7 }} >
-									{smile}
-								</Text>
+							<Pressable
+								onPress={() => addReaction.mutate(reactionsData[key])}
+								key={key}
+							>
+								<Text style={{ fontSize: size.width / 7 }}>{smile}</Text>
 							</Pressable>
 						)
 					})}

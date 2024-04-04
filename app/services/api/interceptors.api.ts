@@ -3,9 +3,9 @@ import { deleteUserStorage, getAccessToken } from '../auth/auth.helper'
 import { errorCatch } from './error.api'
 import { getNewTokens } from './helper.auth'
 
-let url = '85.92.111.216'
+//let url = '85.92.111.216'
 
-//let url = '192.168.241.227'
+let url = '192.168.241.227'
 
 export const baseURL = `http://${url}:4200/api`
 export const BaseImageUrl = `http://${url}:4200`

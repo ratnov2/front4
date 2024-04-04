@@ -3,6 +3,8 @@ import { useNavigation } from '@react-navigation/native'
 import { FC, memo } from 'react'
 import { Pressable, Text, Touchable, View } from 'react-native'
 import { ImgAvatar } from '../profile/other-user/OtherUserProfile'
+import { useQuery } from '@tanstack/react-query'
+import { ProfileService } from '@/services/profile/profile.service'
 
 interface ICommentElement {
 	message: string
@@ -20,11 +22,13 @@ export const CommentElement: FC<ICommentElement> = memo(
 		return (
 			<View className='my-6 relative mr-10 flex-row'>
 				<Pressable onPress={() => navigate('Profile', { id })}>
-					<ImgAvatar avatar={avatar} size='small-photo'/>
+					<ImgAvatar avatar={avatar} size='small-photo' />
 				</Pressable>
 				<View className='pl-2 rounded-lg mr-2'>
 					<View className='flex-row text-center'>
-						<Text className='color-white font-bold mb-0.5'>{email || 'Anonym'}</Text>
+						<Text className='color-white font-bold mb-0.5'>
+							{email || 'Anonym'}
+						</Text>
 						<Text className='text-neutral-700 text-xs text-bold ml-2 '>
 							{!isLoading ? normalDate(created) : 'Loading'}
 						</Text>

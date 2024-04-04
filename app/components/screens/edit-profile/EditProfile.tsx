@@ -33,22 +33,24 @@ export const EditProfile = () => {
 	const { navigate } = useNavigation<any>()
 	const [delayedIsLoading, setDelayedIsLoading] = useState(false)
 	const queryClient = useQueryClient()
-	const user = queryClient.getQueryData(['get-profile']) as IProfile | undefined //@TASK
-	const { handleSubmit, reset, control, setValue } = useForm<TypeEditProfile>({
-		mode: 'onChange',
-		defaultValues: {}
-	})
+	const user = useQuery<IProfile>(['get-profile'], () =>
+		ProfileService.getProfile()
+	) //@TASK
+	const { handleSubmit, reset, control, setValue, formState } =
+		useForm<TypeEditProfile>({
+			mode: 'onChange',
+			defaultValues: {}
+		})
 
 	useEffect(() => {
-		if (user) {
+		if (user.data) {
 			reset({
 				//@ts-ignore
-				firstName: user.firstName,
-				lastName: user.lastName,
-				avatar: user.avatar
+				firstName: user.data.firstName,
+				lastName: user.data.lastName
 			})
 		}
-	}, [user])
+	}, [])
 	const queryCLient = useQueryClient()
 	const updateProfileInfo = useMutation(
 		['update-profile-info'],
@@ -62,12 +64,15 @@ export const EditProfile = () => {
 			onError: () => setTimeout(() => setDelayedIsLoading(false), 500)
 		}
 	)
+
 	const onSubmit: SubmitHandler<TypeEditProfile> = data => {
 		setDelayedIsLoading(true)
 		return updateProfileInfo.mutate(data)
 	}
+	const Submit = () => handleSubmit(onSubmit)()
+
 	const [chooseAvatar, setChooseAvatar] = useState(
-		user && user.avatar ? BaseImageUrl2(user.avatar) : ''
+		user && user.data?.avatar ? BaseImageUrl2(user.data.avatar) : ''
 	)
 	//console.log(chooseAvatar);
 
@@ -108,21 +113,25 @@ export const EditProfile = () => {
 
 	return (
 		<View className='flex-1'>
-			{user && (
+			{user.data && (
 				<LayoutLightOpacity
 					onGoBack={() => navigate('Profile')}
 					title='Edit Profile'
 				>
 					<View className='flex-1 relative'>
 						<UserAvatar2
-							user={user}
+							user={user.data}
 							isSetImg={pickImage}
 							chooseAvatar={chooseAvatar}
 						/>
 						<Text className='text-white text-center text-base font-bold mt-1'>
 							Set profile picture
 						</Text>
-						<EditProfileFields control={control} isLoading={delayedIsLoading} />
+						<EditProfileFields
+							control={control}
+							isLoading={delayedIsLoading}
+							Submit={Submit}
+						/>
 						<Pressable
 							className='bg-red-700 w-full h-14 mx-auto mt-10  rounded-2xl flex justify-center'
 							onPress={handleSubmit(onSubmit)}

@@ -16,13 +16,13 @@ import { ProfileService } from '@/services/profile/profile.service'
 import { useAuth } from '@/hooks/useAuth'
 import { Helper } from '@/components/screens/Helper'
 
-const queryClient = new QueryClient({
-	defaultOptions: {
-		queries: {
-			refetchOnWindowFocus: false
-		}
-	}
-})
+// const queryClient = new QueryClient({
+// 	defaultOptions: {
+// 		queries: {
+// 			refetchOnWindowFocus: false
+// 		}
+// 	}
+// })
 
 export default function App() {
 	const postUrl = process.env.REACT_APP_SERVER_URL
@@ -30,6 +30,16 @@ export default function App() {
 	const [notification, setNotification] = useState(false)
 	const notificationListener = useRef()
 	const responseListener = useRef()
+	const [queryClient] = useState(
+		() =>
+			new QueryClient({
+				defaultOptions: {
+					queries: {
+						refetchOnWindowFocus: false
+					}
+				}
+			})
+	)
 
 	useEffect(() => {
 		registerForPushNotificationsAsync().then(token => {
@@ -44,7 +54,7 @@ export default function App() {
 		//@ts-ignore
 		responseListener.current =
 			Notifications.addNotificationResponseReceivedListener(response => {
-				console.log(response)
+				//console.log(response)
 			})
 		return () => {
 			//@ts-ignore
@@ -53,7 +63,7 @@ export default function App() {
 			Notifications.removeNotificationSubscription(responseListener.current)
 		}
 	}, [])
-	console.log('notification', expoPushToken)
+	//console.log('notification', expoPushToken)
 
 	return (
 		<>

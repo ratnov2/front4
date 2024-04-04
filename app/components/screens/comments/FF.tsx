@@ -35,6 +35,7 @@ export const VirtualizedList: FC<IVirtualizedList> = forwardRef(
 				scrollEnabled={shouldScroll}
 				keyExtractor={() => 'key'}
 				renderItem={null}
+				keyboardShouldPersistTaps='handled'
 				ListHeaderComponent={<>{children}</>}
 			/>
 		)

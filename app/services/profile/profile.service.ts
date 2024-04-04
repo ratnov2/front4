@@ -132,7 +132,6 @@ export type TypeUpdateFavoritePhoto = {
 export type TypeEditProfile = {
 	firtsName: string
 	lastName: string
-	avatar: string
 	isLoading: boolean
 }
 

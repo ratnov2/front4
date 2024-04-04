@@ -16,7 +16,6 @@ export const MainProfile: FC = () => {
 			AsyncStorage.setItem('cashed-my-profile', JSON.stringify(data))
 		}
 	})
-	const queryClient = useQueryClient()
 
 	const [userState, setUserState] = useState<IProfile | null>(null)
 	useEffect(() => {

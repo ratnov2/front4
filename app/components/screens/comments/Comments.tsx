@@ -5,9 +5,11 @@ import { useNavigation, useRoute } from '@react-navigation/native'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { FC, memo, useEffect, useRef, useState } from 'react'
 import {
+	ActivityIndicator,
 	Animated,
 	FlatList,
 	ImageBackground,
+	KeyboardAvoidingView,
 	NativeScrollEvent,
 	NativeSyntheticEvent,
 	PanResponder,
@@ -27,15 +29,20 @@ import { PhotoUser } from './PhotoUser'
 import { BaseImageUrl } from '@/services/api/interceptors.api'
 import { Image } from 'react-native'
 import { BlurView } from 'expo-blur'
-import { AntDesign, Feather, Ionicons } from '@expo/vector-icons'
+import { AntDesign, Feather, Ionicons, MaterialIcons } from '@expo/vector-icons'
 import { Devider, EmodziComment } from './CommentEmodzi'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useStorePhoto } from '../home/element-photo/useStorePhoto'
-import { ILatestInside, ILatestPhoto } from '@/shared/types/profile.interface'
+import {
+	ILatestInside,
+	ILatestPhoto,
+	IProfile
+} from '@/shared/types/profile.interface'
 import { HeaderProfile } from '../profile/Profile'
 import { LayoutOpacityComment } from '@/navigation/ui/LayoutOpacityComment'
 import { DraggableImg } from './DraggableImg'
 import { VirtualizedList } from './FF'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 export const Comments = () => {
 	// useEffect(() => {
@@ -101,11 +108,12 @@ export const Comments = () => {
 	//console.log(userPosts.isLoading)
 
 	const queryClient = useQueryClient()
-
+	
 	// Предположим, 'myQueryKey' - это ключ вашего запроса
 	const queryKey3 = 'get-latest-people'
 	const queryKey2 = 'get-latest-friends'
 	const queryKey = 'get-profile'
+	const user3 = useQuery<IProfile>(['get-profile'])
 
 	//Получите данные из кеша по ключу
 	const dataFromCache: ILatestInside[] | undefined = queryClient.getQueryData([
@@ -201,44 +209,128 @@ export const Comments = () => {
 			setButtonVisible(true)
 		}
 	}
+
+	const addMainComment = useMutation(
+		['add-main-comment'],
+		(data: { message: string; created: Date }) =>
+			ProfileService.addMainComment(data),
+
+		{
+			onMutate: async newF => {
+				queryClient.cancelQueries({ queryKey: ['get-profile'] })
+				const previous = queryClient.getQueryData(['get-profile'])
+				queryClient.setQueryData(['get-profile'], (data2?: IProfile) => {
+					if (!data2) return data2
+					const newDate = JSON.parse(JSON.stringify(data2))
+					newDate.latestPhoto.comment = newF.message
+					return newDate
+				})
+			},
+			onSuccess: dataRes => {
+				queryClient.setQueryData(['get-profile'], (data?: IProfile) => {
+					if (!data) return data
+					const newDate = JSON.parse(JSON.stringify(data))
+					newDate.latestPhoto.comment = dataRes.data
+					queryClient.invalidateQueries(['get-profile'])
+					return newDate
+				})
+			}
+		}
+	)
+
 	return (
 		<View className='flex-1'>
 			<LayoutOpacityComment created={(params as any).created}>
 				{userPosts.data && (
-					<VirtualizedList shouldScroll={shouldScroll} ref={scrollFlatRef}>
-						<ShareHeader
-							toggleScroll={toggleScroll}
-							userMainInfo={userMainInfo}
-						/>
-						<FlatList
-							onScroll={handleScroll}
-							onLayout={event =>
-								setOffsetScroll(event.nativeEvent.layout.height)
-							}
-							data={comments}
-							keyExtractor={(item, index) => item.created + index.toString()}
-							renderItem={({ item }) => (
-								<CommentElement
-									message={item.comment}
-									avatar={item.avatar}
-									created={item.created}
-									email={item.firstName}
-									key={item.comment}
-									firstName={item.firstName}
-									id={item._id}
-									isLoading={(item as any)?.isLoading}
-								/>
+					<KeyboardAvoidingView behavior='padding'>
+						<VirtualizedList
+							shouldScroll={shouldScroll}
+							ref={scrollFlatRef}
+							keyboardShouldPersistTaps='handled'
+						>
+							<ShareHeader
+								toggleScroll={toggleScroll}
+								userMainInfo={userMainInfo}
+							/>
+							<FlatList
+								onScroll={handleScroll}
+								onLayout={event =>
+									setOffsetScroll(event.nativeEvent.layout.height)
+								}
+								data={comments}
+								keyExtractor={(item, index) => item.created + index.toString()}
+								renderItem={({ item }) => {
+									if (item._id === user3.data?._id) {
+										return (
+											<CommentElement
+												message={item.comment}
+												avatar={user3.data.avatar}
+												created={item.created}
+												email={user3.data.firstName}
+												key={item.comment}
+												firstName={user3.data.firstName}
+												id={user3.data._id}
+												isLoading={(item as any)?.isLoading}
+											/>
+										)
+									} else
+										return (
+											<CommentElement
+												message={item.comment}
+												avatar={item.avatar}
+												created={item.created}
+												email={item.firstName}
+												key={item.comment}
+												firstName={item.firstName}
+												id={item._id}
+												isLoading={(item as any)?.isLoading}
+											/>
+										)
+								}}
+							/>
+							{userPosts.data.length === 0 && (
+								<View className='mt-7'>
+									<Text className='text-center text-2xl font-medium text-neutral-500'>
+										No comments yet
+									</Text>
+								</View>
 							)}
-						/>
-						{userPosts.data.length === 0 && (
-							<View className='mt-7'>
-								<Text className='text-center text-2xl font-medium text-neutral-500'>
-									No comments yet
-								</Text>
+							<View className='h-[30px]'></View>
+							<View className='w-full bg-[#111111]'>
+								<View className='bg-neutral-600 h-[1px] w-full'></View>
+								<View className='w-full flex-row'>
+									<TextInput
+										value={value}
+										onChangeText={e => setValue(e)}
+										className='text-white p-2 flex-1 text-xl'
+										placeholder='Add comment...'
+									/>
+									<TouchableOpacity
+										disabled={!value}
+										onPress={() =>
+											sendMessage({
+												created: (params as any).created,
+												message: value,
+												userId: (params as any)._id
+											})
+										}
+										className='mx-2 flex justify-center bg-inherit'
+									>
+										<Ionicons
+											name='send'
+											size={24}
+											color={value ? '#ff2' : '#121'}
+										/>
+									</TouchableOpacity>
+								</View>
+								<View className='bg-neutral-600 h-[1px] w-full'></View>
+								<View
+									className=' w-full'
+									style={{ height: insets.bottom }}
+								></View>
 							</View>
-						)}
-						<View className='h-[100px]'></View>
-					</VirtualizedList>
+						</VirtualizedList>
+					</KeyboardAvoidingView>
 				)}
 				{/* {!isButtonVisible && ( */}
 				{/* <Pressable
@@ -249,33 +341,12 @@ export const Comments = () => {
 					<AntDesign name='downcircle' size={44} color='gray' />
 				</Pressable> */}
 			</LayoutOpacityComment>
-
-			<View className='absolute bottom-0 flex-1 w-full bg-[#111111]'>
-				<View className='bg-neutral-600 h-[1px] w-full'></View>
-				<View className=' w-full flex-row'>
-					<TextInput
-						value={value}
-						onChangeText={e => setValue(e)}
-						className='text-white p-2 flex-1 text-xl'
-						placeholder='Add comment...'
-					/>
-					<TouchableOpacity
-						disabled={!value}
-						onPress={() =>
-							sendMessage({
-								created: (params as any).created,
-								message: value,
-								userId: (params as any)._id
-							})
-						}
-						className='mx-2 flex justify-center bg-inherit'
-					>
-						<Ionicons name='send' size={24} color={value ? '#ff2' : '#121'} />
-					</TouchableOpacity>
-				</View>
-				<View className='bg-neutral-600 h-[1px] w-full'></View>
-				<View className=' w-full' style={{ height: insets.bottom }}></View>
-			</View>
+			{/* <TextInput
+				value={value}
+				onChangeText={e => setValue(e)}
+				className='text-white p-2 flex-1 text-xl'
+				placeholder='Add comment...'
+			/> */}
 		</View>
 	)
 }
@@ -298,9 +369,58 @@ interface IHeaderComponent {
 	toggleScroll: (scroll: boolean) => void
 }
 
- const HeaderComponent: FC<IHeaderComponent> = memo(
+const HeaderComponent: FC<IHeaderComponent> = memo(
 	({ userMainInfo, toggleScroll }) => {
+		const queryClient = useQueryClient()
+
+		const user = useQuery<IProfile>(['get-profile'])
+		const addMainComment = useMutation(
+			['add-main-comment'],
+			(data: { message: string; created: Date }) =>
+				ProfileService.addMainComment(data),
+			{
+				onSuccess: dataRes => {
+					queryClient.setQueryData(['get-profile'], (data?: IProfile) => {
+						if (!data) return data
+						const newDate = JSON.parse(JSON.stringify(data))
+						newDate.latestPhoto.comment = dataRes.data
+						queryClient.refetchQueries(['get-profile'])
+						//setUserDataQuery && setUserDataQuery(newDate)
+						return newDate
+					})
+					// queryClient.setQueryData(
+					// 	['get-latest-people'],
+					// 	(data?: ILatestInside[]) => {
+					// 		if (!data) return data
+					// 		const newData = [...data]
+					// 		for (let i = 0; i < data.length; i++) {
+					// 			if (data[i]._id._id === user2._id) {
+					// 				newData[i].latestPhoto.comment = dataRes.data
+					// 				break
+					// 			}
+					// 		}
+					// 		return [...data]
+					// 	}
+					// )
+					//setCommentAuth(dataRes.data)
+					setIsMessage(false)
+				}
+			}
+		)
+		const handleButtonPress = () => {
+			setIsMessage(true)
+		}
+
+		const [value, setValue] = useState(userMainInfo.latestPhoto.comment)
+		const [isMessage, setIsMessage] = useState(false)
 		const { top } = useSafeAreaInsets()
+		const textInputRef = useRef<TextInput>(null)
+		useEffect(() => {
+			if (isMessage && textInputRef.current) {
+				textInputRef.current.focus()
+			}
+		}, [isMessage])
+
 		return (
 			<View className='flex-1' style={{ aspectRatio: 9 / 14 }}>
 				<View style={{ height: top + 20 }} />
@@ -332,7 +452,75 @@ interface IHeaderComponent {
 						toggleScroll={toggleScroll}
 					/>
 				</View>
-				<View className='h-20' />
+				<View className='h-20 justify-center mx-4'>
+					{user.data?._id === userMainInfo._id._id && !isMessage ? (
+						<TouchableOpacity onPress={handleButtonPress}>
+							<Text className='text-white text-center'>
+								{user.data?.latestPhoto.comment || '...'}
+							</Text>
+						</TouchableOpacity>
+					) : (
+						user.data?._id === userMainInfo._id._id &&
+						isMessage && (
+							<View>
+								<View
+									className={`flex-row items-center border-[1px] border-solid border-stone-700 rounded-lg ${
+										addMainComment.isLoading && 'bg-stone-900 text-stone-800'
+									}`}
+									//onPointerDown={() => console.log('@@@')}
+								>
+									<TextInput
+										ref={textInputRef}
+										value={value}
+										onChangeText={e => setValue(e)}
+										className={`p-2 rounded-lg flex-1 color-white  ${
+											addMainComment.isLoading && ' text-stone-600'
+										}`}
+										pointerEvents={addMainComment.isLoading ? 'none' : 'auto'}
+										placeholder='input text'
+										onBlur={() => {
+											!addMainComment.isLoading && setIsMessage(false)
+										}}
+										onSubmitEditing={() =>
+											addMainComment.mutate({
+												message: value,
+												created: userMainInfo.latestPhoto.created
+											})
+										}
+									>
+										{/* <View className='bg-yellow-300 w-20 h-20 absolute right-0 bottom-0'></View> */}
+									</TextInput>
+
+									{!addMainComment.isLoading ? (
+										<TouchableOpacity
+											className='mx-2'
+											onPress={() => {
+												addMainComment.mutate({
+													message: value,
+													created: userMainInfo.latestPhoto.created
+												})
+											}}
+										>
+											<MaterialIcons name='send' size={24} color='white' />
+										</TouchableOpacity>
+									) : (
+										<ActivityIndicator
+											className='mx-2'
+											size={24}
+											color='white'
+										/>
+									)}
+								</View>
+							</View>
+						)
+					)}
+
+					{user.data?._id !== userMainInfo._id._id && (
+						<Text className='text-white text-center'>
+							{userMainInfo.latestPhoto.comment}
+						</Text>
+					)}
+				</View>
 			</View>
 		)
 	}

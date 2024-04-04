@@ -9,12 +9,14 @@ export interface IEditProfileFields {
 	control: Control<TypeEditProfile> | any
 	isPassRequired?: boolean
 	isLoading: boolean
+	Submit: () => void
 }
 
 const EditProfileFields: FC<IEditProfileFields> = ({
 	control,
 	isLoading,
-	isPassRequired
+	isPassRequired,
+	Submit
 }) => {
 	return (
 		<>
@@ -25,10 +27,12 @@ const EditProfileFields: FC<IEditProfileFields> = ({
 					name='firstName'
 					placeholder='Enter firstName'
 					isLoading={isLoading}
+					onSubmitEditing={Submit}
 					// isLoading={false}
 					// rules={{
 					// 	required: 'firstName',
 					// }}
+					className='text-xl h-10'
 					keyboardType='default'
 				/>
 			</View>
@@ -38,6 +42,8 @@ const EditProfileFields: FC<IEditProfileFields> = ({
 				name='lastName'
 				placeholder='Enter lastName'
 				isLoading={isLoading}
+				onSubmitEditing={Submit}
+				className='text-xl h-10'
 				// secureTextEntry
 				// rules={{
 				// 	required: 'Password is required',

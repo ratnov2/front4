@@ -23,7 +23,7 @@ export const LayoutOpacityComment: FC<ILayoutOpacityComment> = ({
 	const { navigate } = useNavigation<any>()
 	return (
 		<View className='flex-1 relative'>
-			<View className='flex-1'>{children}</View>
+			<View>{children}</View>
 			<View
 				style={{ top: insets.top, zIndex: 10000000000 }}
 				className='flex-row items-center absolute w-full'

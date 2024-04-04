@@ -17,21 +17,17 @@ import { BaseImageUrl2 } from '@/services/api/interceptors.api'
 export const OtherUserProfile = () => {
 	const { params } = useRoute<any>()
 
-	const { user } = useAuth()
-
 	const addFriend = useMutation(
 		['add-friend'],
 		(data: { friendId: string; status: '0' | '1' | '2' }) =>
 			FriendsService.addFriend(data)
 	)
 
-	const getUser = useQuery(['get-user-by-by-id'], () =>
+	const getUser = useQuery([`get-user-${params.id}`], () =>
 		ProfileService.getUser(params?.id)
 	)
 
-	const getMe = useQuery(['get-me'], () =>
-		ProfileService.getUser(String(user?._id))
-	)
+	const getMe = useQuery(['get-profile'], () => ProfileService.getProfile())
 
 	const myFriends = useQuery(['get-my-friends'], () => {
 		return FriendsService.getAllFriends()
@@ -39,7 +35,7 @@ export const OtherUserProfile = () => {
 	const [typeFriend, setTypeFriend] = useState<'0' | '1' | '2' | '3' | null>(
 		null
 	)
-	//console.log(getUser.data?.friendship);
+
 
 	useEffect(() => {
 		if (
@@ -48,6 +44,8 @@ export const OtherUserProfile = () => {
 			!getMe.isLoading &&
 			getMe.data
 		) {
+			console.log('W@MY FRIEBNDS');
+			
 			for (let i = 0; i < myFriends.data.friendship.length; i++) {
 				if (myFriends.data.friendship[i]?.friends._id === params.id) {
 					setTypeFriend(myFriends.data.friendship[i].status)
@@ -56,11 +54,14 @@ export const OtherUserProfile = () => {
 				setTypeFriend(null)
 			}
 		}
-	}, [myFriends.data, getMe.data, myFriends.isFetched])
+	}, [myFriends.data, getMe.data, myFriends.isFetched, params.id])
+
+	useEffect(() => {
+		return setError(false)
+	}, [params.id])
 	const navigate = useNavigation()
 	const { handleModalVisible, modalVisible, userDataForModal } = useModalState()
 	const [error, setError] = useState(false)
-	//console.log(getUser.data);
 
 	return (
 		<View>

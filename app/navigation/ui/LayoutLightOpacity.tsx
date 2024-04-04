@@ -2,7 +2,15 @@ import { AntDesign, Ionicons } from '@expo/vector-icons'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useNavigation } from 'expo-router'
 import { FC, ReactNode } from 'react'
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import {
+	KeyboardAvoidingView,
+	KeyboardAvoidingViewBase,
+	ScrollView,
+	Text,
+	TouchableOpacity,
+	View
+} from 'react-native'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 interface LayoutLightOpacity {
@@ -21,14 +29,23 @@ export const LayoutLightOpacity: FC<LayoutLightOpacity> = ({
 	const insets = useSafeAreaInsets()
 	return (
 		<View className={`flex-1 relative ${padding}`}>
-			<ScrollView
-				style={{ paddingTop: insets.top + 40 }}
+			<KeyboardAwareScrollView
 				className='flex-1'
-				showsVerticalScrollIndicator={false}
+				keyboardShouldPersistTaps='handled'
 			>
-				{children}
-				<View style={{ height: insets.bottom + 150 }} />
-			</ScrollView>
+				<ScrollView
+					style={{
+						paddingTop: insets.top + 40,
+						backgroundColor: 'transparent'
+					}}
+					keyboardShouldPersistTaps='handled'
+					className='flex-1'
+					showsVerticalScrollIndicator={false}
+				>
+					{children}
+					<View style={{ height: insets.bottom + 150 }} />
+				</ScrollView>
+			</KeyboardAwareScrollView>
 			{/* <LinearGradient
 				colors={['#00000000', '#111111']}
 				style={{
