@@ -13,6 +13,7 @@ export const useMutateAddFriend = (
 		[id, status],
 		(data: { friendId: string; status: '0' | '1' | '2' | '3' }) =>
 			FriendsService.addFriend(data),
+			
 		{
 			onSuccess: userInfo => {
 				setTimeout(() => {

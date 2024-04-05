@@ -52,7 +52,7 @@ export const ProfileService = {
 		})
 		return response
 	},
-	async addMainComment(data: { message: string; created: Date }) {
+	async addMainComment(data: { message: string; created: string }) {
 		const response = await instance({
 			url: getUsersUrl(`/profile/main-message`),
 			method: 'POST',

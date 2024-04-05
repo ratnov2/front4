@@ -12,7 +12,7 @@ export const useSearchingFriends = (id: string) => {
 
 	//const { push } = useRouter()
 	const getUserByName = useQuery(
-		['get-user-by-name'],
+		[`get-user-by-name`],
 		() => FriendsService.getUserByName({ name: value, id }),
 		{
 			onSuccess: () => {

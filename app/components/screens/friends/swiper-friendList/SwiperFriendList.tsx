@@ -47,6 +47,7 @@ export const SwiperFriendList: FC<ISwiperFriendList> = ({
 			showsPagination={false}
 			ref={swiperRef}
 			loop={false}
+			keyboardShouldPersistTaps='handled'
 			index={activeIndex}
 			onIndexChanged={(index: number) => {
 				setActiveIndex(index)
@@ -58,6 +59,7 @@ export const SwiperFriendList: FC<ISwiperFriendList> = ({
 				<ShareBody
 					handlerChangeText={handlerChangeText}
 					key={component.key}
+					
 					value={value}
 				>
 					{component}

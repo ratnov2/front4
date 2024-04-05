@@ -105,7 +105,8 @@ export const EditProfile = () => {
 			FilesService.pushPhoto(form, path),
 		{
 			onSuccess: () => {
-				queryClient.refetchQueries(['get-profile'])
+				//queryClient.refetchQueries(['get-profile'])
+				user.refetch()
 				navigate('Profile')
 			}
 		}

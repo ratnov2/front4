@@ -64,7 +64,7 @@ export const Comments = () => {
 			onSuccess: data => {
 				const newData = []
 				for (let i = 0; i < data.length; i++) {
-					newData.push({ ...data[i % 10], IDD: i })
+					newData.push({ ...data[i], IDD: i })
 				}
 				setComments(newData)
 			}
@@ -75,8 +75,21 @@ export const Comments = () => {
 		(data: { message: string; created: string; userId: string }) =>
 			ProfileService.addUserMessage(data),
 		{
-			onSuccess: () => {
+			onSuccess: data => {
 				userPosts.refetch()
+				//LOOK
+				user3.refetch()
+				latestPeople.refetch()
+				latestFriends.refetch()
+				//LOOK
+				// queryClient.setQueryData(['get-profile'], (data?: IProfile) => {
+				// 	if (!data) return data
+				// 	const newDate = JSON.parse(JSON.stringify(data))
+				// 	// queryClient.cancelQueries(['get-profile'])
+
+				// 	queryClient.invalidateQueries(['get-profile'])
+				// 	return newDate
+				// })
 			}
 		}
 	)
@@ -85,15 +98,13 @@ export const Comments = () => {
 		created: string
 		userId: string
 	}) => {
+		if (!user3.data) return
 		const comment = {
-			//@ts-ignore
-			_id: dataFromCache?._id,
-			//@ts-ignore
-			avatar: dataFromCache.avatar,
+			_id: user3.data?._id,
+			avatar: user3.data?.avatar,
 			comment: data.message,
 			created: data.created,
-			//@ts-ignore
-			firstName: dataFromCache.firstName,
+			firstName: user3.data?.firstName,
 			isLoading: true
 		}
 
@@ -108,17 +119,18 @@ export const Comments = () => {
 	//console.log(userPosts.isLoading)
 
 	const queryClient = useQueryClient()
-	
+
 	// Предположим, 'myQueryKey' - это ключ вашего запроса
 	const queryKey3 = 'get-latest-people'
 	const queryKey2 = 'get-latest-friends'
-	const queryKey = 'get-profile'
 	const user3 = useQuery<IProfile>(['get-profile'])
+	///correct PLZ
+	const latestPeople = useQuery<IProfile>(['get-latest-people'])
+	const latestFriends = useQuery<IProfile>(['get-latest-friends'])
+	///correct PLZ
 
 	//Получите данные из кеша по ключу
-	const dataFromCache: ILatestInside[] | undefined = queryClient.getQueryData([
-		queryKey
-	])
+
 	const dataFromCache2: ILatestInside[] | undefined = queryClient.getQueryData([
 		queryKey2
 	])
@@ -126,33 +138,29 @@ export const Comments = () => {
 		queryKey3
 	])
 	//get-latest-photo
-	const [userMainInfo, setUserMainInfo] = useState<ILatestInside>(
+	const [userMainInfo] = useState<ILatestInside>(
 		//@ts-ignore
 		(() => {
-			//console.log("dataFromCache", dataFromCache);
-			//@ts-ignore
-			const data = dataFromCache?.calendarPhotos?.filter(user => {
-				//@ts-ignore
-				return user._id === typeParam._id
-			})[0]
-
-			if (data && Object.entries(data).length !== 0)
+			if (user3.data && user3.data.latestPhoto.created === typeParam.created)
 				return {
-					...data,
-					latestPhoto: { photos: data.photos },
-					//@ts-ignore
-					avatar: dataFromCache.avatar,
-					//@ts-ignore
-					_id: dataFromCache._id,
-					//@ts-ignore
-					firstName: dataFromCache.firstName
+					...user3.data,
+					_id: {
+						_id: user3.data._id
+					},
+					latestPhoto: {
+						photos: user3.data.latestPhoto.photos,
+						comment: user3.data.latestPhoto.comment,
+						photoReactions: user3.data.latestPhoto.photoReactions
+					},
+
+					avatar: user3.data?.avatar,
+					firstName: user3.data?.firstName
 				}
 			//@ts-ignore
 			if (dataFromCache2[0]?._id === typeParam._id) {
 				//@ts-ignore
 				return dataFromCache2[0]
 			}
-			//console.log('wefwefwef',dataFromCache2);
 			//@ts-ignore
 			const data3 = dataFromCache3.filter(user => {
 				//@ts-ignore
@@ -171,8 +179,8 @@ export const Comments = () => {
 			//console.log(dataFromCache2)
 		})()
 	)
+	//console.log(JSON.stringify(userMainInfo.latestPhoto.photos, null, 2))
 
-	//console.log('userMainInfo', userMainInfo, typeParam)
 	const [value, setValue] = useState('')
 
 	const scrollFlatRef = useRef<FlatList>(null)
@@ -210,33 +218,33 @@ export const Comments = () => {
 		}
 	}
 
-	const addMainComment = useMutation(
-		['add-main-comment'],
-		(data: { message: string; created: Date }) =>
-			ProfileService.addMainComment(data),
+	// const addMainComment = useMutation(
+	// 	['add-main-comment'],
+	// 	(data: { message: string; created: Date }) =>
+	// 		ProfileService.addMainComment(data),
 
-		{
-			onMutate: async newF => {
-				queryClient.cancelQueries({ queryKey: ['get-profile'] })
-				const previous = queryClient.getQueryData(['get-profile'])
-				queryClient.setQueryData(['get-profile'], (data2?: IProfile) => {
-					if (!data2) return data2
-					const newDate = JSON.parse(JSON.stringify(data2))
-					newDate.latestPhoto.comment = newF.message
-					return newDate
-				})
-			},
-			onSuccess: dataRes => {
-				queryClient.setQueryData(['get-profile'], (data?: IProfile) => {
-					if (!data) return data
-					const newDate = JSON.parse(JSON.stringify(data))
-					newDate.latestPhoto.comment = dataRes.data
-					queryClient.invalidateQueries(['get-profile'])
-					return newDate
-				})
-			}
-		}
-	)
+	// 	{
+	// 		onMutate: async newF => {
+	// 			queryClient.cancelQueries({ queryKey: ['get-profile'] })
+	// 			const previous = queryClient.getQueryData(['get-profile'])
+	// 			queryClient.setQueryData(['get-profile'], (data2?: IProfile) => {
+	// 				if (!data2) return data2
+	// 				const newDate = JSON.parse(JSON.stringify(data2))
+	// 				newDate.latestPhoto.comment = newF.message
+	// 				return newDate
+	// 			})
+	// 		},
+	// 		onSuccess: dataRes => {
+	// 			queryClient.setQueryData(['get-profile'], (data?: IProfile) => {
+	// 				if (!data) return data
+	// 				const newDate = JSON.parse(JSON.stringify(data))
+	// 				newDate.latestPhoto.comment = dataRes.data
+	// 				queryClient.invalidateQueries(['get-profile'])
+	// 				return newDate
+	// 			})
+	// 		}
+	// 	}
+	// )
 
 	return (
 		<View className='flex-1'>
@@ -376,33 +384,19 @@ const HeaderComponent: FC<IHeaderComponent> = memo(
 		const user = useQuery<IProfile>(['get-profile'])
 		const addMainComment = useMutation(
 			['add-main-comment'],
-			(data: { message: string; created: Date }) =>
+			(data: { message: string; created: string }) =>
 				ProfileService.addMainComment(data),
 			{
 				onSuccess: dataRes => {
 					queryClient.setQueryData(['get-profile'], (data?: IProfile) => {
 						if (!data) return data
 						const newDate = JSON.parse(JSON.stringify(data))
-						newDate.latestPhoto.comment = dataRes.data
-						queryClient.refetchQueries(['get-profile'])
+						//newDate.latestPhoto.comment = dataRes.data
+						//queryClient.refetchQueries(['get-profile'])
+						user.refetch()
 						//setUserDataQuery && setUserDataQuery(newDate)
 						return newDate
 					})
-					// queryClient.setQueryData(
-					// 	['get-latest-people'],
-					// 	(data?: ILatestInside[]) => {
-					// 		if (!data) return data
-					// 		const newData = [...data]
-					// 		for (let i = 0; i < data.length; i++) {
-					// 			if (data[i]._id._id === user2._id) {
-					// 				newData[i].latestPhoto.comment = dataRes.data
-					// 				break
-					// 			}
-					// 		}
-					// 		return [...data]
-					// 	}
-					// )
-					//setCommentAuth(dataRes.data)
 					setIsMessage(false)
 				}
 			}
@@ -420,7 +414,8 @@ const HeaderComponent: FC<IHeaderComponent> = memo(
 				textInputRef.current.focus()
 			}
 		}, [isMessage])
-
+		//console.log(user.data?._id,userMainInfo._id  );
+		
 		return (
 			<View className='flex-1' style={{ aspectRatio: 9 / 14 }}>
 				<View style={{ height: top + 20 }} />
@@ -467,7 +462,6 @@ const HeaderComponent: FC<IHeaderComponent> = memo(
 									className={`flex-row items-center border-[1px] border-solid border-stone-700 rounded-lg ${
 										addMainComment.isLoading && 'bg-stone-900 text-stone-800'
 									}`}
-									//onPointerDown={() => console.log('@@@')}
 								>
 									<TextInput
 										ref={textInputRef}
@@ -534,6 +528,7 @@ const ShareHeader: FC<IHeaderComponent> = memo(
 					userMainInfo={userMainInfo}
 					toggleScroll={toggleScroll}
 				/>
+
 				<EmodziComment
 					//@ts-ignore
 					reactionsData={userMainInfo.latestPhoto.photoReactions}

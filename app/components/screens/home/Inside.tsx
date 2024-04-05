@@ -26,6 +26,7 @@ import * as ScreenOrientation from 'expo-screen-orientation'
 import { ImgAvatar } from '../profile/other-user/OtherUserProfile'
 import { IFriendsip } from '@/services/friends/friends.service'
 import { IFriendsStatus } from '../friends/Friends'
+import { IProfile } from '@/shared/types/profile.interface'
 
 export const Inside = memo(() => {
 	const [frontImage, setFrontImage] = useState<string | null>(null)
@@ -98,7 +99,6 @@ export const Inside = memo(() => {
 		}
 	)
 	//[{"_id": {"_id": "65587d61dbdf73a8b2a442f3", "avatar": "/uploads/avatar/65587d61dbdf73a8b2a442f3/435795e1081764dfc011da2110729610105a.webp", "firstName": "anton"}, "latestPhoto": {"comment": "Qq", "comments": [Array], "created": "2024-03-18T15:15:10.427Z", "photos": [Object]}}
-	const { user } = useAuth()
 
 	const [startCamera, setStartCamera] = useState(false)
 	const __startCamera = async () => {
@@ -132,9 +132,8 @@ export const Inside = memo(() => {
 		}
 	}
 	const myFriends = useQuery<IFriendsip>(['get-my-friends'])
-	console.log(myFriends.data)
 
-	const user2 = useQuery(['get-profile'], () => ProfileService.getProfile())
+
 	const { mutate, isLoading, data } = useMutation(
 		['push-photo'],
 		(form: FormData) => FilesService.pushTwoPhoto(form),
@@ -160,12 +159,12 @@ export const Inside = memo(() => {
 
 	const cron = useQuery(['get-cron-time'], ProfileService.getCronTime)
 	const queryClient = useQueryClient()
-	const userQuery = queryClient.getQueryData(['get-profile']) as any
+	const user = useQuery<IProfile>(['get-profile'])
 	const [userDataFromQuery, setUserDataQuery] = useState({
-		latestPhoto: { ...userQuery.latestPhoto },
-		avatar: userQuery.avatar,
-		_id: userQuery._id,
-		firstName: userQuery.firstName
+		latestPhoto: { ...user?.data?.latestPhoto },
+		avatar: user.data?.avatar,
+		_id: user.data?._id,
+		firstName: user.data?.firstName
 	})
 
 	//('userQuery', userQuery.latestPhoto.comment)
@@ -218,15 +217,14 @@ export const Inside = memo(() => {
 					<View className='h-14' />
 					{typeOfCalendarPhotos === 'my_friends' ? (
 						<DismissKeyboard>
-							{!!userQuery?.latestPhoto &&
-								IsTiming(cron.data, userQuery.latestPhoto.created || null) && (
+							{!!userDataFromQuery.latestPhoto &&
+								IsTiming(cron.data, user.data?.latestPhoto.created || null) && (
 									<ElementPhoto
 										photo={userDataFromQuery}
 										toggleScroll={toggleScroll}
 										refetch={() => latestPhoto.refetch()}
-										reactions={userQuery.latestPhoto?.photoReactions}
+										reactions={user.data?.latestPhoto?.photoReactions}
 										startCamera={() => __startCamera()}
-										setUserDataQuery={(data: any) => setUserDataQuery(data)}
 									/>
 								)}
 							{latestPhoto?.isLoading ? (
@@ -258,7 +256,7 @@ export const Inside = memo(() => {
 								>
 									<View>
 										<Text style={{ color: '#FFFFFF', fontWeight: 'bold' }}>
-											Здесь пока нет фото пользователей
+											Здесь пока нет фото ваших друзей
 										</Text>
 									</View>
 								</View>
@@ -274,7 +272,7 @@ export const Inside = memo(() => {
 							) : latestPhotoOther.data && latestPhotoOther.data.length > 0 ? (
 								<View className='h-full'>
 									{latestPhotoOther.data?.map((photo, key) => {
-										if (photo._id === user?._id) return null
+										if (photo._id === user.data?._id) return null
 										return (
 											<ElementPhoto
 												//@ts-ignore
@@ -310,8 +308,8 @@ export const Inside = memo(() => {
 				</LayoutOpacityItems>
 			)}
 			{!startCamera &&
-				user &&
-				!IsTiming(cron.data, userQuery.latestPhoto?.created || null) && (
+				user.data &&
+				!IsTiming(cron.data, user.data.latestPhoto?.created || null) && (
 					<View>
 						<View
 							style={{ height: 50, flex: 1 }}

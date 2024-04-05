@@ -17,6 +17,7 @@ export const FriendsSearchResult = () => {
 
 	const navigate = useNavigation()
 	const { handleModalVisible, modalVisible, userDataForModal } = useModalState()
+	console.log(JSON.stringify(getUserByName.data, null, 2))
 
 	return (
 		<View className='flex-1 w-full z-[20] rounded-xl p-4 mt-6'>

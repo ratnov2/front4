@@ -132,7 +132,7 @@ export const Calendar = () => {
 				</View>
 			</Modal>
 			{user && (
-				<View>
+				<View className='justify-center'>
 					{(() => {
 						const calendarPhotos = user.calendarPhotos
 						let date = new Date()
@@ -202,13 +202,13 @@ export const Calendar = () => {
 						}
 						return dateMassive.map((el, key) => {
 							return (
-								<View key={key}>
+								<View key={key} className=''>
 									<View>
 										<Text className='text-white text-center text-2xl'>
 											{el.month}
 										</Text>
 									</View>
-									<View className='flex-row flex-wrap justify-around'>
+									<View className='flex-row flex-wrap justify-center'>
 										{el.array.map((el, key) => {
 											return (
 												<View

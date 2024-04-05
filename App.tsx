@@ -15,6 +15,7 @@ import * as Notifications from 'expo-notifications'
 import { ProfileService } from '@/services/profile/profile.service'
 import { useAuth } from '@/hooks/useAuth'
 import { Helper } from '@/components/screens/Helper'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
 
 // const queryClient = new QueryClient({
 // 	defaultOptions: {
@@ -81,12 +82,13 @@ export default function App() {
 			<QueryClientProvider client={queryClient}>
 				<AuthProvider>
 					<Helper deviceToken={expoPushToken} />
-
-					<ContactsDataProvider>
-						<SafeAreaProvider>
-							<Navigation />
-						</SafeAreaProvider>
-					</ContactsDataProvider>
+					<GestureHandlerRootView style={{ flex: 1 }}>
+						<ContactsDataProvider>
+							<SafeAreaProvider>
+								<Navigation />
+							</SafeAreaProvider>
+						</ContactsDataProvider>
+					</GestureHandlerRootView>
 				</AuthProvider>
 				<StatusBar barStyle='light-content' />
 				<Toast />

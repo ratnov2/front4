@@ -23,12 +23,11 @@ export const EmodziComment: FC<IEmodziComment> = ({
 	const { user } = useAuth()
 	if (!user) return null
 	const { navigate } = useNavigation<any>()
-	console.log(reactionsData);
 	
 	return (
 		<View className={`mt-4 ${style} mx-2`}>
 			<View className='flex-row'>
-				{reactionsData.length > 0 ? (
+				{reactionsData && reactionsData.length > 0 ? (
 					<FlatList
 						data={[...reactionsData]}
 						className='flex-row'

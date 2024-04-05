@@ -2,6 +2,7 @@ export interface IProfile {
 	_id: string
 	email: string
 	calendarPhotos: IPhotos[]
+	latestPhoto: IPhotos
 	createdAt: string
 	favoritePhotos: {
 		photoOne: {

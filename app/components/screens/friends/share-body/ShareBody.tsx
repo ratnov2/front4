@@ -21,7 +21,7 @@ export const ShareBody: FC<IShareBody> = ({
 	const { user } = useAuth()
 	const { getUserByName } = useSearchingFriends(String(user?._id))
 	return (
-		<ScrollView className='px-4'>
+		<ScrollView className='px-4' keyboardShouldPersistTaps='handled'>
 			<SearchInput value={value} handlerChangeText={handlerChangeText} />
 			{getUserByName.data || value ? (
 				<FriendsSearchResult />
