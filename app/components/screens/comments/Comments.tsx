@@ -150,9 +150,10 @@ export const Comments = () => {
 					latestPhoto: {
 						photos: user3.data.latestPhoto.photos,
 						comment: user3.data.latestPhoto.comment,
-						photoReactions: user3.data.latestPhoto.photoReactions
+						photoReactions: user3.data.latestPhoto.photoReactions,
+						created: user3.data.latestPhoto.created
 					},
-
+					//created
 					avatar: user3.data?.avatar,
 					firstName: user3.data?.firstName
 				}
@@ -393,10 +394,11 @@ const HeaderComponent: FC<IHeaderComponent> = memo(
 						const newDate = JSON.parse(JSON.stringify(data))
 						//newDate.latestPhoto.comment = dataRes.data
 						//queryClient.refetchQueries(['get-profile'])
-						user.refetch()
+						
 						//setUserDataQuery && setUserDataQuery(newDate)
 						return newDate
 					})
+					user.refetch()
 					setIsMessage(false)
 				}
 			}
@@ -406,6 +408,8 @@ const HeaderComponent: FC<IHeaderComponent> = memo(
 		}
 
 		const [value, setValue] = useState(userMainInfo.latestPhoto.comment)
+		
+		
 		const [isMessage, setIsMessage] = useState(false)
 		const { top } = useSafeAreaInsets()
 		const textInputRef = useRef<TextInput>(null)
@@ -415,7 +419,7 @@ const HeaderComponent: FC<IHeaderComponent> = memo(
 			}
 		}, [isMessage])
 		//console.log(user.data?._id,userMainInfo._id  );
-		
+
 		return (
 			<View className='flex-1' style={{ aspectRatio: 9 / 14 }}>
 				<View style={{ height: top + 20 }} />
@@ -453,6 +457,16 @@ const HeaderComponent: FC<IHeaderComponent> = memo(
 							<Text className='text-white text-center'>
 								{user.data?.latestPhoto.comment || '...'}
 							</Text>
+							{/* {user.data?.latestPhoto.comment ? (
+							<Text className='text-white mt-2'>
+								{user.data?.latestPhoto.comment || '...'}
+							</Text>
+						) : (
+							<View className='mt-2 mx-2 mb-2 flex-row items-center justify-between  flex-1'>
+								<Text className='text-white'>Add comment</Text>
+								<AntDesign name='pluscircle' size={34} color='white' />
+							</View>
+						)} */}
 						</TouchableOpacity>
 					) : (
 						user.data?._id === userMainInfo._id._id &&

@@ -15,6 +15,7 @@ import {
 } from 'react-native'
 import userPng from '@/assets/user.png'
 import {
+	AntDesign,
 	MaterialCommunityIcons,
 	MaterialIcons,
 	SimpleLineIcons
@@ -185,9 +186,16 @@ export const ElementPhoto: FC<IElementPhoto> = ({
 			<View className=''>
 				{user.data?._id === photo._id && !isMessage ? (
 					<TouchableOpacity onPress={handleButtonPress}>
-						<Text className='text-white mt-4'>
-							{user.data?.latestPhoto.comment || '...'}
-						</Text>
+						{user.data?.latestPhoto.comment ? (
+							<Text className='text-white mt-2'>
+								{user.data?.latestPhoto.comment || '...'}
+							</Text>
+						) : (
+							<View className='mt-2 mx-2 mb-2 flex-row items-center justify-between  flex-1'>
+								<Text className='text-white'>Add comment</Text>
+								<AntDesign name='pluscircle' size={34} color='white' />
+							</View>
+						)}
 					</TouchableOpacity>
 				) : (
 					user.data?._id === photo._id &&
@@ -303,37 +311,11 @@ const Reactions: FC<IReactions> = ({ reactions, userId, created }) => {
 			ProfileService.addReaction({ userId, reaction, created }),
 		{
 			onSuccess: newData => {
-				// queryClient.setQueryData(['get-profile'], (data: any) => {
-				// 	const latestPhotoCopy = { ...data.latestPhoto }
-				// 	latestPhotoCopy.photoReactions = newData
-				// 	setStateReactions([...newData])
-				// 	setIsVisibleSmile(!isVisibleSmile)
-				// 	return {
-				// 		...data,
-				// 		latestPhoto: latestPhotoCopy
-				// 	}
-				// })
-
 				queryClient.refetchQueries(['get-profile'])
 				queryClient.refetchQueries(['get-latest-people'])
 				queryClient.refetchQueries(['get-latest-friends'])
 
 				setIsVisibleSmile(!isVisibleSmile)
-				// queryClient.setQueryData(['get-latest-people'], (data: any) => {
-				// 	for (let i = 0; i < data.length; i++) {
-				// 		// if(data._id._id === ){
-				// 		// 	break
-				// 		// }
-				// 	}
-				// 	// const latestPhotoCopy = { ...data.latestPhoto }
-				// 	// latestPhotoCopy.photoReactions = newData
-				// 	// setStateReactions([...newData])
-				// 	// setIsVisibleSmile(!isVisibleSmile)
-				// 	// return {
-				// 	// 	...data,
-				// 	// 	latestPhoto: latestPhotoCopy
-				// 	// }
-				// })
 			}
 		}
 	)
