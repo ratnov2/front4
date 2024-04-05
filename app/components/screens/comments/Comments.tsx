@@ -394,7 +394,7 @@ const HeaderComponent: FC<IHeaderComponent> = memo(
 						const newDate = JSON.parse(JSON.stringify(data))
 						//newDate.latestPhoto.comment = dataRes.data
 						//queryClient.refetchQueries(['get-profile'])
-						
+
 						//setUserDataQuery && setUserDataQuery(newDate)
 						return newDate
 					})
@@ -408,8 +408,7 @@ const HeaderComponent: FC<IHeaderComponent> = memo(
 		}
 
 		const [value, setValue] = useState(userMainInfo.latestPhoto.comment)
-		
-		
+
 		const [isMessage, setIsMessage] = useState(false)
 		const { top } = useSafeAreaInsets()
 		const textInputRef = useRef<TextInput>(null)
@@ -453,20 +452,17 @@ const HeaderComponent: FC<IHeaderComponent> = memo(
 				</View>
 				<View className='h-20 justify-center mx-4'>
 					{user.data?._id === userMainInfo._id._id && !isMessage ? (
-						<TouchableOpacity onPress={handleButtonPress}>
-							<Text className='text-white text-center'>
-								{user.data?.latestPhoto.comment || '...'}
-							</Text>
-							{/* {user.data?.latestPhoto.comment ? (
-							<Text className='text-white mt-2'>
-								{user.data?.latestPhoto.comment || '...'}
-							</Text>
-						) : (
-							<View className='mt-2 mx-2 mb-2 flex-row items-center justify-between  flex-1'>
-								<Text className='text-white'>Add comment</Text>
-								<AntDesign name='pluscircle' size={34} color='white' />
-							</View>
-						)} */}
+						<TouchableOpacity onPress={handleButtonPress} className='flex-1 justify-center '>
+							{user.data?.latestPhoto.comment ? (
+								<Text className='text-white mt-2 text-center'>
+									{user.data?.latestPhoto.comment || '...'}
+								</Text>
+							) : (
+								<View className='mt-2 mx-2 mb-2 flex-row items-center justify-between flex-1 '>
+									<Text className='text-white'>Add comment</Text>
+									<AntDesign name='pluscircle' size={34} color='white' />
+								</View>
+							)}
 						</TouchableOpacity>
 					) : (
 						user.data?._id === userMainInfo._id._id &&
