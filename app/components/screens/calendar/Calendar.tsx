@@ -52,85 +52,6 @@ export const Calendar = () => {
 			onGoBack={() => navigate('Profile')}
 			padding='px-2'
 		>
-			<Modal
-				animationType='slide'
-				transparent={true}
-				visible={modalVisible}
-				onRequestClose={() => {
-					Alert.alert('Modal has been closed.')
-					setModalVisible(!modalVisible)
-				}}
-			>
-				<View className='bg-red-400  flex-1 justify-center items-center'>
-					<View className='flex-1 w-full bg-black px-10 '>
-						<Pressable
-							onPress={() => setModalVisible(!modalVisible)}
-							className='flex-1'
-						>
-							<View className='h-[15%] items-center' style={{ marginTop: top }}>
-								<Text className='text-white font-bold text-xl'>
-									{user && text(user?.calendarPhotos[modalImg]?.created || '')}
-								</Text>
-								<Text className='text-white/70 text-base -mt-1'>
-									{normalDate(user?.calendarPhotos[modalImg]?.created || '')}
-								</Text>
-							</View>
-							<View className='flex-1 bg-white rounded-2xl overflow-hidden border-2 border-white'>
-								<ImageBackground
-									className='h-full w-full rounded-2xl'
-									source={{
-										uri: BaseImageUrl2(
-											user?.calendarPhotos[modalImg]?.photos?.frontPhoto
-												?.photo ||
-												user?.calendarPhotos[modalImg]?.photos?.backPhoto
-													?.photo ||
-												''
-										)
-									}}
-								/>
-							</View>
-						</Pressable>
-						{'params' && (
-							<View className='text-center h-[25%]'>
-								<Pressable
-									className='border-2  m-auto p-3 rounded-2xl bg-white w-full'
-									onPress={() =>
-										updateFavoritePhoto.mutate({
-											key: 'photoOne',
-											photo:
-												user?.calendarPhotos[modalImg].photos.frontPhoto
-													?.photo ||
-												user?.calendarPhotos[modalImg].photos.backPhoto
-													?.photo ||
-												'',
-											created:
-												user?.calendarPhotos[modalImg].photos.frontPhoto
-													?.created ||
-												user?.calendarPhotos[modalImg].photos.backPhoto
-													?.created ||
-												''
-										})
-									}
-								>
-									{!updateFavoritePhoto.isLoading ? (
-										<Text className='text-center text-xl font-bold'>
-											Pin photo
-										</Text>
-									) : (
-										<View className=''>
-											{/* <SvgUri width={100} height={100} uri={infinitySvg} /> */}
-											{/* <Image source={infinitySvg} /> */}
-											<Text className='text-center text-xl font-bold '>
-												Loading...
-											</Text>
-										</View>
-									)}
-								</Pressable>
-							</View>
-						)}
-					</View>
-				</View>
-			</Modal>
 			{user && (
 				<View className='justify-center'>
 					{(() => {
@@ -166,9 +87,20 @@ export const Calendar = () => {
 
 							while (beginWhile <= days) {
 								const calDPh = new Date(calendarPhotos[k]?.created)
-								const crYear = calDPh.getFullYear()
-								const crMonth = calDPh.getMonth()
-								const crDay = calDPh.getDate()
+								const nextDate = new Date(calendarPhotos[k + 1]?.created)
+								let crYear = calDPh.getFullYear()
+								let crMonth = calDPh.getMonth()
+								let crDay = calDPh.getDate()
+								if (
+									nextDate.getDate() === crDay &&
+									nextDate.getMonth() === crMonth &&
+									nextDate.getFullYear() === crYear
+								) {
+									crYear = nextDate.getFullYear()
+									crMonth = nextDate.getMonth()
+									crDay = nextDate.getDate()
+									k++
+								}
 								if (beginDate.getDate() === 1) {
 									obj.month = beginDate.toLocaleString('default', {
 										month: 'long'
@@ -219,8 +151,9 @@ export const Calendar = () => {
 														// <View className='border-[1px] rounded-lg border-white bg-orange-700'>
 														<TouchableOpacity
 															onPress={() => {
-																setModalImg(el.photo)
-																setModalVisible(true)
+																navigate('SwiperPhotos', {
+																	created: calendarPhotos[el.photo].created
+																})
 															}}
 															className='relative flex-1 w-[40px] h-[50px] justify-center '
 														>
@@ -240,7 +173,9 @@ export const Calendar = () => {
 																	}}
 																/>
 															</View>
-															<Text className='text-white text-center'>{el.day}</Text>
+															<Text className='text-white text-center'>
+																{el.day}
+															</Text>
 														</TouchableOpacity>
 													) : (
 														// </View>

@@ -1,6 +1,6 @@
 import { useAuth } from '@/hooks/useAuth'
 import { FC } from 'react'
-import { View, Text, TouchableOpacity } from 'react-native'
+import { View, Text, TouchableOpacity, Pressable } from 'react-native'
 // import { ProfileHeader } from './header/Header'
 import { MainProfile } from './main/MainProfile'
 import { CalendarMin } from './calendar-min/CalendarMin'

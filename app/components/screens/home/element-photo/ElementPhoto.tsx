@@ -35,6 +35,13 @@ import { Draggable } from '../Draggable/Draggable'
 import { IsTiming } from '../IsTiming'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { TouchableHighlight } from 'react-native-gesture-handler'
+import Animated, {
+	Keyframe,
+	useSharedValue,
+	withDelay,
+	withSpring,
+	withTiming
+} from 'react-native-reanimated'
 
 //import { Draggable } from '../Draggable/Draggable'
 
@@ -319,11 +326,74 @@ const Reactions: FC<IReactions> = ({ reactions, userId, created }) => {
 			}
 		}
 	)
-	console.log(reactions)
+	const DURATION = 500
+	const DELAY = 100
+
+	const opacity = [
+		useSharedValue(0),
+		useSharedValue(0),
+		useSharedValue(0),
+		useSharedValue(0),
+		useSharedValue(0)
+	]
+	const translate = [
+		useSharedValue(100),
+		useSharedValue(100),
+		useSharedValue(100),
+		useSharedValue(100),
+		useSharedValue(100)
+	]
+	const show = () => {
+		if (isVisibleSmile) {
+			opacity.map((el, key) => {
+				el.value = withDelay(key * DELAY, withTiming(0, { duration: DURATION }))
+			})
+			translate.map((el, key) => {
+				el.value = withDelay(
+					key * DELAY,
+					withTiming(100, { duration: DURATION })
+				)
+			})
+		} else {
+			opacity.map((el, key) => {
+				el.value = withDelay(key * DELAY, withTiming(1, { duration: DURATION }))
+			})
+			translate.map((el, key) => {
+				el.value = withDelay(
+					key * DELAY,
+					withTiming(-10, { duration: DURATION })
+				)
+			})
+		}
+
+		setIsVisibleSmile(!isVisibleSmile)
+	}
+	// const enteringAnimation = new Keyframe({
+	// 	0: {
+	// 		transform: [{ translateY: 0 }],
+	// 		opacity: 0
+	// 	},
+
+	// 	100: {
+	// 		transform: [{ translateY: -100 }],
+	// 		opacity: 1
+	// 	}
+	// })
+	// const exitingAnimation = new Keyframe({
+	// 	0: {
+	// 		transform: [{ translateY: -100 }],
+	// 		opacity: 1
+	// 	},
+
+	// 	100: {
+	// 		transform: [{ translateY: 0 }],
+	// 		opacity: 0
+	// 	}
+	// })
 
 	return (
 		<View
-			className='flex-1 flex-row justify-between pb-4 relative'
+			className='flex-1 flex-row justify-between pb-4 relative '
 			onLayout={e => setSize(e.nativeEvent.layout)}
 		>
 			<View className='flex-1'>
@@ -344,28 +414,37 @@ const Reactions: FC<IReactions> = ({ reactions, userId, created }) => {
 				)}
 			</View>
 
-			<Pressable
-				className={`pr-4 ${isVisibleSmile ? 'pb-14' : ''}`}
-				onPress={() => setIsVisibleSmile(!isVisibleSmile)}
-			>
+			<Pressable className={`pr-4`} onPress={show}>
 				<MaterialCommunityIcons name='dots-circle' size={49} color='white' />
 			</Pressable>
-			{isVisibleSmile && (
-				<View
-					className={`absolute items-center w-full bg-white/10 flex-row justify-between bottom-0`}
-				>
-					{['😁', '😂', '😍', '😐', '🤮'].map((smile, key) => {
-						return (
+			{/* {isVisibleSmile && ( */}
+
+			<View className='absolute -bottom-[10px] flex-row'>
+				{['😁', '😂', '😍', '😐', '🤮'].map((smile, key) => {
+					return (
+						<Animated.View
+							// style={{ opacity: opacity[key] }}
+							style={{
+								opacity: opacity[key],
+								transform: [{ translateY: translate[key] }]
+							}}
+							//
+							// entering={enteringAnimation.duration(300).delay(key * 100)}
+							// exiting={exitingAnimation}
+						>
 							<Pressable
 								onPress={() => addReaction.mutate(reactionsData[key])}
 								key={key}
 							>
 								<Text style={{ fontSize: size.width / 7 }}>{smile}</Text>
 							</Pressable>
-						)
-					})}
-				</View>
-			)}
+						</Animated.View>
+					)
+				})}
+			</View>
+
+			{/* )} */}
+			{/* </View> */}
 		</View>
 	)
 }

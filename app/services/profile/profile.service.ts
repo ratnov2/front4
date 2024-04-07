@@ -20,6 +20,8 @@ export const ProfileService = {
 	},
 
 	async updateFavoritePhoto(data: TypeUpdateFavoritePhoto) {
+		console.log(data)
+
 		const response = await instance.put(
 			getUsersUrl('/profile/favorite-photos'),
 			data
@@ -126,8 +128,9 @@ export const ProfileService = {
 
 export type TypeUpdateFavoritePhoto = {
 	key: 'photoOne' | 'photoTwo' | 'photoThree'
-	photo: string
-	created: string
+	frontPhoto: string | null
+	backPhoto: string | null
+	created: string | null
 }
 export type TypeEditProfile = {
 	firtsName: string

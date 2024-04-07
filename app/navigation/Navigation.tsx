@@ -26,8 +26,6 @@ const Navigation: FC = () => {
 		return () => {
 			navRef.removeListener('state', listener)
 		}
-		
-		
 	}, [])
 
 	useCheckAuth(currentRoute)

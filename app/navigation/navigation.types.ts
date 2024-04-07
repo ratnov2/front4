@@ -25,6 +25,7 @@ export type TypeRootStackParamList = {
 	Settings: undefined
 	Memories_settings: undefined
 	Profile: undefined
+	SwiperPhotos: undefined
 } & TypeRootStackAdminList
 
 export type RootStackParamList = {

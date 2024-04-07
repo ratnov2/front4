@@ -15,12 +15,18 @@ import { TimeZone } from '@/components/screens/settings/pages/time-zone/TimeZone
 import { Other } from '@/components/screens/settings/pages/other/Other'
 import { Help } from '@/components/screens/settings/pages/help/Help'
 import { About } from '@/components/screens/settings/pages/About/About'
+import { SwiperPhotos } from '@/components/screens/swiper-photos/SwiperPhotos'
 
 export const userRoutes: IRoute[] = [
 	{
 		name: 'Profile',
 		component: Profile
 	},
+	{
+		name: 'SwiperPhotos',
+		component: SwiperPhotos
+	},
+
 	{
 		name: 'Privacy',
 		component: Privacy
@@ -66,7 +72,7 @@ export const userRoutes: IRoute[] = [
 		name: 'EditProfile',
 		component: EditProfile
 	},
-	
+
 	{
 		name: 'Settings',
 		component: Settings

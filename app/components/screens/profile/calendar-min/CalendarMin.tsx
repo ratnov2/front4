@@ -6,7 +6,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { FC, useState } from 'react'
 import { Image, Modal, Pressable, Text, View } from 'react-native'
 import clsx from 'clsx'
-import { Link } from '@react-navigation/native'
+import { Link, useNavigation } from '@react-navigation/native'
 import { BaseImageUrl, BaseImageUrl2 } from '@/services/api/interceptors.api'
 import { ILatestPhoto, IPhotos } from '@/shared/types/profile.interface'
 import { ImageBackground } from 'react-native'
@@ -22,7 +22,7 @@ export const CalendarMin: FC = () => {
 	const [modalVisible, setModalVisible] = useState(false)
 	const [modalImg, setModalImg] = useState(0)
 	const addDate = new Date()
-
+	const { navigate } = useNavigation<any>()
 	const user = useQuery(['get-profile'], () => ProfileService.getProfile(), {
 		select: data => {
 			const calendarPhotos = data.calendarPhotos.slice(-14)
@@ -33,105 +33,13 @@ export const CalendarMin: FC = () => {
 	Date.prototype.daysInMonth = function () {
 		return 33 - new Date(this.getFullYear(), this.getMonth(), 33).getDate()
 	}
-	const queryClient = useQueryClient()
-	const updateFavoritePhoto = useMutation(
-		['update-favorite-photo-calendar'],
-		(data: TypeUpdateFavoritePhoto) => ProfileService.updateFavoritePhoto(data),
-		{
-			onSuccess: () => {
-				setModalVisible(false)
-				queryClient.refetchQueries(['get-profile'])
-			}
-		}
-	)
 
 	addDate.setDate(addDate.getDate() - 13)
 
 	//console.log(user.data?.calendarPhotos);
-	const { top } = useSafeAreaInsets()
+	
 	return (
 		<View className='bg-zinc-900 rounded-xl p-4 mt-5'>
-			<Modal
-				animationType='fade'
-				transparent={true}
-				visible={modalVisible}
-				onRequestClose={() => {
-					setModalVisible(!modalVisible)
-				}}
-			>
-				<View className='flex-1 justify-center items-center'>
-					<View className='flex-1 w-full bg-black px-10 '>
-						<Pressable
-							onPress={() => setModalVisible(!modalVisible)}
-							className='flex-1'
-						>
-							<View className='h-[15%] items-center' style={{ marginTop: top }}>
-								<Text className='text-white font-bold text-xl'>
-									{user.data &&
-										text(user.data?.calendarPhotos[modalImg]?.created || '')}
-								</Text>
-								<Text className='text-white/70 text-base -mt-1'>
-									{normalDate(
-										user.data?.calendarPhotos[modalImg]?.created || ''
-									)}
-								</Text>
-							</View>
-							<View className='flex-1 bg-white rounded-2xl overflow-hidden border-2 border-white'>
-								<ImageBackground
-									className='h-full w-full rounded-2xl'
-									source={{
-										uri: BaseImageUrl2(
-											user.data?.calendarPhotos[modalImg]?.photos?.frontPhoto
-												?.photo ||
-												user.data?.calendarPhotos[modalImg]?.photos?.backPhoto
-													?.photo ||
-												''
-										)
-									}}
-								/>
-							</View>
-						</Pressable>
-						{'params' && (
-							<View className='text-center h-[25%]'>
-								<Pressable
-									className='border-2  m-auto p-3 rounded-2xl bg-white w-full'
-									onPress={() =>
-										updateFavoritePhoto.mutate({
-											key: 'photoOne',
-											photo:
-												user.data?.calendarPhotos[modalImg].photos.frontPhoto
-													?.photo ||
-												user.data?.calendarPhotos[modalImg].photos.backPhoto
-													?.photo ||
-												'',
-											created:
-												user.data?.calendarPhotos[modalImg].photos.frontPhoto
-													?.created ||
-												user.data?.calendarPhotos[modalImg].photos.backPhoto
-													?.created ||
-												''
-										})
-									}
-								>
-									{!updateFavoritePhoto.isLoading ? (
-										<Text className='text-center text-xl font-bold'>
-											Pin photo
-										</Text>
-									) : (
-										<View className=''>
-											{/* <SvgUri width={100} height={100} uri={infinitySvg} /> */}
-											{/* <Image source={infinitySvg} /> */}
-											<Text className='text-center text-xl font-bold '>
-												Loading...
-											</Text>
-										</View>
-									)}
-								</Pressable>
-							</View>
-						)}
-					</View>
-				</View>
-			</Modal>
 			<Text className='text-white mb-3 text-xl font-bold'>Last 14 days</Text>
 			{user.data && (
 				<View className='text-white flex-row w-full mx-[1px] flex-wrap justify-center'>
@@ -155,15 +63,27 @@ export const CalendarMin: FC = () => {
 								break
 							}
 						}
-
+						console.log('///////////////')
+						for (let i = 0; i < photo.length; i++) {
+							console.log(JSON.stringify(photo[i].created, null, 2))
+						}
 						//photo.map(photo => console.log(JSON.stringify(photo.created)))
 						return Array.from(Array(14)).map((_, key) => {
 							const date = new Date(photo[k]?.created)
-							const day = date.getDate()
-							const month = date.getMonth()
-							const year = date.getFullYear()
+							let day = date.getDate()
+							let month = date.getMonth()
+							let year = date.getFullYear()
 
 							let photoImg: number = k
+							const nextDate = new Date(photo[k + 1]?.created)
+							if (
+								nextDate.getDate() === day &&
+								nextDate.getFullYear() === year &&
+								nextDate.getMonth() === month
+							) {
+								photoImg++
+								k++
+							}
 							const provPhoto =
 								month === addDate.getMonth() &&
 								day === addDate.getDate() &&
@@ -184,8 +104,9 @@ export const CalendarMin: FC = () => {
 									{provPhoto ? (
 										<Pressable
 											onPress={() => {
-												setModalImg(photoImg)
-												setModalVisible(true)
+												navigate('SwiperPhotos', {
+													created: user.data?.calendarPhotos[photoImg].created
+												})
 											}}
 											className='w-full h-full roundex-2xl relative flex justify-center'
 										>

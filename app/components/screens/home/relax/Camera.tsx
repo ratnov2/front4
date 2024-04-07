@@ -48,6 +48,8 @@ export const CameraComponent: FC<ICameraComponent> = ({
 							? (Camera.Constants.Type as any).front
 							: (Camera.Constants.Type as any).back
 					}
+					whiteBalance={999999}
+					
 					ratio='4:3'
 					ref={cameraRef}
 				></Camera>

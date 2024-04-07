@@ -17,17 +17,26 @@ export const SharePinBlock: FC<ISharePinBlock> = ({ user }) => {
 			<View>
 				<View className='flex-row justify-between'>
 					<PinBlock
-						img={user.favoritePhotos.photoOne?.photo || ''}
+						photos={{
+							frontPhoto: user.favoritePhotos.photoOne?.frontPhoto || '',
+							backPhoto: user.favoritePhotos.photoOne?.backPhoto || ''
+						}}
 						pin='photoOne'
 						created={user.favoritePhotos.photoOne?.created || ''}
 					/>
 					<PinBlock
-						img={user.favoritePhotos.photoTwo?.photo || ''}
+						photos={{
+							frontPhoto: user.favoritePhotos.photoTwo?.frontPhoto || '',
+							backPhoto: user.favoritePhotos.photoTwo?.backPhoto || ''
+						}}
 						pin='photoTwo'
 						created={user.favoritePhotos.photoTwo?.created || ''}
 					/>
 					<PinBlock
-						img={user.favoritePhotos.photoThree?.photo || ''}
+						photos={{
+							frontPhoto: user.favoritePhotos.photoThree?.frontPhoto || '',
+							backPhoto: user.favoritePhotos.photoThree?.backPhoto || ''
+						}}
 						pin='photoThree'
 						created={user.favoritePhotos.photoThree?.created || ''}
 					/>

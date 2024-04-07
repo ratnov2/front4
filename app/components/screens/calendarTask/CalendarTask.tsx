@@ -21,6 +21,9 @@ import { LayoutLightOpacity } from '@/navigation/ui/LayoutLightOpacity'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { normalDate } from '../comments/CommentElement'
 import { IProfile } from '@/shared/types/profile.interface'
+import { Draggable } from '../home/Draggable/Draggable'
+import { AntDesign } from '@expo/vector-icons'
+import { NormalDate } from '@/navigation/ui/LayoutOpacityCommenrSwiper'
 var days = [
 	'Воскресенье',
 	'Понедельник',
@@ -41,7 +44,7 @@ export const text = (created: string) => {
 
 export const CalendarTask = () => {
 	const queryClient = useQueryClient()
-	const user = queryClient.getQueryData(['get-profile']) as IProfile | undefined //@TASK
+	const user = useQuery<IProfile>(['get-profile'])
 	const navigate = useNavigation<any>()
 	let { params } = useRoute()
 	const updateFavoritePhoto = useMutation(
@@ -49,8 +52,6 @@ export const CalendarTask = () => {
 		(data: TypeUpdateFavoritePhoto) => ProfileService.updateFavoritePhoto(data),
 		{
 			onSuccess: () => {
-				console.log('wefewfwefneqwkfbeqwkewffewewf')
-
 				queryClient.refetchQueries(['get-profile'])
 				setModalVisible(false)
 				//@ts-ignore
@@ -72,75 +73,80 @@ export const CalendarTask = () => {
 			padding='px-2'
 		>
 			<Modal
-				animationType='slide'
-				transparent={true}
+				animationType='fade'
 				visible={modalVisible}
+				transparent={true}
 				onRequestClose={() => {
-					//Alert.alert('Modal has been closed.')
 					setModalVisible(!modalVisible)
 				}}
 			>
-				<View className='flex-1 justify-center items-center'>
-					<View className='flex-1 w-full bg-black px-10 '>
-						<Pressable
-							onPress={() => setModalVisible(!modalVisible)}
-							className='flex-1'
-						>
-							<View className='h-[15%] items-center' style={{ marginTop: top }}>
-								<Text className='text-white font-bold text-xl'>
-									{user && text(user?.calendarPhotos[modalImg]?.created || '')}
-								</Text>
-								<Text className='text-white/70 text-base -mt-1'>
-									{normalDate(user?.calendarPhotos[modalImg]?.created || '')}
-								</Text>
-							</View>
-							<View className='flex-1 bg-white rounded-2xl overflow-hidden border-2 border-white'>
-								<ImageBackground
-									className='h-full w-full rounded-2xl'
-									source={{
-										uri: BaseImageUrl2(
-											user?.calendarPhotos[modalImg]?.photos?.frontPhoto?.photo ||
-												user?.calendarPhotos[modalImg]?.photos?.backPhoto
-													?.photo ||
-												''
-										)
-									}}
-								/>
-							</View>
-						</Pressable>
-						{params && (
-							<View className='text-center h-[25%]'>
+				<View className='flex-1 bg-black'>
+					<ScrollView
+						className='flex-1'
+						showsVerticalScrollIndicator={false}
+						bounces={false}
+					>
+						<View className='flex-1'>
+							<Pressable className='flex-1'>
+								<View
+									className='flex-row  justify-between items-center mb-4'
+									style={{ marginTop: top }}
+								>
+									<Pressable onPress={() => setModalVisible(!modalVisible)}>
+										<AntDesign name='arrowleft' size={30} color='white' />
+									</Pressable>
+									<View className='items-center'>
+										<NormalDate
+											created={
+												user.data?.calendarPhotos[modalImg].created || ''
+											}
+										/>
+									</View>
+									<View />
+								</View>
+								<View
+									className='flex-1 rounded-2xl overflow-hidden border-2 border-white'
+									style={{ aspectRatio: 9 / 12 }}
+								>
+									<Draggable
+										img1={
+											user.data?.calendarPhotos[modalImg].photos.frontPhoto
+												?.photo || ''
+										}
+										img2={
+											user.data?.calendarPhotos[modalImg].photos.backPhoto
+												?.photo || ''
+										}
+										isVisibleElementsPhoto={true}
+									/>
+								</View>
+							</Pressable>
+							<View className='text-center flex-1 mt-5'>
 								<Pressable
 									className='border-2  m-auto p-3 rounded-2xl bg-white w-full'
 									onPress={() =>
 										updateFavoritePhoto.mutate({
-											key: params?.['pin' as keyof typeof params] as unknown as
-												| 'photoOne'
-												| 'photoTwo'
-												| 'photoThree',
-											photo:
-												user?.calendarPhotos[modalImg].photos.frontPhoto
-													?.photo ||
-												user?.calendarPhotos[modalImg].photos.backPhoto
-													?.photo ||
-												'',
-											created:
-												user?.calendarPhotos[modalImg].photos.frontPhoto
-													?.created ||
-												user?.calendarPhotos[modalImg].photos.backPhoto
-													?.created ||
-												''
+											key:
+												(params?.['pin' as keyof typeof params] as unknown as
+													| 'photoOne'
+													| 'photoTwo'
+													| 'photoThree') || 'photoOne',
+											backPhoto:
+												user.data?.calendarPhotos[modalImg].photos.backPhoto
+													?.photo || '',
+											frontPhoto:
+												user.data?.calendarPhotos[modalImg].photos.frontPhoto
+													?.photo || '',
+											created: user.data?.calendarPhotos[modalImg].created || ''
 										})
 									}
 								>
 									{!updateFavoritePhoto.isLoading ? (
-										<Text className='text-center text-xl font-bold'>
+										<Text className='text-center text-xl font-bold '>
 											Pin photo
 										</Text>
 									) : (
 										<View className=''>
-											{/* <SvgUri width={100} height={100} uri={infinitySvg} /> */}
-											{/* <Image source={infinitySvg} /> */}
 											<Text className='text-center text-xl font-bold '>
 												Loading...
 											</Text>
@@ -148,18 +154,21 @@ export const CalendarTask = () => {
 									)}
 								</Pressable>
 							</View>
-						)}
-					</View>
+						</View>
+						<View className='h-4' />
+					</ScrollView>
 				</View>
 			</Modal>
-			{user && (
+			{user.data && (
 				<View>
 					{(() => {
-						const calendarPhotos = user.calendarPhotos
-						let beginDate = new Date(user.createdAt)
+						const calendarPhotos = user.data.calendarPhotos
+						let beginDate = new Date(user.data.createdAt)
 
 						let getUserDate = new Date(
-							user.calendarPhotos[user.calendarPhotos.length - 1]?.created
+							user.data.calendarPhotos[
+								user.data.calendarPhotos.length - 1
+							]?.created
 						)
 						const lateYear = getUserDate?.getFullYear()
 						const lateMonth = getUserDate?.getMonth()
@@ -186,9 +195,20 @@ export const CalendarTask = () => {
 
 							while (beginWhile <= days) {
 								const calDPh = new Date(calendarPhotos[k]?.created)
-								const crYear = calDPh.getFullYear()
-								const crMonth = calDPh.getMonth()
-								const crDay = calDPh.getDate()
+								const nextDate = new Date(calendarPhotos[k + 1]?.created)
+								let crYear = calDPh.getFullYear()
+								let crMonth = calDPh.getMonth()
+								let crDay = calDPh.getDate()
+								if (
+									nextDate.getDate() === crDay &&
+									nextDate.getMonth() === crMonth &&
+									nextDate.getFullYear() === crYear
+								) {
+									crYear = nextDate.getFullYear()
+									crMonth = nextDate.getMonth()
+									crDay = nextDate.getDate()
+									k++
+								}
 								if (beginDate.getDate() === 1) {
 									obj.month = beginDate.toLocaleString('default', {
 										month: 'long'
