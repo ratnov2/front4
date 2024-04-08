@@ -4,7 +4,7 @@ import { View, Text } from 'react-native'
 const Admin: FC = () => {
 	return (
 		<View>
-			<Text>Admin</Text>
+			<Text>Admind</Text>
 		</View>
 	)
 }
