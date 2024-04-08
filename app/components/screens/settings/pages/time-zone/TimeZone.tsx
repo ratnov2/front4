@@ -44,7 +44,8 @@ export const TimeZone: FC<INotifications> = ({ navigation }) => {
 		>
 			<View>
 				<Text className='text-white text-3xl font-bold'>
-					Select vour Time Zone
+					Select vour Time Zon
+					
 				</Text>
 				<Text className='text-white text-lg mt-2'>
 					To receive your BePrime notification during daytime, select your time
