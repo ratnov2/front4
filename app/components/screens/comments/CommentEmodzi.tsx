@@ -14,16 +14,19 @@ interface IEmodziComment {
 		reactionType: TReaction
 		avatar: string
 	}[]
+	_id: string
 }
 
 export const EmodziComment: FC<IEmodziComment> = ({
 	style = '',
-	reactionsData
+	reactionsData,
+	_id
 }) => {
 	const { user } = useAuth()
 	if (!user) return null
 	const { navigate } = useNavigation<any>()
-	
+	console.log(JSON.stringify(reactionsData, null, 2))
+
 	return (
 		<View className={`mt-4 ${style} mx-2`}>
 			<View className='flex-row'>
@@ -33,17 +36,23 @@ export const EmodziComment: FC<IEmodziComment> = ({
 						className='flex-row'
 						horizontal
 						showsHorizontalScrollIndicator={false}
-						renderItem={({ item }) => (
-							<Pressable
-								className='mr-4'
-								onPress={() => navigate('Profile', { id: item.userId })}
-							>
-								<ImgAvatar avatar={item?.avatar} size='reaction-main' />
-								<Text className='absolute bottom-0 -right-1'>
-									{reactionsData2[item.reactionType]}
-								</Text>
-							</Pressable>
-						)}
+						renderItem={({ item }) => {
+							return (
+								<Pressable
+									className='mr-4'
+									onPress={() =>
+										navigate('Profile', {
+											id: user._id !== item._id ? item._id : ''
+										})
+									}
+								>
+									<ImgAvatar avatar={item?.avatar} size='reaction-main' />
+									<Text className='absolute bottom-0 -right-1'>
+										{reactionsData2[item.reactionType]}
+									</Text>
+								</Pressable>
+							)
+						}}
 					></FlatList>
 				) : (
 					<View className='h-10 flex-1 justify-center'>

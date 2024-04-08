@@ -29,6 +29,7 @@ export const VirtualizedList: FC<IVirtualizedList> = forwardRef(
 		}
 		return (
 			<FlatList
+				showsVerticalScrollIndicator={false}
 				onLayout={handleLayout}
 				ref={ref}
 				data={[]}

@@ -88,7 +88,7 @@ export const LayoutOpacityComment: FC<ILayoutOpacityComment> = ({
 							<NormalDate created={created} />
 						</View>
 					</View>
-					<TouchableOpacity onPress={() => navigate('Home')}>
+					<TouchableOpacity onPress={() => navigate('Profile')}>
 						<Feather name='arrow-left' size={30} color='white' />
 					</TouchableOpacity>
 					<View className='flex-row'>

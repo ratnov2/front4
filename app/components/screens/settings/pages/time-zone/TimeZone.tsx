@@ -47,8 +47,8 @@ export const TimeZone: FC<INotifications> = ({ navigation }) => {
 					Select vour Time Zone
 				</Text>
 				<Text className='text-white text-lg mt-2'>
-					To receive your BeReal notification during daytime, select your time
-					zone. When changing your time zone, all your current BeReal will be
+					To receive your BePrime notification during daytime, select your time
+					zone. When changing your time zone, all your current BePrime will be
 					deleted. You can only change time zones once a day.
 				</Text>
 			</View>

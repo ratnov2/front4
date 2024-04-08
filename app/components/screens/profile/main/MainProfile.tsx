@@ -12,12 +12,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 export const MainProfile: FC = () => {
 	const user = useQuery(['get-profile'], () => ProfileService.getProfile(), {
 		onSuccess: data => {
-			setUserState(data)
+			//setUserState(data)
 			AsyncStorage.setItem('cashed-my-profile', JSON.stringify(data))
 		}
 	})
 
-	const [userState, setUserState] = useState<IProfile | null>(null)
+	//const [userState, setUserState] = useState<IProfile | null>(null)
 	useEffect(() => {
 		;(async () => {
 			if (!user.data) {
@@ -33,14 +33,14 @@ export const MainProfile: FC = () => {
 	// @get-user
 	//console.log(user);
 	//console.log(userState);
-	
+
 	return (
 		<View>
-			{userState && (
+			{user.data && (
 				<>
-					<UserInfo user={userState} />
-					<Joined date={userState.createdAt} />
-					<SharePinBlock user={userState} />
+					<UserInfo user={user.data} />
+					<Joined date={user.data.createdAt} />
+					<SharePinBlock user={user.data} />
 					<YourMemories />
 				</>
 			)}

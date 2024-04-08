@@ -131,7 +131,6 @@ export const Inside = memo(() => {
 			mutate(formData)
 		}
 	}
-	const myFriends = useQuery<IFriendsip>(['get-my-friends'])
 
 
 	const { mutate, isLoading, data } = useMutation(
@@ -225,13 +224,14 @@ export const Inside = memo(() => {
 										refetch={() => latestPhoto.refetch()}
 										reactions={user.data?.latestPhoto?.photoReactions}
 										startCamera={() => __startCamera()}
+										cron={cron.data}
 									/>
 								)}
 							{latestPhoto?.isLoading ? (
 								<View>
 									<Text className='text-white'>Loading...</Text>
 								</View>
-							) : latestPhoto.data && latestPhoto.data.length > 0 ? (
+							) : latestPhoto.data &&  latestPhoto.data.length > 0 ? (
 								<View>
 									{latestPhoto.data?.map((photo, key) => {
 										return (
@@ -242,6 +242,7 @@ export const Inside = memo(() => {
 												reactions={photo.latestPhoto.photoReactions}
 												refetch={() => latestPhoto.refetch()}
 												startCamera={() => __startCamera()}
+												cron={cron.data}
 											/>
 										)
 									})}
@@ -283,6 +284,7 @@ export const Inside = memo(() => {
 												reactions={photo.latestPhoto.photoReactions}
 												refetch={() => latestPhotoOther.refetch()}
 												startCamera={() => __startCamera()}
+												cron={cron.data}
 											/>
 										)
 									})}
@@ -307,7 +309,7 @@ export const Inside = memo(() => {
 					)}
 				</LayoutOpacityItems>
 			)}
-			{!startCamera &&
+			{cron.data && !startCamera &&
 				user.data &&
 				!IsTiming(cron.data, user.data.latestPhoto?.created || null) && (
 					<View>
@@ -337,7 +339,7 @@ export const Inside = memo(() => {
 								>
 									<Feather name='circle' size={80} color='white' />
 									<Text className='text-white text-center'>
-										Post a Late BeReal
+										Post a Late BePrime
 									</Text>
 								</TouchableOpacity>
 								{startCamera && (

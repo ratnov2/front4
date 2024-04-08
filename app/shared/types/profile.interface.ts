@@ -52,10 +52,12 @@ export interface IPhotos {
 		}
 	}
 	comment: string
-	comments: {
-		_id: string
-		message: string
-	}[]
+	comments:
+		| {
+				_id: string
+				message: string
+		  }[]
+		| number
 }
 
 export interface ILatestPhoto {

@@ -89,7 +89,7 @@ export const CameraComponent: FC<ICameraComponent> = ({
 							className='text-center flex items-center'
 						>
 							<Feather name='circle' size={80} color='white' />
-							<Text className='text-white text-center'>Post a Late BeReal</Text>
+							<Text className='text-white text-center'>Post a Late BePrime</Text>
 						</TouchableOpacity>
 
 						<Pressable onPress={() => setIsFrontCamera()} className='p-2'>

@@ -63,10 +63,8 @@ export const CalendarMin: FC = () => {
 								break
 							}
 						}
-						console.log('///////////////')
-						for (let i = 0; i < photo.length; i++) {
-							console.log(JSON.stringify(photo[i].created, null, 2))
-						}
+						
+					
 						//photo.map(photo => console.log(JSON.stringify(photo.created)))
 						return Array.from(Array(14)).map((_, key) => {
 							const date = new Date(photo[k]?.created)

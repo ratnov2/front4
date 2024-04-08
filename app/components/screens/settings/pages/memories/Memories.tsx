@@ -22,7 +22,7 @@ export const Memories: FC<IMemories> = ({ navigation }) => {
 				Your Memories are activated
 			</Text>
 			<Text className='text-white text-xl font-medium mt-4'>
-				All your BeReal are automatically added to your Memories and only
+				All your BePrime are automatically added to your Memories and only
 				visible to you.
 			</Text>
 			<View className='mt-6 border-2 border-solid border-red-500 rounded-xl p-3 bg-red-500/5'>
@@ -30,8 +30,8 @@ export const Memories: FC<IMemories> = ({ navigation }) => {
 					Your Memories are activated
 				</Text>
 				<Text className='text-white text-base font-medium mt-2'>
-					If you deactivate your Memories, all your BeReal will be permanently
-					deleted and unrecoverable. All your future BeReal won't be saved in
+					If you deactivate your Memories, all your BePrime will be permanently
+					deleted and unrecoverable. All your future BePrime won't be saved in
 					Memories and will be automatically deleted as well.
 				</Text>
 				<TouchableOpacity className='bg-zinc-800 p-4 rounded-2xl mt-4'>

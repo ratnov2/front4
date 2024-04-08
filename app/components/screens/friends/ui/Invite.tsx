@@ -21,11 +21,11 @@ export const Invite = () => {
 			<View className='flex-row justify-between flex-1 items-center ml-4 '>
 				<View className='h-12 justify-between '>
 					<Text className='text-white font-bold text-base'>
-						Invite freinds on BeReal
+						Invite freinds on BePrime
 					</Text>
-					<Text className='text-white font-medium text-base'>{`bere.al/${userQuery?.email.split(
-						'@'
-					)[0]}`}</Text>
+					<Text className='text-white font-medium text-base'>{`be.prim/${
+						userQuery?.email.split('@')[0]
+					}`}</Text>
 				</View>
 				<WithShareProfile>
 					<Entypo name='share' size={28} color='white' />

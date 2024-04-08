@@ -1,5 +1,5 @@
 import { BaseImageUrl2 } from '@/services/api/interceptors.api'
-import { FC, memo, useRef, useState } from 'react'
+import { FC, memo, useEffect, useRef, useState } from 'react'
 
 import { ImageBackground, Pressable, StyleSheet } from 'react-native'
 import { Image, View } from 'react-native'
@@ -114,6 +114,18 @@ export const Draggable: FC<IDraggable> = memo(
 				{ translateY: position2.value }
 			]
 		}))
+		const opacity = useSharedValue(1)
+
+		const onPinch = (is: boolean) => {
+			if (is) {
+				opacity.value = withTiming(1)
+			} else {
+				opacity.value = withTiming(0)
+			}
+
+			setIsVisibleElementsPhoto?.(is)
+		}
+
 		return (
 			<View style={styles.container}>
 				<View
@@ -123,7 +135,6 @@ export const Draggable: FC<IDraggable> = memo(
 				>
 					<ImageZoom
 						ref={imageZoomRef}
-						
 						uri={state ? BaseImageUrl2(img1) : BaseImageUrl2(img2)}
 						style={{ width: '100%' }}
 						minScale={1}
@@ -140,8 +151,9 @@ export const Draggable: FC<IDraggable> = memo(
 							// 	imageZoomRef.current?.reset()
 							// }, 3000)
 						}}
-						onPinchStart={() => console.log('onPinchStart')}
+						onPinchStart={() => onPinch(false)}
 						onPinchEnd={zoomType => {
+							onPinch(true)
 							onAnimationStart()
 							setTimeout(() => {
 								imageZoomRef.current?.reset()
@@ -151,37 +163,32 @@ export const Draggable: FC<IDraggable> = memo(
 							onAnimationEnd(finished)
 						}}
 						resizeMode='cover'
-						
 					/>
 				</View>
-
-				{isVisibleElementsPhoto && (
-					// <Pressable
-					// 	className='flex-1 absolute'
-					// 	onPress={() => setState(!state)}
-					// >
-					<GestureDetector gesture={panGesture}>
-						<Animated.View style={[styles.box, animatedStyle]} ref={ref}>
-							<Pressable onPress={() => setState(!state)}>
-								<View
-									style={styles.overlayImageContainer}
-									ref={ref}
-									className='border-2 border-black'
-								>
-									<ImageBackground
-										source={
-											state
-												? { uri: BaseImageUrl2(img2) }
-												: { uri: BaseImageUrl2(img1) }
-										}
-										className='bg-black'
-										style={styles.overlayImage}
-									/>
-								</View>
-							</Pressable>
-						</Animated.View>
-					</GestureDetector>
-				)}
+				<GestureDetector gesture={panGesture}>
+					<Animated.View
+						style={[styles.box, animatedStyle, { opacity }]}
+						ref={ref}
+					>
+						<Pressable onPress={() => setState(!state)}>
+							<View
+								style={styles.overlayImageContainer}
+								ref={ref}
+								className='border-2 border-black'
+							>
+								<ImageBackground
+									source={
+										state
+											? { uri: BaseImageUrl2(img2) }
+											: { uri: BaseImageUrl2(img1) }
+									}
+									className='bg-black'
+									style={styles.overlayImage}
+								/>
+							</View>
+						</Pressable>
+					</Animated.View>
+				</GestureDetector>
 			</View>
 		)
 	}

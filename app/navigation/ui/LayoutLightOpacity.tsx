@@ -32,6 +32,7 @@ export const LayoutLightOpacity: FC<LayoutLightOpacity> = ({
 			<KeyboardAwareScrollView
 				className='flex-1'
 				keyboardShouldPersistTaps='handled'
+				showsVerticalScrollIndicator={false}
 			>
 				<ScrollView
 					style={{

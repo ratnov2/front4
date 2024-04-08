@@ -1,7 +1,7 @@
 import { useAuth } from '@/hooks/useAuth'
 import { BaseImageUrl, BaseImageUrl2 } from '@/services/api/interceptors.api'
 import { Link, useNavigation } from '@react-navigation/native'
-import { FC, useEffect, useReducer, useRef, useState } from 'react'
+import { FC, forwardRef, useEffect, useReducer, useRef, useState } from 'react'
 //import Draggable from 'react-native-draggable'
 import {
 	ActivityIndicator,
@@ -42,6 +42,7 @@ import Animated, {
 	withSpring,
 	withTiming
 } from 'react-native-reanimated'
+import { AnimationReaction } from './AnimationReaction'
 
 //import { Draggable } from '../Draggable/Draggable'
 
@@ -51,6 +52,7 @@ interface IElementPhoto {
 	toggleScroll: (scroll: boolean) => any
 	reactions: { userId: string; reactionType: TReaction }[]
 	startCamera: () => void
+	cron: string | undefined
 }
 
 export type BaseExampleProps = {
@@ -68,10 +70,10 @@ export const ElementPhoto: FC<IElementPhoto> = ({
 	refetch,
 	toggleScroll,
 	reactions,
-	startCamera
+	startCamera,
+	cron
 }) => {
 	const queryClient = useQueryClient()
-	const cron = queryClient.getQueryData(['get-cron-time'])
 
 	const navigate = useNavigation()
 	const [isVisibleElementsPhoto, setIsVisibleElementsPhoto] = useState(true)
@@ -119,7 +121,14 @@ export const ElementPhoto: FC<IElementPhoto> = ({
 			textInputRef.current.focus()
 		}
 	}, [isMessage])
-
+	const opacity = useSharedValue(1)
+	useEffect(() => {
+		if (isVisibleElementsPhoto) {
+			opacity.value = withTiming(1)
+		} else {
+			opacity.value = withTiming(0)
+		}
+	}, [isVisibleElementsPhoto])
 	return (
 		<View style={{ marginBottom: 70 }}>
 			{photo && (
@@ -165,27 +174,32 @@ export const ElementPhoto: FC<IElementPhoto> = ({
 							}
 							isVisibleElementsPhoto={isVisibleElementsPhoto}
 						/>
-						{isVisibleElementsPhoto && (
-							<View className='absolute bottom-0 w-full'>
-								<Reactions
-									reactions={reactions}
-									userId={photo._id}
-									created={photo.latestPhoto.created}
-								/>
-							</View>
-						)}
-						{!IsTiming(cron, user.data?.latestPhoto?.created || null) && (
-							<View className='bg-neutral-700 w-full h-full top-0 left-0 flex justify-center items-center'>
-								<Pressable
-									className='bg-white rounded-2xl p-2 border-[2px] border-black'
-									onPress={startCamera}
-								>
-									<Text className='text-neutral-800 text-2xl font-bold'>
-										Post BePrime
-									</Text>
-								</Pressable>
-							</View>
-						)}
+
+						<Animated.View
+							className='absolute bottom-0 w-full'
+							style={{ opacity }}
+						>
+							<Reactions
+								reactions={reactions}
+								userId={photo._id}
+								created={photo.latestPhoto.created}
+								isVisibleElementsPhoto={isVisibleElementsPhoto}
+							/>
+						</Animated.View>
+
+						{cron &&
+							!IsTiming(cron, user.data?.latestPhoto?.created || null) && (
+								<View className='bg-neutral-700 w-full h-full top-0 left-0 flex justify-center items-center'>
+									<Pressable
+										className='bg-white rounded-2xl p-2 border-[2px] border-black'
+										onPress={startCamera}
+									>
+										<Text className='text-neutral-800 text-2xl font-bold'>
+											Post BePrime
+										</Text>
+									</Pressable>
+								</View>
+							)}
 					</View>
 				</View>
 			)}
@@ -281,14 +295,14 @@ export const ElementPhoto: FC<IElementPhoto> = ({
 						<View className='rounded-xl flex-row justify-between items-center'>
 							{user.data?._id === photo._id ? (
 								<Text className='text-zinc-600 text-base'>
-									{user.data.latestPhoto.comments.length > 0
-										? `${user.data.latestPhoto.comments.length} комменатариев`
+									{user.data.latestPhoto.comments > 0
+										? `${user.data.latestPhoto.comments} комменатариев`
 										: 'Комментировать'}
 								</Text>
 							) : (
 								<Text className='text-zinc-900'>
-									{photo.latestPhoto.comments.length > 0
-										? `${photo.latestPhoto.comments.length} комменатариев`
+									{photo.latestPhoto.comments > 0
+										? `${photo.latestPhoto.comments} комменатариев`
 										: 'Комментировать'}
 								</Text>
 							)}
@@ -304,11 +318,13 @@ export interface IReactions {
 	reactions: { userId: string; reactionType: TReaction }[]
 	userId: string
 	created: string
+	isVisibleElementsPhoto: boolean
 }
 
 const Reactions: FC<IReactions> = ({ reactions, userId, created }) => {
 	const queryClient = useQueryClient()
 	const [isVisibleSmile, setIsVisibleSmile] = useState(false)
+	//const [isVisibleReactions, setIsReactions] = useState(false)
 	const [size, setSize] = useState({ height: 0, width: 0, x: 0, y: 0 })
 	//const [stateReaction, setStateReactions] = useState(reactions)
 	const user = useQuery<IProfile>(['get-profile'])
@@ -321,8 +337,8 @@ const Reactions: FC<IReactions> = ({ reactions, userId, created }) => {
 				queryClient.refetchQueries(['get-profile'])
 				queryClient.refetchQueries(['get-latest-people'])
 				queryClient.refetchQueries(['get-latest-friends'])
-
-				setIsVisibleSmile(!isVisibleSmile)
+				show()
+				//setIsVisibleSmile(!isVisibleSmile)
 			}
 		}
 	)
@@ -368,6 +384,7 @@ const Reactions: FC<IReactions> = ({ reactions, userId, created }) => {
 
 		setIsVisibleSmile(!isVisibleSmile)
 	}
+
 	// const enteringAnimation = new Keyframe({
 	// 	0: {
 	// 		transform: [{ translateY: 0 }],
@@ -397,50 +414,50 @@ const Reactions: FC<IReactions> = ({ reactions, userId, created }) => {
 			onLayout={e => setSize(e.nativeEvent.layout)}
 		>
 			<View className='flex-1'>
-				{!isVisibleSmile && (
-					<View className='flex-1 mx-4 flex-row'>
-						{reactions.slice(0, 7).map((reaction, key) => (
-							<Pressable
-								className={`relative ${reactions.length > 4 && key !== 0 && '-ml-4'} border-stone-200 border-[1px] rounded-full`}
+				<View className='flex-1 mx-4 flex-row'>
+					{reactions.slice(0, 7).map((reaction, key) => {
+						return (
+							<AnimationReaction
+								avatar={reaction?.avatar || ''}
+								index={key}
 								key={key}
-							>
-								<ImgAvatar avatar={reaction?.avatar} size='reaction-main' />
-								<Text className='absolute bottom-0 -left-1'>
-									{reactionsData2[reaction.reactionType]}
-								</Text>
-							</Pressable>
-						))}
-					</View>
-				)}
+								reactionType={reactionsData2[reaction.reactionType]}
+								reactionsLength={reactions.length}
+								isVisibleSmile={isVisibleSmile}
+							/>
+						)
+					})}
+				</View>
 			</View>
 
-			<Pressable className={`pr-4`} onPress={show}>
-				<MaterialCommunityIcons name='dots-circle' size={49} color='white' />
-			</Pressable>
 			{/* {isVisibleSmile && ( */}
 
 			<View className='absolute -bottom-[10px] flex-row'>
 				{['😁', '😂', '😍', '😐', '🤮'].map((smile, key) => {
 					return (
 						<Animated.View
-							// style={{ opacity: opacity[key] }}
 							style={{
 								opacity: opacity[key],
 								transform: [{ translateY: translate[key] }]
 							}}
-							//
-							// entering={enteringAnimation.duration(300).delay(key * 100)}
-							// exiting={exitingAnimation}
+							key={key}
 						>
 							<Pressable
 								onPress={() => addReaction.mutate(reactionsData[key])}
 								key={key}
 							>
-								<Text style={{ fontSize: size.width / 7 }}>{smile}</Text>
+								<Text style={{ fontSize: size.width / 8 }}>{smile}</Text>
 							</Pressable>
 						</Animated.View>
 					)
 				})}
+				<Pressable onPress={show} style={{ transform: [{ translateY: -15 }] }}>
+					<MaterialCommunityIcons
+						name='lightning-bolt-circle'
+						size={size.width / 6}
+						color='white'
+					/>
+				</Pressable>
 			</View>
 
 			{/* )} */}
@@ -448,6 +465,7 @@ const Reactions: FC<IReactions> = ({ reactions, userId, created }) => {
 		</View>
 	)
 }
+
 export const reactionsData2 = {
 	happy_face: '😁',
 	laughing: '😂',

@@ -43,6 +43,7 @@ import { LayoutOpacityComment } from '@/navigation/ui/LayoutOpacityComment'
 import { DraggableImg } from './DraggableImg'
 import { VirtualizedList } from './FF'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { Draggable } from '../home/Draggable/Draggable'
 
 export const Comments = () => {
 	// useEffect(() => {
@@ -266,6 +267,7 @@ export const Comments = () => {
 								onLayout={event =>
 									setOffsetScroll(event.nativeEvent.layout.height)
 								}
+								showsVerticalScrollIndicator={false}
 								data={comments}
 								keyExtractor={(item, index) => item.created + index.toString()}
 								renderItem={({ item }) => {
@@ -444,15 +446,18 @@ const HeaderComponent: FC<IHeaderComponent> = memo(
 					}}
 				/>
 				<View className='mx-4 flex-1 rounded-xl overflow-hidden'>
-					<DraggableImg
+					<Draggable
 						img1={userMainInfo.latestPhoto.photos.frontPhoto?.photo || ''}
 						img2={userMainInfo.latestPhoto.photos.backPhoto?.photo || ''}
-						toggleScroll={toggleScroll}
+						isVisibleElementsPhoto={true}
 					/>
 				</View>
 				<View className='h-20 justify-center mx-4'>
 					{user.data?._id === userMainInfo._id._id && !isMessage ? (
-						<TouchableOpacity onPress={handleButtonPress} className='flex-1 justify-center '>
+						<TouchableOpacity
+							onPress={handleButtonPress}
+							className='flex-1 justify-center '
+						>
 							{user.data?.latestPhoto.comment ? (
 								<Text className='text-white mt-2 text-center'>
 									{user.data?.latestPhoto.comment || '...'}
@@ -542,6 +547,7 @@ const ShareHeader: FC<IHeaderComponent> = memo(
 				<EmodziComment
 					//@ts-ignore
 					reactionsData={userMainInfo.latestPhoto.photoReactions}
+					_id={userMainInfo._id._id}
 				/>
 			</View>
 		)
