@@ -1,80 +1,74 @@
 {
 	"expo": {
-		"name": "BePrime",
-		"slug": "front4",
-		"version": "1.1.5",
-		"orientation": "portrait",
-		"icon": "./app/assets/icon.png",
-		"userInterfaceStyle": "light",
-		"splash": {
-			"image": "./app/assets/splash.png",
-			"resizeMode": "contain",
-			"backgroundColor": "#ffffff"
+	  "name": "BePrime",
+	  "slug": "front4",
+	  "version": "1.0.0",
+	  "orientation": "portrait",
+	  "icon": "./app/assets/icon.png",
+	  "userInterfaceStyle": "light",
+	  "splash": {
+		"image": "./app/assets/splash.png",
+		"resizeMode": "contain",
+		"backgroundColor": "#ffffff"
+	  },
+	  "assetBundlePatterns": [
+		"**/*"
+	  ],
+	  "ios": {
+		"supportsTablet": true,
+		"bundleIdentifier": "com.anonymous.front4",
+		"requireFullScreen": true,
+		"infoPlist": {
+		  "NSContactsUsageDescription": "Allow $(PRODUCT_NAME) to access your contacts."
 		},
-		"assetBundlePatterns": ["**/*"],
-		"ios": {
-			"supportsTablet": true,
-			"bundleIdentifier": "com.anonymous.front4",
-			"requireFullScreen": true,
-			"infoPlist": {
-				"NSContactsUsageDescription": "Allow $(PRODUCT_NAME) to access your contacts."
-			},
-			"icon": "./app/assets/test.png"
-		},
-		"android": {
-			"permissions": [
-				"android.permission.CAMERA",
-				"android.permission.RECORD_AUDIO",
-				"android.permission.READ_CONTACTS",
-				"android.permission.WRITE_CONTACTS"
-			],
-			"adaptiveIcon": {
-				"foregroundImage": "./app/assets/icon.png",
-				"backgroundColor": "#ffffff"
-			},
-			"package": "com.anonymous.front4"
-		},
-		"web": {
-			"favicon": "./assets/favicon.png"
-		},
-		"plugins": [
-			[
-				"expo-image-picker",
-				{
-					"photosPermission": "The app accesses your photos to let you share them with your friends."
-				}
-			],
-			[
-				"expo-camera",
-				{
-					"cameraPermission": "Allow $(PRODUCT_NAME) to access your camera."
-				}
-			],
-			[
-				"expo-contacts",
-				{
-					"contactsPermission": "Allow $(PRODUCT_NAME) to access your contacts."
-				}
-			],
-			[
-				"expo-screen-orientation",
-				{
-					"initialOrientation": "DEFAULT"
-				}
-			],
-			["expo-notifications"]
+		"runtimeVersion": "1.0.0"
+	  },
+	  "android": {
+		"permissions": [
+		  "android.permission.CAMERA",
+		  "android.permission.RECORD_AUDIO",
+		  "android.permission.READ_CONTACTS",
+		  "android.permission.WRITE_CONTACTS"
 		],
-		"extra": {
-			"eas": {
-				"projectId": "6a630618-a589-40dd-a7d6-ccca21a8a08a"
-			}
+		"adaptiveIcon": {
+		  "foregroundImage": "./app/assets/icon.png",
+		  "backgroundColor": "#ffffff"
 		},
-		"updates": {
-			"url": "https://u.expo.dev/6a630618-a589-40dd-a7d6-ccca21a8a08a"
-		},
+		"package": "com.anonymous.front4",
 		"runtimeVersion": {
-			"policy": "appVersion"
-		},
-		"owner": "anton12213123"
+		  "policy": "appVersion"
+		}
+	  },
+	  "web": {
+		"favicon": "./assets/favicon.png"
+	  },
+	  "plugins": [
+		[
+		  "expo-image-picker",
+		  {
+			"photosPermission": "The app accesses your photos to let you share them with your friends."
+		  }
+		],
+		[
+		  "expo-camera",
+		  {
+			"cameraPermission": "Allow $(PRODUCT_NAME) to access your camera."
+		  }
+		],
+		[
+		  "expo-contacts",
+		  {
+			"contactsPermission": "Allow $(PRODUCT_NAME) to access your contacts."
+		  }
+		]
+	  ],
+	  "extra": {
+		"eas": {
+		  "projectId": "8890438b-635b-4db5-97c0-dd4e3119a987"
+		}
+	  },
+	  "updates": {
+		"url": "https://u.expo.dev/8890438b-635b-4db5-97c0-dd4e3119a987"
+	  }
 	}
-}
+  }
