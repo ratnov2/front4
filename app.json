@@ -2,7 +2,9 @@
 	"expo": {
 		"name": "BePrime",
 		"slug": "front4",
-		"version": "1.3.0",
+		"runtimeVersion": {
+			"policy": "appVersion"
+		},
 		"orientation": "portrait",
 		"icon": "./app/assets/icon.png",
 		"userInterfaceStyle": "light",
@@ -19,8 +21,7 @@
 			"infoPlist": {
 				"NSContactsUsageDescription": "Allow $(PRODUCT_NAME) to access your contacts."
 			},
-			"icon": "./app/assets/test.png",
-			"runtimeVersion": "1.3.0"
+			"icon": "./app/assets/test.png"
 		},
 		"android": {
 			"permissions": [
@@ -33,10 +34,7 @@
 				"foregroundImage": "./app/assets/icon.png",
 				"backgroundColor": "#ffffff"
 			},
-			"package": "com.anonymous.front4",
-			"runtimeVersion": {
-				"policy": "appVersion"
-			}
+			"package": "com.anonymous.front4"
 		},
 		"web": {
 			"favicon": "./assets/favicon.png"
@@ -75,11 +73,12 @@
 		],
 		"extra": {
 			"eas": {
-				"projectId": "8890438b-635b-4db5-97c0-dd4e3119a987"
+				"projectId": "6a630618-a589-40dd-a7d6-ccca21a8a08a"
 			}
 		},
 		"updates": {
-			"url": "https://u.expo.dev/8890438b-635b-4db5-97c0-dd4e3119a987"
-		}
+			"url": "https://u.expo.dev/6a630618-a589-40dd-a7d6-ccca21a8a08a"
+		},
+		"owner": "anton12213123"
 	}
 }
