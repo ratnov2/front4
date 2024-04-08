@@ -19,7 +19,7 @@
 			"infoPlist": {
 				"NSContactsUsageDescription": "Allow $(PRODUCT_NAME) to access your contacts."
 			},
-			"runtimeVersion": "1.1.0"
+			"runtimeVersion": { "policy": "sdkVersion" }
 		},
 		"android": {
 			"permissions": [
@@ -33,9 +33,7 @@
 				"backgroundColor": "#ffffff"
 			},
 			"package": "com.anonymous.front4",
-			"runtimeVersion": {
-				"policy": "appVersion"
-			}
+			"runtimeVersion": { "policy": "sdkVersion" }
 		},
 		"web": {
 			"favicon": "./assets/favicon.png"
