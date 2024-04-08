@@ -11,7 +11,7 @@ module.exports = function (api) {
 				}
 			],
 			'nativewind/babel',
-			'react-native-reanimated/plugin',
+			// 'react-native-reanimated/plugin',
 			['inline-dotenv']
 			// 'react-native-vision-camera'
 		]

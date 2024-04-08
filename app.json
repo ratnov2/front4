@@ -2,9 +2,7 @@
 	"expo": {
 		"name": "BePrime",
 		"slug": "front4",
-		"runtimeVersion": {
-			"policy": "appVersion"
-		},
+		"version": "1.1.5",
 		"orientation": "portrait",
 		"icon": "./app/assets/icon.png",
 		"userInterfaceStyle": "light",
@@ -64,12 +62,7 @@
 					"initialOrientation": "DEFAULT"
 				}
 			],
-			[
-				"expo-notifications",
-				{
-					"icon": "./app/assets/test.png"
-				}
-			]
+			["expo-notifications"]
 		],
 		"extra": {
 			"eas": {
@@ -78,6 +71,9 @@
 		},
 		"updates": {
 			"url": "https://u.expo.dev/6a630618-a589-40dd-a7d6-ccca21a8a08a"
+		},
+		"runtimeVersion": {
+			"policy": "appVersion"
 		},
 		"owner": "anton12213123"
 	}
